@@ -1,0 +1,31 @@
+{
+	"forest.1":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_1", "stream": false }]},
+	"forest.2":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_2", "stream": false }]},
+	"forest.3":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_3", "stream": false }]},
+	"forest.4":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_4", "stream": false }]},
+	"forest.5":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_5", "stream": false }]},
+	"forest.6":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_6", "stream": false }]},
+	"forest.7":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_7", "stream": false }]},
+	"forest.8":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_8", "stream": false }]},
+	"forest.9":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_9", "stream": false }]},
+	"forest.10":{"category": "master","sounds": [ { "name": "sounds_extended:forest_varient_10", "stream": false }]},
+	
+	"forest.storm.1":{"category": "master","sounds": [ { "name": "sounds_extended:forest_storm_varient_1", "stream": false }]},
+	
+	"wind.high.1":{"category": "master","sounds": [ { "name": "sounds_extended:wind_high_varient_1", "stream": false }]},
+	"wind.high.2":{"category": "master","sounds": [ { "name": "sounds_extended:wind_high_varient_2", "stream": false }]},
+	"wind.high.3":{"category": "master","sounds": [ { "name": "sounds_extended:wind_high_varient_3", "stream": false }]},
+	"wind.high.4":{"category": "master","sounds": [ { "name": "sounds_extended:wind_high_varient_4", "stream": false }]},
+
+	"fire.crack.1":{"category": "master","sounds": [ { "name": "sounds_extended:fire_varient_1", "stream": true }]},
+	"fire.crack.2":{"category": "master","sounds": [ { "name": "sounds_extended:fire_varient_2", "stream": true }]},
+	"fire.crack.3":{"category": "master","sounds": [ { "name": "sounds_extended:fire_varient_3", "stream": true }]},
+	
+	"night.cricket":{"category": "master","sounds": [ { "name": "sounds_extended:night_cricket", "stream": true }]},
+	
+	"beach.wave.1":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_1", "stream": false }]},
+	"beach.wave.2":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_2", "stream": false }]},
+	"beach.wave.3":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_3", "stream": false }]},
+	"beach.wave.4":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_4", "stream": false }]},
+	"beach.wave.5":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_5", "stream": false }]}
+}

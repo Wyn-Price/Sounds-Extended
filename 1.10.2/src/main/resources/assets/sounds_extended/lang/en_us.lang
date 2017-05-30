@@ -1,0 +1,33 @@
+gui.isForest=Is Forest Sounds Enabled
+gui.isForest.comment=Is the Forest Sounds Enabled
+
+gui.isBeach=Is Beach Sounds Enabled
+gui.isBeach.comment=Is the Beach Sounds Enabled
+
+gui.isFire=Is Fire Sounds Enabled
+gui.isFire.comment=Is the Fire Sounds Enabled
+
+gui.isCricket=Is Night-time Cricket Sounds Enabled
+gui.isCricket.comment=Is the Night-time Sounds Enabled
+
+gui.isWind=Is Wind Sounds Enabled
+gui.isWind.comment=Is the Wind Sounds Enabled
+
+gui.isForestStorm=Is Forest Storm Sounds Enabled
+gui.isForestStorm.comment=Is the Forest Storm Sounds Enabled
+
+gui.useServer=Should the sound system be used on a server
+gui.useServer.comment=If false then the below will not be counted
+
+gui.useBlackList=Should the blacklist for servers be used
+gui.useBlackList.comment=As some server plugins cause the sound system to crash
+
+gui.blackListedServers=If yes then what servers should be blacklisted (IP)
+gui.blackListedServers.comment=A list of the server IP's that should disable the sound system
+
+
+gui.title=Sounds Extended Configuration File
+gui.category.enabled=Which Sounds are Sounds Enabled?
+gui.category.enabled.tooltip=Choose which sounds are on and off
+gui.category.server=The Server settings
+gui.category.server.tooltip=Control what happens when you connect to a server
