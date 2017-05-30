@@ -20,9 +20,7 @@ public class MainRegistry
 	
 	@SidedProxy(clientSide = References.CLIENT_PROXY, serverSide = References.SERVER_PROXY)
 	public static CommonProxy proxy;
-	
-	public static final CreativeTabs Creative_Tab= new CreativeInventoryTab();
-	
+		
 	@Mod.Instance(References.MODID)
 	public static MainRegistry instance;
 	
