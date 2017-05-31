@@ -139,9 +139,9 @@ public class SoundEventPlay
 				for(int i = 0; i < 9; i ++)
 				{
 					if(world.canSeeSky(new BlockPos(player.posX + Arrays.asList(-1f, 0f, 1f).get(i%3), player.posY, player.posZ + Arrays.asList(-1f,-1f,-1f,0f,0f,0f,1f,1f,1f).get(i))))
-						canSeeSky = false;
+						canSeeSky = false; 
 				}
-				if(Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33).contains(biome.getIdForBiome(biome)) && !canSeeSky)
+				if(Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33).contains(biome.getIdForBiome(biome)) && canSeeSky)
 				{
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.WEATHER, 1, 1);
 				}
