@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.wynprice.Sound.config.SoundConfig;
 
 import net.minecraft.block.Block;
@@ -20,6 +22,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
 public class SoundEventPlay
@@ -27,10 +30,11 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>(Arrays.asList(Blocks.LEAVES, Blocks.LEAVES2, Blocks.GRASS, Blocks.DIRT, Blocks.GRASS, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER));
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
+	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>();
 	private EntityPlayer player;
 	private World world;
 	private float timer, backTimer, nanoTimer;
-	private static Boolean single = false, loadin = true;
+	private static Boolean single = false, loadin = true, playerEnterHell = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -63,10 +67,10 @@ public class SoundEventPlay
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
-			if(world.getBiome(player.getPosition()) == world.getBiome(player.getPosition()).getBiome(8) && nanoTimer <= System.nanoTime())
+			if(player.dimension == -1 && randInt(0, 200) == 2)
 			{
-				nanoTimer = (float) (System.nanoTime() + 1.7894e+10);
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 10f, 1f);
+				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 100f, 1f);
+
 			}
 			if(timer >= 20f)
 			{
@@ -130,11 +134,19 @@ public class SoundEventPlay
 			if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) < 20)
 				isFoilage = true;
 		}
-		if(biome.equals(biome.getBiome(8)))
-			return;
+		if(!SoundConfig.foliage)
+			isFoilage = true;
+		if(player.dimension == -1)
+			if(playerEnterHell)
+			{
+				playerEnterHell = false;
+				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 100f, 1f);
+				return;
+			}
+		playerEnterHell = true;		
 		if(biome.equals(biome.getBiome(7)))
 			return;
-		if(Arrays.asList(16,25,26).contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
+		if(beachIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
 		{
 			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.WEATHER, 2, 1);
 		}
@@ -148,7 +160,7 @@ public class SoundEventPlay
 					if(world.canSeeSky(new BlockPos(player.posX + Arrays.asList(-1f, 0f, 1f).get(i%3), player.posY, player.posZ + Arrays.asList(-1f,-1f,-1f,0f,0f,0f,1f,1f,1f).get(i))))
 						canSeeSky = false; 
 				}
-				if(Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33).contains(biome.getIdForBiome(biome)) && canSeeSky)
+				if(stormIDs.contains(biome.getIdForBiome(biome)) && !canSeeSky)
 				{
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.WEATHER, 1, 1);
 				}
@@ -160,11 +172,11 @@ public class SoundEventPlay
 					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
 					{
 						
-						if(Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35).contains(biome.getIdForBiome(biome)))
+						if(cricketIDs.contains(biome.getIdForBiome(biome)))
 						{
 							
 							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(!Arrays.asList(1,6,35).contains(biome.getIdForBiome(biome)) && !world.isThundering() && SoundConfig.isForest)
+							if(forestIDs.contains(biome.getIdForBiome(biome)) && !world.isThundering() && SoundConfig.isForest)
 								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.WEATHER, vol, 1);
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.WEATHER, 2 - vol, 1);
@@ -173,7 +185,7 @@ public class SoundEventPlay
 					}
 					else
 					{
-						if(Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35).contains(biome.getIdForBiome(biome)) && SoundConfig.isCricket)
+						if(cricketIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isCricket)
 						{
 							world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.WEATHER, 2, 1);
 						}
@@ -182,7 +194,7 @@ public class SoundEventPlay
 				}
 				else
 				{
-					if(Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33).contains(biome.getIdForBiome(biome)) && SoundConfig.isForest)
+					if(forestIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isForest)
 					{
 						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.WEATHER, 2.5f, 1);
 					}
@@ -226,6 +238,20 @@ public class SoundEventPlay
 	public void playerQuit(ClientDisconnectionFromServerEvent e)
 	{
 		this.loadin = true;
+	}
+	
+	@SubscribeEvent
+	public void onPlayerJoin(PlayerLoggedInEvent e)
+	{
+		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
+		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
+		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
+		for(Integer i : SoundConfig.moddedCricket){cricketIDs.add(i);}
+		for(Integer i : Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35)){cricketIDs.add(i);}
+		for(Integer i : SoundConfig.moddedStorm){stormIDs.add(i);}
+		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){stormIDs.add(i);}
+		for(Integer i : SoundConfig.moddedForest){forestIDs.add(i);}
+		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
 	}
 	
 }
