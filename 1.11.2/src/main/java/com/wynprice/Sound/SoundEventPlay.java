@@ -15,6 +15,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -28,7 +29,7 @@ public class SoundEventPlay
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	private EntityPlayer player;
 	private World world;
-	private float timer, backTimer;
+	private float timer, backTimer, nanoTimer;
 	private static Boolean single = false, loadin = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
@@ -61,11 +62,16 @@ public class SoundEventPlay
 		this.world = e.getEntity().getEntityWorld();
 		if(e.getEntity() instanceof EntityPlayer)
 		{
+			this.player = (EntityPlayer) e.getEntityLiving();
+			if(world.getBiome(player.getPosition()) == world.getBiome(player.getPosition()).getBiome(8) && nanoTimer <= System.nanoTime())
+			{
+				nanoTimer = (float) (System.nanoTime() + 1.7894e+10);
+				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 10f, 1f);
+			}
 			if(timer >= 20f)
 			{
 				backTimer++;
 				timer = 0f;
-				this.player = (EntityPlayer) e.getEntityLiving();
 				int x = this.player.getPosition().getX() + randInt(-15, 15);
 				int y = 0;
 				int z = this.player.getPosition().getZ() + randInt(-15, 15);
@@ -124,7 +130,8 @@ public class SoundEventPlay
 			if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) < 20)
 				isFoilage = true;
 		}
-		
+		if(biome.equals(biome.getBiome(8)))
+			return;
 		if(biome.equals(biome.getBiome(7)))
 			return;
 		if(Arrays.asList(16,25,26).contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
