@@ -28,7 +28,7 @@ public class SoundConfig
 	private static Configuration config = null;
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, runOnServer, useList, foliage;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, runOnServer, useList, foliage;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -146,6 +146,11 @@ public class SoundConfig
 		isForestStormSound.setComment(isClient? I18n.format("gui.isForestStorm.comment") : "");
 		enabledOrder.add(isForestStormSound.getName());
 		
+		Property isHellSound = config.get(CATEGORY_SOUNDS_ENABLED, "isHellSound", true);
+		isHellSound.setLanguageKey("gui.isHell");
+		isHellSound.setComment(isClient? I18n.format("gui.isHell.comment") : "");
+		enabledOrder.add(isHellSound.getName());
+		
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
@@ -158,6 +163,7 @@ public class SoundConfig
 			isCricket = isCricketSound.getBoolean();
 			isWind = isWindSound.getBoolean();
 			isForestStorm = isForestStormSound.getBoolean();
+			isHell = isHellSound.getBoolean();
 			
 			runOnServer = useServer.getBoolean();
 			useList = useBlackList.getBoolean();
@@ -176,6 +182,7 @@ public class SoundConfig
 		isCricketSound.set(isCricket);
 		isWindSound.set(isWind);
 		isForestStormSound.set(isForestStorm);
+		isHellSound.set(isHell);
 		
 		useServer.set(runOnServer);
 		useBlackList.set(useList);
