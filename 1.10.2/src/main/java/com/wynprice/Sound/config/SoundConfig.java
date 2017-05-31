@@ -26,10 +26,11 @@ public class SoundConfig
 {
 	private static Boolean isClient = false;
 	private static Configuration config = null;
-	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings";
+	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, runOnServer, useList;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, runOnServer, useList, foliage;
 	public static String[] blackServers;
+	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket;
 	public static ArrayList<String> readServers = new ArrayList<String>();
 	
 	public static Configuration getConfig()
@@ -66,6 +67,36 @@ public class SoundConfig
 			config.load(); 
 		List<String> enabledOrder = new ArrayList<String>();
 		List<String> serverOrder = new ArrayList<String>();
+		List<String> moddedOrder = new ArrayList<String>();
+		
+		
+		Property useFoliage = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "useFoliage", true);
+		useFoliage.setLanguageKey("gui.useFoliage");
+		useFoliage.setComment(isClient? I18n.format("gui.useFoliage.comment") : "");
+		moddedOrder.add(useFoliage.getName());
+		
+		int[] emptyIntArray = {};
+		Property forestBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "forestBiomes", emptyIntArray);
+		forestBiomes.setLanguageKey("gui.moddedForest");
+		forestBiomes.setComment(isClient? I18n.format("gui.forestBiomes.comment") : "");
+		moddedOrder.add(forestBiomes.getName());
+		
+		Property cricketBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "cricketBiomes", emptyIntArray);
+		cricketBiomes.setLanguageKey("gui.moddedCricket");
+		cricketBiomes.setComment(isClient? I18n.format("gui.moddedCricket.comment") : "");
+		moddedOrder.add(cricketBiomes.getName());
+		
+		Property stormBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "stormBiomes", emptyIntArray);
+		stormBiomes.setLanguageKey("gui.moddedStorm");
+		stormBiomes.setComment(isClient? I18n.format("gui.moddedStorm.comment") : "");
+		moddedOrder.add(stormBiomes.getName());
+		
+		Property beachBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "beachBiomes", emptyIntArray);
+		beachBiomes.setLanguageKey("gui.moddedBeach");
+		beachBiomes.setComment(isClient? I18n.format("gui.moddedBeach.comment") : "");
+		moddedOrder.add(beachBiomes.getName());
+		
+		
 		
 		Property useServer = config.get(CATEGORY_SERVER_SETTINGS, "useServer", true);
 		useServer.setLanguageKey("gui.useServer");
@@ -82,6 +113,7 @@ public class SoundConfig
 		blackListedServers.setLanguageKey("gui.blackListedServers");
 		blackListedServers.setComment(isClient? I18n.format("gui.blackListedServers.comment") : "");
 		serverOrder.add(blackListedServers.getName());
+		
 		
 		
 		Property isForestSound = config.get(CATEGORY_SOUNDS_ENABLED, "isForestSound", true);
@@ -114,8 +146,14 @@ public class SoundConfig
 		isForestStormSound.setComment(isClient? I18n.format("gui.isForestStorm.comment") : "");
 		enabledOrder.add(isForestStormSound.getName());
 		
+		Property isHellSound = config.get(CATEGORY_SOUNDS_ENABLED, "isHellSound", true);
+		isHellSound.setLanguageKey("gui.isHell");
+		isHellSound.setComment(isClient? I18n.format("gui.isHell.comment") : "");
+		enabledOrder.add(isHellSound.getName());
+		
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
+		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
 		
 		if(read)
 		{
@@ -125,10 +163,17 @@ public class SoundConfig
 			isCricket = isCricketSound.getBoolean();
 			isWind = isWindSound.getBoolean();
 			isForestStorm = isForestStormSound.getBoolean();
+			isHell = isHellSound.getBoolean();
 			
 			runOnServer = useServer.getBoolean();
 			useList = useBlackList.getBoolean();
 			blackServers = blackListedServers.getStringList();
+			
+			moddedBeach = beachBiomes.getIntList();
+			moddedCricket = cricketBiomes.getIntList();
+			moddedStorm = stormBiomes.getIntList();
+			moddedForest = forestBiomes.getIntList();
+			foliage = useFoliage.getBoolean();
 		}
 		
 		isForestSound.set(isForest);
@@ -137,10 +182,18 @@ public class SoundConfig
 		isCricketSound.set(isCricket);
 		isWindSound.set(isWind);
 		isForestStormSound.set(isForestStorm);
+		isHellSound.set(isHell);
 		
 		useServer.set(runOnServer);
 		useBlackList.set(useList);
 		blackListedServers.set(blackServers);
+		
+		beachBiomes.set(moddedBeach);
+		cricketBiomes.set(moddedCricket);
+		stormBiomes.set(moddedStorm);
+		forestBiomes.set(moddedForest);
+		useFoliage.set(foliage);
+		
 		
 		readServers.clear();
 		for(String IP : blackServers)
@@ -159,7 +212,8 @@ public class SoundConfig
 			if(!isError)
 				readServers.add(address.getHostAddress());
 		}
-		MainRegistry.getlogger().info("Block IP's:" + readServers);
+		if(readServers.size() != 0)
+			MainRegistry.getlogger().info("Block IP's:" + readServers);
 		if(config.hasChanged())
 			config.save();
 	}

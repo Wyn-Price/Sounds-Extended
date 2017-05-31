@@ -55,6 +55,7 @@ public class guiFactory implements IModGuiFactory
 			List<IConfigElement> list = new ArrayList<IConfigElement>();
 			list.add(new DummyCategoryElement("gui.category.enabled", "gui.category.enabled", CategoryEnabled.class));
 			list.add(new DummyCategoryElement("gui.category.server", "gui.category.server", CategoryServer.class));
+			list.add(new DummyCategoryElement("gui.category.modded", "gui.category.modded", CategoryModded.class));
 			return list;
 		}
 		
@@ -92,6 +93,23 @@ public class guiFactory implements IModGuiFactory
 				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_SERVER_SETTINGS));
 				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
 				String windowTitle = I18n.format("gui.category.server");
+				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
+			}
+		}
+		
+		public static class CategoryModded extends CategoryEntry
+		{
+			public CategoryModded(GuiConfig owningScreen, GuiConfigEntries owningEntryList,
+					IConfigElement configElement) {
+				super(owningScreen, owningEntryList, configElement);
+			}
+			
+			@Override
+			protected GuiScreen buildChildScreen() {
+				Configuration config = SoundConfig.getConfig();
+				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_MODDED_BIOMES_SUPPORT));
+				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
+				String windowTitle = I18n.format("gui.category.modded");
 				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
 			}
 		}

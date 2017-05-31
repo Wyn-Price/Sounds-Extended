@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class SoundHandler 
 {
 	public static ArrayList<SoundEvent> soundForest, highWind, fireCrack, beachWave, soundForestStorm;
-	public static SoundEvent cricketNight;
+	public static SoundEvent cricketNight, hell;
 	private static int soundEventId;
 	public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = net.minecraftforge.fml.common.registry.GameData.getSoundEventRegistry();
 	
@@ -25,6 +25,7 @@ public class SoundHandler
 		soundForestStorm = new ArrayList<SoundEvent>(Arrays.asList(register("forest.storm.1")));
 		cricketNight = register("night.cricket");
 		beachWave = new ArrayList<SoundEvent>(Arrays.asList(register("beach.wave.1"), register("beach.wave.2"), register("beach.wave.3"), register("beach.wave.4"), register("beach.wave.5")));
+		hell = register("hell");
 	}
 	
 	public static SoundEvent register(String name)
