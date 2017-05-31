@@ -7,6 +7,7 @@ import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.proxys.CommonProxy;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY)
-public class MainRegistry 
+public class MainRegistry
 {
 	
 	@SidedProxy(clientSide = References.CLIENT_PROXY, serverSide = References.SERVER_PROXY)

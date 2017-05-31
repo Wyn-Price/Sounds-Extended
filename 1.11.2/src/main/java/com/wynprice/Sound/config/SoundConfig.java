@@ -212,7 +212,8 @@ public class SoundConfig
 			if(!isError)
 				readServers.add(address.getHostAddress());
 		}
-		MainRegistry.getlogger().info("Block IP's:" + readServers);
+		if(readServers.size() != 0)
+			MainRegistry.getlogger().info("Block IP's:" + readServers);
 		if(config.hasChanged())
 			config.save();
 	}

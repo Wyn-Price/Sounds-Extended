@@ -33,11 +33,12 @@ public class SoundEventPlay
 	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>();
 	private EntityPlayer player;
 	private World world;
-	private float timer, backTimer, nanoTimer;
-	private static Boolean single = false, loadin = true, playerEnterHell = true;
+	private float timer, backTimer, hellTimer;
+	private static Boolean single = false, loadin = true, loadHell = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
+
 		if(loadin)
 		{
 			loadin = false;
@@ -54,7 +55,8 @@ public class SoundEventPlay
 				single = true;
 			}
 		}
-		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind)
+		
+		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind && !SoundConfig.isHell)
 			return;
 		
 		else if(!single)
@@ -67,11 +69,13 @@ public class SoundEventPlay
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
-			if(player.dimension == -1 && randInt(0, 200) == 2)
+			if((hellTimer >= (20f * 15)) && player.dimension == -1 && SoundConfig.isHell)
 			{
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 100f, 1f);
-
+				hellTimer = 0f;
+				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.WEATHER, 100f, 1f);
 			}
+				
+			else hellTimer ++;
 			if(timer >= 20f)
 			{
 				backTimer++;
@@ -136,16 +140,19 @@ public class SoundEventPlay
 		}
 		if(!SoundConfig.foliage)
 			isFoilage = true;
-		if(player.dimension == -1)
-			if(playerEnterHell)
-			{
-				playerEnterHell = false;
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.BLOCKS, 100f, 1f);
-				return;
-			}
-		playerEnterHell = true;		
 		if(biome.equals(biome.getBiome(7)))
 			return;
+		if(player.dimension == -1)
+		{
+			if(loadHell)
+			{
+				hellTimer = Integer.MAX_VALUE;
+			}
+			loadHell = false;
+			return;
+		}
+		
+		loadHell = true;
 		if(beachIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
 		{
 			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.WEATHER, 2, 1);
