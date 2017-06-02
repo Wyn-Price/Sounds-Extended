@@ -71,12 +71,13 @@ public class SoundEventPlay
 			this.player = (EntityPlayer) e.getEntityLiving();
 			if((hellTimer >= (20f * 15)) && player.dimension == -1 && SoundConfig.isHell)
 			{
+				System.out.println("lel");
 				hellTimer = 0f;
 				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.WEATHER, 100f, 1f);
 			}
 				
 			else hellTimer ++;
-			if(timer >= 20f)
+			if(timer >= 20f && player.dimension == 0)
 			{
 				backTimer++;
 				timer = 0f;
