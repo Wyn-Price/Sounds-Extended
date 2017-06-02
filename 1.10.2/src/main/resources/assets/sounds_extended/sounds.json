@@ -29,5 +29,6 @@
 	"beach.wave.4":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_4", "stream": false }]},
 	"beach.wave.5":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_5", "stream": false }]},
 	
-	"hell":{"category": "master","sounds": [ { "name": "sounds_extended:hell", "stream": false }]}
+	"hell":{"category": "master","sounds": [ { "name": "sounds_extended:hell", "stream": false }]},
+	"dragon.fight":{"category": "master","sounds": [ { "name": "sounds_extended:dragon_fight", "stream": true }]}
 }

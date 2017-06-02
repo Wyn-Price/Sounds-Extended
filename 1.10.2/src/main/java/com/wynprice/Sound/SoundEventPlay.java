@@ -3,26 +3,27 @@ package com.wynprice.Sound;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.Logger;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import com.wynprice.Sound.config.SoundConfig;
+import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
 public class SoundEventPlay
@@ -32,9 +33,11 @@ public class SoundEventPlay
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>();
 	private EntityPlayer player;
+	private ISound dragonFight;
+	private Entity dragon;
 	private World world;
-	private float timer, backTimer, hellTimer;
-	private static Boolean single = false, loadin = true, loadHell = true;
+	private float timer, backTimer, hellTimer, dragonTimer;
+	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, playMusic = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -68,35 +71,71 @@ public class SoundEventPlay
 		this.world = e.getEntity().getEntityWorld();
 		if(e.getEntity() instanceof EntityPlayer)
 		{
+			
+			for(Entity entity : world.getLoadedEntityList())
+			{
+				if(entity instanceof EntityDragon)
+				{
+					dragon = entity;
+				}
+			}
+			if(dragon != null)
+			{
+				if(!dragon.isDead && !previousFrameDragon)
+					playMusic = true;
+				if(dragon.isDead && previousFrameDragon)
+					Minecraft.getMinecraft().getSoundHandler().stopSounds();
+				previousFrameDragon = !dragon.isDead;
+			}
+			
 			this.player = (EntityPlayer) e.getEntityLiving();
-			if((hellTimer >= (20f * 15)) && player.dimension == -1 && SoundConfig.isHell)
+			if((hellTimer >= (18.5f * 15)) && player.dimension == -1 && SoundConfig.isHell)
 			{
 				hellTimer = 0f;
 				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.WEATHER, 100f, 1f);
 			}
+			else 
+				hellTimer ++;
+			if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(dragonFight) && player.dimension == 1 && previousFrameDragon)
+			{
+				playMusic = true;
+				dragonTimer = 0;
+			}
+			else if(world.isRemote)
+			{
+				dragonTimer ++;
+			}
+			if(playMusic)
+			{
+				System.out.println("lloop");
+				playMusic = false;
+				Minecraft.getMinecraft().getSoundHandler().playSound(dragonFight);
 				
-			else hellTimer ++;
-			if(timer >= 20f && player.dimension == 0)
+			}
+			if(timer >= 20f)
 			{
 				backTimer++;
 				timer = 0f;
-				int x = this.player.getPosition().getX() + randInt(-15, 15);
-				int y = 0;
-				int z = this.player.getPosition().getZ() + randInt(-15, 15);
-				boolean isBlockAir = true;
-				for(int i2 = 256; isBlockAir; i2--)
+				if(player.dimension == 0)
 				{
-					if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() != Blocks.AIR)
+					int x = this.player.getPosition().getX() + randInt(-15, 15);
+					int y = 0;
+					int z = this.player.getPosition().getZ() + randInt(-15, 15);
+					boolean isBlockAir = true;
+					for(int i2 = 256; isBlockAir; i2--)
 					{
-						if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() == Blocks.FIRE && !firePositions.contains(new BlockPos(x, i2, z)))
-							firePositions.add(new BlockPos(x, i2, z));
-						else if(foliage.contains(world.getBlockState(new BlockPos(x, i2, z)).getBlock()) && !foliagePositions.contains(new BlockPos(x, i2, z)))
-							foliagePositions.add(new BlockPos(x, i2, z));
-						isBlockAir = false;
-						y = i2;
+						if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() != Blocks.AIR)
+						{
+							if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() == Blocks.FIRE && !firePositions.contains(new BlockPos(x, i2, z)))
+								firePositions.add(new BlockPos(x, i2, z));
+							else if(foliage.contains(world.getBlockState(new BlockPos(x, i2, z)).getBlock()) && !foliagePositions.contains(new BlockPos(x, i2, z)))
+								foliagePositions.add(new BlockPos(x, i2, z));
+							isBlockAir = false;
+							y = i2;
+						}
 					}
+					BiomeUpdate(new BlockPos(x, y, z));
 				}
-				BiomeUpdate(new BlockPos(x, y, z));
 				
 			}
 			else
@@ -244,12 +283,14 @@ public class SoundEventPlay
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	public void playerQuit(ClientDisconnectionFromServerEvent e)
 	{
+		Minecraft.getMinecraft().getSoundHandler().stopSound(dragonFight);
 		this.loadin = true;
 	}
 	
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e)
 	{
+		this.dragonFight = PositionedSoundRecord.getMasterRecord(SoundHandler.dragonFight, 1f);
 		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
 		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
 		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
@@ -259,6 +300,12 @@ public class SoundEventPlay
 		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){stormIDs.add(i);}
 		for(Integer i : SoundConfig.moddedForest){forestIDs.add(i);}
 		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
+	}
+	
+	@SubscribeEvent
+	public void quit(PlayerLoggedOutEvent e)
+	{
+		Minecraft.getMinecraft().getSoundHandler().stopSound(dragonFight);
 	}
 	
 }
