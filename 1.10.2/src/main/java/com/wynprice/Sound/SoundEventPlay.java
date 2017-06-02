@@ -76,7 +76,7 @@ public class SoundEventPlay
 			}
 				
 			else hellTimer ++;
-			if(timer >= 20f)
+			if(timer >= 20f && player.dimension == 0)
 			{
 				backTimer++;
 				timer = 0f;
