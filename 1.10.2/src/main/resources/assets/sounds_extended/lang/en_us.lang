@@ -16,11 +16,20 @@ gui.isWind.comment=Is the Wind Sounds Enabled
 gui.isForestStorm=Is Forest Storm Sounds Enabled
 gui.isForestStorm.comment=Is the Forest Storm Sounds Enabled
 
+gui.isHell=Is the Nether Sound Enabled
+gui.isHell.comment=When in the nether, are the sounds enabled
+
+gui.isEndDragon=Is Ender Dragon Fight Music Enabled
+gui.isEndDragon.comment=While fighting the ender dragon, is the music played?
+
+gui.isWither=Is Wither Boss Fight Music Enabled
+gui.isWither.comment=While fighting the wither, is the music played?
+
 gui.useServer=Should the sound system be used on a server
 gui.useServer.comment=If false then the below will not be counted
 
 gui.useBlackList=Should the blacklist for servers be used
-gui.useBlackList.comment=As some server plugins cause the sound system to crash
+gui.useBlackList.comment=Should the blacklist be used
 
 gui.blackListedServers=If yes then what servers should be blacklisted (IP)
 gui.blackListedServers.comment=A list of the server IP's that should disable the sound system
@@ -39,6 +48,7 @@ gui.moddedStorm.comment=Play stormy sounds, designed to work with trees
 
 gui.moddedBeach=What modded biomes ID's should act like a beach
 gui.moddedBeach.comment=Play wave sounds
+
 
 
 gui.title=Sounds Extended Configuration File

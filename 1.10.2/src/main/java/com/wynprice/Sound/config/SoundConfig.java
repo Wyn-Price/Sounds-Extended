@@ -28,7 +28,7 @@ public class SoundConfig
 	private static Configuration config = null;
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, runOnServer, useList, foliage;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, runOnServer, useList, foliage;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -151,6 +151,16 @@ public class SoundConfig
 		isHellSound.setComment(isClient? I18n.format("gui.isHell.comment") : "");
 		enabledOrder.add(isHellSound.getName());
 		
+		Property isEndDragonFightSound = config.get(CATEGORY_SOUNDS_ENABLED, "isEndDragon", true);
+		isEndDragonFightSound.setLanguageKey("gui.isEndDragon");
+		isEndDragonFightSound.setComment(isClient? I18n.format("gui.isEndDragon.comment") : "");
+		enabledOrder.add(isEndDragonFightSound.getName());
+		
+		Property isWitherSound = config.get(CATEGORY_SOUNDS_ENABLED, "isWither", true);
+		isWitherSound.setLanguageKey("gui.isWither");
+		isWitherSound.setComment(isClient? I18n.format("gui.isWither.comment") : "");
+		enabledOrder.add(isWitherSound.getName());
+		
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
@@ -164,6 +174,8 @@ public class SoundConfig
 			isWind = isWindSound.getBoolean();
 			isForestStorm = isForestStormSound.getBoolean();
 			isHell = isHellSound.getBoolean();
+			isEndDragon = isEndDragonFightSound.getBoolean();
+			isWither = isWitherSound.getBoolean();
 			
 			runOnServer = useServer.getBoolean();
 			useList = useBlackList.getBoolean();
@@ -183,6 +195,8 @@ public class SoundConfig
 		isWindSound.set(isWind);
 		isForestStormSound.set(isForestStorm);
 		isHellSound.set(isHell);
+		isEndDragonFightSound.set(isEndDragon);
+		isWindSound.set(isWither);
 		
 		useServer.set(runOnServer);
 		useBlackList.set(useList);
