@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class SoundHandler 
 {
-	public static ArrayList<SoundEvent> soundForest, highWind, fireCrack, beachWave, soundForestStorm;
+	public static ArrayList<SoundEvent> soundForest, highWind, fireCrack, beachWave, soundForestStorm, endAmbience;
 	public static SoundEvent cricketNight, hell, bossMusic;
 	private static int soundEventId;
 	public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = net.minecraftforge.fml.common.registry.GameData.getSoundEventRegistry();
@@ -26,7 +26,8 @@ public class SoundHandler
 		cricketNight = register("night.cricket");
 		beachWave = new ArrayList<SoundEvent>(Arrays.asList(register("beach.wave.1"), register("beach.wave.2"), register("beach.wave.3"), register("beach.wave.4"), register("beach.wave.5")));
 		hell = register("hell");
-		bossMusic = register("dragon.fight");
+		bossMusic = register("boss.fight");
+		endAmbience = new ArrayList<SoundEvent>(Arrays.asList(register("end.1"), register("end.2")));
 	}
 	
 	public static SoundEvent register(String name)

@@ -10,15 +10,18 @@ import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -218,8 +221,16 @@ public class SoundEventPlay
 		
 		if(player.dimension == 1)
 		{
-			//if(world.getBlockState(position).getBlock() == Blocks.END_STONE)
-				//TODO play souynd
+			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 5) == 2)
+				world.playSound(player, position, SoundHandler.endAmbience.get(0), SoundCategory.WEATHER, 20f, randInt(1, 200) / 100);
+			for(Entity e : world.loadedEntityList)
+			{
+				if(e instanceof EntityShulker)
+				{
+					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.WEATHER, 2f, 2 - (randInt(0, 400) / 100));
+				}
+				
+			}
 		}
 		
 		if(player.dimension != 0)
