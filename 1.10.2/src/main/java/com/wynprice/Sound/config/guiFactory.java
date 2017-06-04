@@ -26,7 +26,7 @@ public class guiFactory implements IModGuiFactory
 	public void initialize(Minecraft minecraftInstance) {
 		
 	}
-	
+
 	@Override
 	public Class<? extends GuiScreen> mainConfigGuiClass() {
 		return SoundConfigGui.class;

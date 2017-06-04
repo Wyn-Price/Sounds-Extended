@@ -30,5 +30,9 @@
 	"beach.wave.5":{"category": "master","sounds": [ { "name": "sounds_extended:beach_wave_varient_5", "stream": false }]},
 	
 	"hell":{"category": "master","sounds": [ { "name": "sounds_extended:hell", "stream": false }]},
-	"dragon.fight":{"category": "master","sounds": [ { "name": "sounds_extended:dragon_fight", "stream": true }]}
+	"boss.fight":{"category": "master","sounds": [ { "name": "sounds_extended:boss_fight", "stream": true }]},
+	
+	
+	"end.1":{"category": "master","sounds": [ { "name": "sounds_extended:end_1", "stream": false }]},
+	"end.2":{"category": "master","sounds": [ { "name": "sounds_extended:end_2", "stream": false }]}
 }
