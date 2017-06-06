@@ -25,6 +25,12 @@ gui.isEndDragon.comment=While fighting the ender dragon, is the music played?
 gui.isWither=Is Wither Boss Fight Music Enabled
 gui.isWither.comment=While fighting the wither, is the music played?
 
+gui.isEnd=Are the End Ambience Sounds Enabled
+gui.isEnd.comment=The Background noise to add noise to the end
+
+gui.isShulkerEnd=Is the Shulker Sound Enabled
+gui.isShulkerEnd.comment=Is the sound when you go near shulkers enabled
+
 gui.useServer=Should the sound system be used on a server
 gui.useServer.comment=If false then the below will not be counted
 

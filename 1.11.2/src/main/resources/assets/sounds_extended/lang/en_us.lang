@@ -25,6 +25,15 @@ gui.isEndDragon.comment=While fighting the ender dragon, is the music played?
 gui.isWither=Is Wither Boss Fight Music Enabled
 gui.isWither.comment=While fighting the wither, is the music played?
 
+gui.isEnd=Are the End Ambience Sounds Enabled
+gui.isEnd.comment=The Background noise to add noise to the end
+
+gui.isShulkerEnd=Is the Shulker Sound Enabled
+gui.isShulkerEnd.comment=Is the sound when you go near shulkers enabled
+
+gui.isEndCity=Is the End City Sound Enabled
+gui.isEndCity.comment=Is the sound that happens when you go near an end city enabled
+
 gui.useServer=Should the sound system be used on a server
 gui.useServer.comment=If false then the below will not be counted
 
@@ -48,8 +57,6 @@ gui.moddedStorm.comment=Play stormy sounds, designed to work with trees
 
 gui.moddedBeach=What modded biomes ID's should act like a beach
 gui.moddedBeach.comment=Play wave sounds
-
-
 
 gui.title=Sounds Extended Configuration File
 gui.category.enabled=Which Sounds are Sounds Enabled?

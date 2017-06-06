@@ -28,7 +28,7 @@ public class SoundConfig
 	private static Configuration config = null;
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, runOnServer, useList, foliage;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -160,6 +160,16 @@ public class SoundConfig
 		isWitherSound.setLanguageKey("gui.isWither");
 		isWitherSound.setComment(isClient? I18n.format("gui.isWither.comment") : "");
 		enabledOrder.add(isWitherSound.getName());
+
+		Property isEndSound = config.get(CATEGORY_SOUNDS_ENABLED, "isEnd", true);
+		isEndSound.setLanguageKey("gui.isEnd");
+		isEndSound.setComment(isClient? I18n.format("gui.isEnd.comment") : "");
+		enabledOrder.add(isEndSound.getName());
+		
+		Property isShulkerEndSound = config.get(CATEGORY_SOUNDS_ENABLED, "isShulkerEnd", true);
+		isShulkerEndSound.setLanguageKey("gui.isShulkerEnd");
+		isShulkerEndSound.setComment(isClient? I18n.format("gui.isShulkerEnd.comment") : "");
+		enabledOrder.add(isShulkerEndSound.getName());
 		
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
@@ -176,6 +186,8 @@ public class SoundConfig
 			isHell = isHellSound.getBoolean();
 			isEndDragon = isEndDragonFightSound.getBoolean();
 			isWither = isWitherSound.getBoolean();
+			isEnd = isEndSound.getBoolean();
+			isShulkerSoundEnd = isShulkerEndSound.getBoolean();
 			
 			runOnServer = useServer.getBoolean();
 			useList = useBlackList.getBoolean();
@@ -197,6 +209,8 @@ public class SoundConfig
 		isHellSound.set(isHell);
 		isEndDragonFightSound.set(isEndDragon);
 		isWindSound.set(isWither);
+		isEndSound.set(isEnd);
+		isShulkerEndSound.set(isShulkerSoundEnd);
 		
 		useServer.set(runOnServer);
 		useBlackList.set(useList);

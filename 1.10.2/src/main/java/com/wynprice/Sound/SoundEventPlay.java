@@ -72,8 +72,9 @@ public class SoundEventPlay
 			}
 		}
 		
-		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind && !SoundConfig.isHell)
-			return;
+		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind 
+				&& !SoundConfig.isHell && !SoundConfig.isEndDragon && !SoundConfig.isWither && !SoundConfig.isEnd && !SoundConfig.isShulkerSoundEnd)
+				return;
 		
 		else if(!single)
 		{
@@ -263,20 +264,17 @@ public class SoundEventPlay
 		
 		
 		
-		if(player.dimension == 1)
+		if(player.dimension == 1 && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))
 		{
-			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0)
+			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0 && SoundConfig.isEnd)
 				world.playSound(player, position, SoundHandler.endDrip.get(randInt(0, SoundHandler.endDrip.size() - 1)), SoundCategory.MASTER, 3f, 2 - (randInt(0, 400) / 100));
 			Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
-			while(iWorldLoadedEntityList.hasNext())
+			while(iWorldLoadedEntityList.hasNext() && SoundConfig.isShulkerSoundEnd)
 			{
 				Entity e = iWorldLoadedEntityList.next();
 				if(e instanceof EntityShulker)
-				{
-					
-					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
-							
-				}
+					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) 
+						world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
 			}
 				
 		}

@@ -72,7 +72,8 @@ public class SoundEventPlay
 			}
 		}
 		
-		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind && !SoundConfig.isHell)
+		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind 
+				&& !SoundConfig.isHell && !SoundConfig.isEndDragon && !SoundConfig.isWither && !SoundConfig.isEnd && !SoundConfig.isShulkerSoundEnd && !SoundConfig.isEndCity)
 			return;
 		
 		else if(!single)
@@ -165,7 +166,7 @@ public class SoundEventPlay
 			else 
 				hellTimer ++;
 			
-			if(endTimer >= (18.5 * 7) && relativeDistance > 0f)
+			if(endTimer >= (18.5 * 7) && relativeDistance > 0f && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
 				world.playSound(player, nearestEndCityLocation, SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
@@ -263,32 +264,32 @@ public class SoundEventPlay
 		
 		
 		
-		if(player.dimension == 1)
+		if(player.dimension == 1 && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))
 		{
-			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0)
+			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0 && SoundConfig.isEnd)
 				world.playSound(player, position, SoundHandler.endDrip.get(randInt(0, SoundHandler.endDrip.size() - 1)), SoundCategory.MASTER, 3f, 2 - (randInt(0, 400) / 100));
 			Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
-			while(iWorldLoadedEntityList.hasNext())
+			while(iWorldLoadedEntityList.hasNext() && SoundConfig.isShulkerSoundEnd)
 			{
 				Entity e = iWorldLoadedEntityList.next();
 				if(e instanceof EntityShulker)
 				{
-					
 					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
-					BlockPos endCityLocation = world.findNearestStructure("EndCity", player.getPosition(), false);
-					if(endCityLocation != null)
-						if(Math.sqrt(player.getDistanceSq(endCityLocation)) < 250)
-						{
-							nearestEndCityLocation = endCityLocation;
-							float vol = (float) (Math.sqrt(player.getDistanceSq(endCityLocation)) > 50? 1 + ((50 - Math.sqrt(player.getDistanceSq(endCityLocation))) / 200) : 1f);
-							this.relativeDistance = vol;
-						}
-						else this.relativeDistance = -1f;
-					else this.relativeDistance = -1f;
-							
 				}
 			}
-				
+			if(SoundConfig.isEndCity)
+			{
+				BlockPos endCityLocation = world.findNearestStructure("EndCity", player.getPosition(), false);
+				if(endCityLocation != null)
+					if(Math.sqrt(player.getDistanceSq(endCityLocation)) < 250)
+					{
+						nearestEndCityLocation = endCityLocation;
+						float vol = (float) (Math.sqrt(player.getDistanceSq(endCityLocation)) > 50? 1 + ((50 - Math.sqrt(player.getDistanceSq(endCityLocation))) / 200) : 1f);
+						this.relativeDistance = vol;
+					}
+					else this.relativeDistance = -1f;
+				else this.relativeDistance = -1f;
+			}	
 		}
 		
 		if(player.dimension != 0)
