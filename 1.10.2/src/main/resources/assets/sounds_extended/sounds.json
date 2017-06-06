@@ -32,7 +32,18 @@
 	"hell":{"category": "master","sounds": [ { "name": "sounds_extended:hell", "stream": false }]},
 	"boss.fight":{"category": "master","sounds": [ { "name": "sounds_extended:boss_fight", "stream": true }]},
 	
+	"end.drip.1":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_1", "stream": false }]},
+	"end.drip.2":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_2", "stream": false }]},
+	"end.drip.3":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_3", "stream": false }]},
+	"end.drip.4":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_4", "stream": false }]},
+	"end.drip.5":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_5", "stream": false }]},
+	"end.drip.6":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_6", "stream": false }]},
+	"end.drip.7":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_7", "stream": false }]},
+	"end.drip.8":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_8", "stream": false }]},
+	"end.drip.9":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_9", "stream": false }]},
+	"end.drip.10":{"category": "master","sounds": [ { "name": "sounds_extended:end_drip_varient_10", "stream": false }]},
 	
-	"end.1":{"category": "master","sounds": [ { "name": "sounds_extended:end_1", "stream": false }]},
-	"end.2":{"category": "master","sounds": [ { "name": "sounds_extended:end_2", "stream": false }]}
+	"end.reverse":{"category": "master","sounds": [ { "name": "sounds_extended:end_reverse", "stream": false }]},
+	
+	"wither.spawn.timer":{"category": "master","sounds": [ { "name": "sounds_extended:wither_spawn_timer", "stream": false }]}
 }
