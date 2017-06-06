@@ -2,7 +2,10 @@ package com.wynprice.Sound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
+
+import javax.annotation.Nullable;
 
 import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
@@ -17,10 +20,16 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.tileentity.TileEntityStructure;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.world.gen.structure.StructureComponent;
+import net.minecraft.world.gen.structure.StructureEndCityPieces;
+import net.minecraft.world.gen.structure.StructureStart;
 import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -39,13 +48,13 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private ISound bossMusic;
 	private Entity dragon, wither;
+	private BlockPos nearestEndCityLocation;
 	private World world;
-	private float timer, backTimer, hellTimer;
+	private float timer, backTimer, hellTimer, endTimer, relativeDistance, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
-
 		if(loadin)
 		{
 			loadin = false;
@@ -75,10 +84,14 @@ public class SoundEventPlay
 		
 		
 		
-		if(playMusic && SoundConfig.isEndDragon)
+		if(playMusic && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic))
 		{
+			Minecraft.getMinecraft().getSoundHandler().stop(References.MODID + ":wither.spawn.timer", SoundCategory.MASTER);
 			playMusic = false;
-			Minecraft.getMinecraft().getSoundHandler().playSound(bossMusic);
+			if(previousFrameDragon || previousFrameWither)
+				try{ Minecraft.getMinecraft().getSoundHandler().playSound(bossMusic); }
+				catch (IllegalArgumentException i) {}
+			
 			
 		}
 		this.world = e.getEntity().getEntityWorld();
@@ -87,8 +100,10 @@ public class SoundEventPlay
 			this.player = (EntityPlayer) e.getEntityLiving();
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
-				for(Entity entity : world.getLoadedEntityList())
+				Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
+				while(iWorldLoadedEntityList.hasNext())
 				{
+					Entity entity = iWorldLoadedEntityList.next();
 					if(entity instanceof EntityDragon)
 					{
 						dragon = entity;
@@ -97,18 +112,24 @@ public class SoundEventPlay
 					{
 						wither = entity;
 					}
+					
 				}
 				if(SoundConfig.isEndDragon)
 				{
 					if(dragon != null)
 					{
+						EntityDragon d = (EntityDragon) dragon;
 						if(!dragon.isDead && !previousFrameDragon)
 							playMusic = true;
-						if(dragon.isDead && previousFrameDragon)
-							Minecraft.getMinecraft().getSoundHandler().stopSound(bossMusic);
-						previousFrameDragon = !dragon.isDead;
+						if((dragon.isDead || d.getHealth() == 0) && previousFrameDragon)
+						{
+							Minecraft.getMinecraft().getSoundHandler().stopSounds();
+							world.playSound(player, dragon.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 5f, 1f);
+						}
+							
+						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
 					}
-					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && player.dimension == 1 && previousFrameDragon)
+					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && previousFrameDragon)
 						playMusic = true;
 					
 				}
@@ -117,49 +138,60 @@ public class SoundEventPlay
 				{
 					if(wither != null)
 					{
-						if(!wither.isDead && !previousFrameWither)
-							playMusic = true;
-						if(wither.isDead && previousFrameWither)
-							Minecraft.getMinecraft().getSoundHandler().stopSound(bossMusic);
-						previousFrameWither = !wither.isDead;
+						EntityWither w = (EntityWither) wither;
+						witherInvulvTimer = w.getInvulTime();
+						if(witherInvulvTimer > 0)
+						{
+							world.playSound(player, w.getPosition(), SoundHandler.witherTimer, SoundCategory.MASTER, 1f, 2 - (4 * (witherInvulvTimer / 220)));
+						}
+						if((wither.isDead || w.getHealth() == 0) && previousFrameWither)
+						{
+							Minecraft.getMinecraft().getSoundHandler().stopSounds();;
+						}
+						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
 					}
-					
-					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && previousFrameWither)
+					else witherInvulvTimer = 1f;
+					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && previousFrameWither && witherInvulvTimer == 0)
 						playMusic = true;
+						
 				}
 				
 			}
 			if((hellTimer >= (18.5f * 15)) && player.dimension == -1 && SoundConfig.isHell)
 			{
 				hellTimer = 0f;
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.WEATHER, 100f, 1f);
+				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.MASTER, 100f, 1f);
 			}
 			else 
 				hellTimer ++;
 			
+			if(endTimer >= (18.5 * 7) && relativeDistance > 0f)
+			{
+				endTimer = 0f;
+				world.playSound(player, nearestEndCityLocation, SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
+				world.playSound(player, new BlockPos(nearestEndCityLocation.getX(), nearestEndCityLocation.getY() + 25f, nearestEndCityLocation.getX()), SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
+			}
+			else endTimer ++;
 			if(timer >= 20f)
 			{
 				backTimer++;
 				timer = 0f;
-				int x = this.player.getPosition().getX() + randInt(-15, 15);
-				int y = 0;
-				int z = this.player.getPosition().getZ() + randInt(-15, 15);
-				boolean isBlockAir = true;
-				for(int i2 = 256; isBlockAir; i2--)
+				if(player.dimension != 1 || (player.dimension == 1 && (!player.isElytraFlying() && player.posY > 49)))
 				{
-					if(i2 == 0)
-						isBlockAir = false;
-					if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() != Blocks.AIR)
-					{
-						if(world.getBlockState(new BlockPos(x, i2, z)).getBlock() == Blocks.FIRE && !firePositions.contains(new BlockPos(x, i2, z)))
-							firePositions.add(new BlockPos(x, i2, z));
-						else if(foliage.contains(world.getBlockState(new BlockPos(x, i2, z)).getBlock()) && !foliagePositions.contains(new BlockPos(x, i2, z)))
-							foliagePositions.add(new BlockPos(x, i2, z));
-						isBlockAir = false;
-					}
-					y = i2;
+					int x = this.player.getPosition().getX() + randInt(-15, 15);
+					int y = 0;
+					int z = this.player.getPosition().getZ() + randInt(-15, 15);
+					boolean isBlockAir = true;
+					BlockPos highestBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
+					if(world.getBlockState(highestBlock).getBlock() == Blocks.FIRE && !firePositions.contains(highestBlock))
+						firePositions.add(highestBlock);
+					else if(foliage.contains(world.getBlockState(highestBlock).getBlock()) && !foliagePositions.contains(highestBlock))
+						foliagePositions.add(highestBlock);
+					BiomeUpdate(highestBlock);
 				}
-				BiomeUpdate(new BlockPos(x, y, z));
+				else
+					for(int t = 0; t < 3; t ++) BiomeUpdate(new BlockPos(this.player.getPosition().getX() + randInt(-15, 15), this.player.getPosition().getY() + randInt(-10, 20), this.player.getPosition().getZ() + randInt(-15, 15)));
+				
 				
 			}
 			else
@@ -168,6 +200,20 @@ public class SoundEventPlay
 			{
 				if(world.isRemote)
 					backTimer = 0;
+				/**
+				Iterator<BlockPos> iFirePositions = firePositions.iterator();
+				while(iFirePositions.hasNext())
+				
+				{
+					BlockPos pos = iFirePositions.next();
+					if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 10)	
+						if(world.getBlockState(pos).getBlock() != Blocks.FIRE)
+							firePositions.remove(pos);
+						else 
+							world.playSound(player, pos, SoundHandler.fireCrack.get(randInt(0, SoundHandler.fireCrack.size() - 1)), SoundCategory.BLOCKS, 2, 1);
+				}
+				**/
+				
 				for (int i = 0; i < firePositions.size(); i++)
 				{
 					try
@@ -192,19 +238,17 @@ public class SoundEventPlay
 		
 	}
 	
+	
 	private void BiomeUpdate(BlockPos position)
 	{
+		position = new BlockPos(position.getX(), position.getY() - 1f, position.getZ());
 		Biome biome = world.getBiome(position);
-		Boolean isFoilage = false;
-		for(BlockPos pos : foliagePositions)
-		{
-			if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) < 20)
-				isFoilage = true;
-		}
-		if(!SoundConfig.foliage)
-			isFoilage = true;
-		if(biome.equals(biome.getBiome(7)))
+		if(biome.equals(biome.equals(7)))
 			return;
+		
+		
+		
+		
 		if(player.dimension == -1)
 		{
 			if(loadHell)
@@ -221,23 +265,47 @@ public class SoundEventPlay
 		
 		if(player.dimension == 1)
 		{
-			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 5) == 2)
-				world.playSound(player, position, SoundHandler.endAmbience.get(0), SoundCategory.WEATHER, 20f, randInt(1, 200) / 100);
-			for(Entity e : world.loadedEntityList)
+			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0)
+				world.playSound(player, position, SoundHandler.endDrip.get(randInt(0, SoundHandler.endDrip.size() - 1)), SoundCategory.MASTER, 3f, 2 - (randInt(0, 400) / 100));
+			Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
+			while(iWorldLoadedEntityList.hasNext())
 			{
+				Entity e = iWorldLoadedEntityList.next();
 				if(e instanceof EntityShulker)
 				{
-					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.WEATHER, 2f, 2 - (randInt(0, 400) / 100));
+					
+					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
+					BlockPos endCityLocation = world.findNearestStructure("EndCity", player.getPosition(), false);
+					if(endCityLocation != null)
+						if(Math.sqrt(player.getDistanceSq(endCityLocation)) < 250)
+						{
+							nearestEndCityLocation = endCityLocation;
+							float vol = (float) (Math.sqrt(player.getDistanceSq(endCityLocation)) > 50? 1 + ((50 - Math.sqrt(player.getDistanceSq(endCityLocation))) / 200) : 1f);
+							this.relativeDistance = vol;
+						}
+						else this.relativeDistance = -1f;
+					else this.relativeDistance = -1f;
+							
 				}
-				
 			}
+				
 		}
 		
 		if(player.dimension != 0)
 			return;
+		Boolean isFoilage = false;
+		Iterator<BlockPos> iFoliagePositions = foliagePositions.iterator();
+		while(iFoliagePositions.hasNext())
+		{
+			BlockPos pos = iFoliagePositions.next();
+			if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) < 20)
+				isFoilage = true;
+		}
+		if(!SoundConfig.foliage)
+			isFoilage = true;
 		if(beachIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
 		{
-			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.WEATHER, 2, 1);
+			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.MASTER, 2, 1);
 		}
 		else if(isFoilage && (SoundConfig.isCricket || SoundConfig.isForest || SoundConfig.isForestStorm))
 		{
@@ -251,7 +319,7 @@ public class SoundEventPlay
 				}
 				if(stormIDs.contains(biome.getIdForBiome(biome)) && !canSeeSky)
 				{
-					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.WEATHER, 1, 1);
+					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
 			}
 			else if(SoundConfig.isForest || SoundConfig.isCricket)
@@ -266,9 +334,9 @@ public class SoundEventPlay
 							
 							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
 							if(forestIDs.contains(biome.getIdForBiome(biome)) && !world.isThundering() && SoundConfig.isForest)
-								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.WEATHER, vol, 1);
+								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
 							if(SoundConfig.isCricket)
-								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.WEATHER, 2 - vol, 1);
+								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
 								
 						}
 					}
@@ -276,7 +344,7 @@ public class SoundEventPlay
 					{
 						if(cricketIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isCricket)
 						{
-							world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.WEATHER, 2, 1);
+							world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2, 1);
 						}
 					}
 					
@@ -285,7 +353,7 @@ public class SoundEventPlay
 				{
 					if(forestIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isForest)
 					{
-						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.WEATHER, 2.5f, 1);
+						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
 				}
 				
@@ -297,7 +365,7 @@ public class SoundEventPlay
 			
 			float vol = 1 - ((130 - (float) player.posY) / 45);
 			vol = vol > 1? 1f : vol;
-			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.WEATHER, vol, 1);
+			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
 		
 		 
@@ -310,7 +378,7 @@ public class SoundEventPlay
 	}
 	
 	@SubscribeEvent
-	public void blockUpdat(BlockEvent e)
+	public void blockUpdate(BlockEvent e)
 	{
 		
 		if(e.getState().getBlock() == Blocks.FIRE)
@@ -326,14 +394,14 @@ public class SoundEventPlay
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	public void playerQuit(ClientDisconnectionFromServerEvent e)
 	{
-		Minecraft.getMinecraft().getSoundHandler().stopSound(bossMusic);
+		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 		this.loadin = true;
 	}
 	
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e)
 	{
-		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f);
+		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
 		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
 		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
@@ -348,7 +416,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void quit(PlayerLoggedOutEvent e)
 	{
-		Minecraft.getMinecraft().getSoundHandler().stopSound(bossMusic);
+		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 	}
 	
 }

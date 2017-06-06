@@ -18,9 +18,9 @@ public class PositionedSoundRecord extends PositionedSound
         this(soundIn, categoryIn, volumeIn, pitchIn, (float)pos.getX() + 0.5F, (float)pos.getY() + 0.5F, (float)pos.getZ() + 0.5F);
     }
 
-    public static PositionedSoundRecord getMasterRecord(SoundEvent soundIn, float pitchIn)
+    public static PositionedSoundRecord getMasterRecord(SoundEvent soundIn, float pitchIn, float volumeIn)
     {
-        return new PositionedSoundRecord(soundIn, SoundCategory.MASTER, 1F, pitchIn, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+        return new PositionedSoundRecord(soundIn, SoundCategory.MASTER, volumeIn, pitchIn, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
     }
 
     public PositionedSoundRecord(SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, float xIn, float yIn, float zIn)

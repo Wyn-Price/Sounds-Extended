@@ -19,6 +19,9 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
+import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
+import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
+
 public class guiFactory implements IModGuiFactory
 {
 

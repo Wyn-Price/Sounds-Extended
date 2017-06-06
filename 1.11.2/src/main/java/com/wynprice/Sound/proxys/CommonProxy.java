@@ -22,7 +22,6 @@ public class CommonProxy
 	public void Init(FMLInitializationEvent e)
 	{
 	SoundEventPlay handler = new SoundEventPlay();
-	System.out.println(handler);
 	MinecraftForge.EVENT_BUS.register(handler);
 	FMLCommonHandler.instance().bus().register(handler);
 	
