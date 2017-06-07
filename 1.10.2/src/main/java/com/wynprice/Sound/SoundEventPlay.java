@@ -1,19 +1,29 @@
 package com.wynprice.Sound;
 
+import static net.minecraftforge.common.ForgeVersion.Status.AHEAD;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
+import static net.minecraftforge.common.ForgeVersion.Status.OUTDATED;
+import static net.minecraftforge.common.ForgeVersion.Status.PENDING;
+import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -21,16 +31,14 @@ import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.tileentity.TileEntityStructure;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureEndCityPieces;
-import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraftforge.client.event.sound.SoundEvent;
+import net.minecraftforge.common.ForgeVersion.Status;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -38,6 +46,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
 
 public class SoundEventPlay
 {
@@ -51,7 +60,7 @@ public class SoundEventPlay
 	private BlockPos nearestEndCityLocation;
 	private World world;
 	private float timer, backTimer, hellTimer, endTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false;
+	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -387,7 +396,7 @@ public class SoundEventPlay
 	}
 	
 	@SubscribeEvent
-	public void onPlayerJoin(PlayerLoggedInEvent e)
+	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException
 	{
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
@@ -399,7 +408,73 @@ public class SoundEventPlay
 		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){stormIDs.add(i);}
 		for(Integer i : SoundConfig.moddedForest){forestIDs.add(i);}
 		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
-	}
+		
+		if(doUpdate)
+		{
+			doUpdate = false;
+			
+			Status status = PENDING;
+	        ComparableVersion target = null;
+			URL url = new URL(References.UPDATE_URL);
+			InputStream con = url.openStream();
+	        String data = new String(ByteStreams.toByteArray(con), "UTF-8");
+	        con.close();
+	        @SuppressWarnings("unchecked")
+	        Map<String, Object> json = new Gson().fromJson(data, Map.class);
+	        @SuppressWarnings("unchecked")
+	        Map<String, String> promos = (Map<String, String>)json.get("promos");
+	        String display_url = (String)json.get("homepage");
+
+	        String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
+	        String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
+	        ComparableVersion current = new ComparableVersion(References.VERSION);
+
+	        if (rec != null)
+	        {
+	            ComparableVersion recommended = new ComparableVersion(rec);
+	            int diff = recommended.compareTo(current);
+
+	            if (diff == 0)
+	                status = UP_TO_DATE;
+	            else if (diff < 0)
+	            {
+	                status = AHEAD;
+	                if (lat != null)
+	                {
+	                    ComparableVersion latest = new ComparableVersion(lat);
+	                    if (current.compareTo(latest) < 0)
+	                    {
+	                        status = OUTDATED;
+	                        target = latest;
+	                    }
+	                }
+	            }
+	            else
+	            {
+	                status = OUTDATED;
+	                target = recommended;
+	            }
+	        }
+	        else if (lat != null)
+	        {
+	            ComparableVersion latest = new ComparableVersion(lat);
+	            if (current.compareTo(latest) < 0)
+	            {
+	                status = BETA_OUTDATED;
+	                target = latest;
+	            }
+	            else
+	                status = BETA;
+	        }
+	        else
+	            status = BETA;
+	        if(status == Status.OUTDATED)
+	        	e.player.addChatMessage((ITextComponent)  new TextComponentTranslation("version", References.VERSION, target));
+			MainRegistry.getlogger().info("Update checker returned: " + status);
+			
+		}
+	}	
+	
 	
 	@SubscribeEvent
 	public void quit(PlayerLoggedOutEvent e)

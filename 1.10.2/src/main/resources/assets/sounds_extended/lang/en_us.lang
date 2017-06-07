@@ -55,7 +55,7 @@ gui.moddedStorm.comment=Play stormy sounds, designed to work with trees
 gui.moddedBeach=What modded biomes ID's should act like a beach
 gui.moddedBeach.comment=Play wave sounds
 
-
+version=[sounds_extended]Mod is out of date. Your version %s, target version: %s.
 
 gui.title=Sounds Extended Configuration File
 gui.category.enabled=Which Sounds are Sounds Enabled?
