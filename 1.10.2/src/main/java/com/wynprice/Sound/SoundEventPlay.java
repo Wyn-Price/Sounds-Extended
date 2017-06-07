@@ -415,7 +415,6 @@ public class SoundEventPlay
 		if(doUpdate)
 		{
 			doUpdate = false;
-			
 			Status status = PENDING;
 	        ComparableVersion target = null;
 			URL url = new URL(References.UPDATE_URL);
