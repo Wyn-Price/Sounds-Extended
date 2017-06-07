@@ -55,6 +55,16 @@ gui.moddedStorm.comment=Play stormy sounds, designed to work with trees
 gui.moddedBeach=What modded biomes ID's should act like a beach
 gui.moddedBeach.comment=Play wave sounds
 
+gui.netherDimension=What dimension ID's should act like the nether
+gui.netherDimension.comment=Play the hell sounds
+
+gui.endDimension=What dimension ID's should act like the end
+gui.endDimension.comment=Play the drip sounds when it hits end stone
+
+gui.overworldDimension=What dimension ID's should act like the overworld
+gui.overworldDimension.comment=Play the sounds for the forest, beach, cricket, stronghold ect...
+
+
 version=[sounds_extended]Mod is out of date. Your version %s, target version: %s.
 
 gui.title=Sounds Extended Configuration File

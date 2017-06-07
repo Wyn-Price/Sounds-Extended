@@ -30,7 +30,7 @@ public class SoundConfig
 	
 	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage;
 	public static String[] blackServers;
-	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket;
+	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd;
 	public static ArrayList<String> readServers = new ArrayList<String>();
 	
 	public static Configuration getConfig()
@@ -95,6 +95,21 @@ public class SoundConfig
 		beachBiomes.setLanguageKey("gui.moddedBeach");
 		beachBiomes.setComment(isClient? I18n.format("gui.moddedBeach.comment") : "");
 		moddedOrder.add(beachBiomes.getName());
+		
+		Property netherDimension = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "netherDimension", emptyIntArray);
+		netherDimension.setLanguageKey("gui.netherDimension");
+		netherDimension.setComment(isClient? I18n.format("gui.netherDimension.comment") : "");
+		moddedOrder.add(netherDimension.getName());
+		
+		Property endDimension = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "endDimension", emptyIntArray);
+		endDimension.setLanguageKey("gui.endDimension");
+		endDimension.setComment(isClient? I18n.format("gui.endDimension.comment") : "");
+		moddedOrder.add(endDimension.getName());
+		
+		Property overworldDimension = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "overworldDimension", emptyIntArray);
+		overworldDimension.setLanguageKey("gui.overworldDimension");
+		overworldDimension.setComment(isClient? I18n.format("gui.overworldDimension.comment") : "");
+		moddedOrder.add(overworldDimension.getName());
 		
 		
 		
@@ -197,6 +212,9 @@ public class SoundConfig
 			moddedCricket = cricketBiomes.getIntList();
 			moddedStorm = stormBiomes.getIntList();
 			moddedForest = forestBiomes.getIntList();
+			moddedNether = netherDimension.getIntList();
+			moddedEnd = endDimension.getIntList();
+			moddedOverworld = overworldDimension.getIntList();
 			foliage = useFoliage.getBoolean();
 		}
 		
@@ -220,6 +238,9 @@ public class SoundConfig
 		cricketBiomes.set(moddedCricket);
 		stormBiomes.set(moddedStorm);
 		forestBiomes.set(moddedForest);
+		netherDimension.set(moddedNether);
+		endDimension.set(moddedEnd);
+		overworldDimension.set(moddedOverworld);
 		useFoliage.set(foliage);
 		
 		
