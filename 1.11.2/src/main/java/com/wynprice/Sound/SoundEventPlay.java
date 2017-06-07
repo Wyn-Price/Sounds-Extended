@@ -302,7 +302,7 @@ public class SoundEventPlay
 			}	
 		}
 		
-		if(overworld.contains(player.dimension))
+		if(!overworld.contains(player.dimension))
 			return;
 		if(SoundConfig.isStronghold)
 		{
