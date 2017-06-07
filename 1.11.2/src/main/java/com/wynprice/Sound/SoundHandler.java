@@ -31,7 +31,8 @@ public class SoundHandler
 				register("end.drip.6"), register("end.drip.7"), register("end.drip.8"), register("end.drip.9"), register("end.drip.10")));
 		endAmbience = new ArrayList<SoundEvent>(Arrays.asList(register("end.city"), register("end.reverse")));
 		witherTimer = register("wither.spawn.timer");
-		stronghold = register("stronghold");	}
+		stronghold = register("stronghold");	
+	}
 	
 	public static SoundEvent register(String name)
 	{

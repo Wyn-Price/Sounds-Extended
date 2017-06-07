@@ -54,7 +54,8 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>(Arrays.asList(Blocks.LEAVES, Blocks.LEAVES2, Blocks.GRASS, Blocks.DIRT, Blocks.GRASS, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER));
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>();
+	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
+			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
 	private ISound bossMusic;
 	private Entity dragon, wither;
@@ -169,7 +170,7 @@ public class SoundEventPlay
 				}
 				
 			}
-			if((hellTimer >= (18.5f * 15)) && player.dimension == -1 && SoundConfig.isHell)
+			if((hellTimer >= (18.5f * 15)) && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
 				hellTimer = 0f;
 				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.MASTER, 100f, 1f);
@@ -201,7 +202,7 @@ public class SoundEventPlay
 			{
 				backTimer++;
 				timer = 0f;
-				if(player.dimension != 1 || (player.dimension == 1 && (!player.isElytraFlying() && player.posY > 49)))
+				if(!end.contains(player.dimension)|| (end.contains(player.dimension) && (!player.isElytraFlying() && player.posY > 49)))
 				{
 					int x = this.player.getPosition().getX() + randInt(-15, 15);
 					int y = 0;
@@ -260,7 +261,7 @@ public class SoundEventPlay
 		
 		
 		
-		if(player.dimension == -1)
+		if(nether.contains(player.dimension))
 		{
 			if(loadHell)
 			{
@@ -274,7 +275,7 @@ public class SoundEventPlay
 		
 		
 		
-		if(player.dimension == 1 && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))
+		if(end.contains(player.dimension) && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))
 		{
 			if(world.getBlockState(position).getBlock() == Blocks.END_STONE && randInt(0, 2) == 0 && SoundConfig.isEnd)
 				world.playSound(player, position, SoundHandler.endDrip.get(randInt(0, SoundHandler.endDrip.size() - 1)), SoundCategory.MASTER, 3f, 2 - (randInt(0, 400) / 100));
@@ -301,7 +302,7 @@ public class SoundEventPlay
 			}	
 		}
 		
-		if(player.dimension != 0)
+		if(overworld.contains(player.dimension))
 			return;
 		if(SoundConfig.isStronghold)
 		{
@@ -435,6 +436,10 @@ public class SoundEventPlay
 		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){stormIDs.add(i);}
 		for(Integer i : SoundConfig.moddedForest){forestIDs.add(i);}
 		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
+		
+		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
+		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(-1);
+		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(-1);
 		
 		doUpdate = true;
 		if(doUpdate)
