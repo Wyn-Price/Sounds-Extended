@@ -438,10 +438,9 @@ public class SoundEventPlay
 		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
 		
 		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
-		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(-1);
-		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(-1);
+		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
+		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
 		
-		doUpdate = true;
 		if(doUpdate)
 		{
 			doUpdate = false;
