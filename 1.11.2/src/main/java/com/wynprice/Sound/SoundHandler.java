@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class SoundHandler 
 {
 	public static ArrayList<SoundEvent> soundForest, highWind, fireCrack, beachWave, soundForestStorm, endDrip, endAmbience;
-	public static SoundEvent cricketNight, hell, bossMusic, witherTimer;
+	public static SoundEvent cricketNight, hell, bossMusic, witherTimer, stronghold;
 	private static int soundEventId;
 	public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = net.minecraftforge.fml.common.registry.GameData.getSoundEventRegistry();
 	
@@ -31,7 +31,7 @@ public class SoundHandler
 				register("end.drip.6"), register("end.drip.7"), register("end.drip.8"), register("end.drip.9"), register("end.drip.10")));
 		endAmbience = new ArrayList<SoundEvent>(Arrays.asList(register("end.city"), register("end.reverse")));
 		witherTimer = register("wither.spawn.timer");
-	}
+		stronghold = register("stronghold");	}
 	
 	public static SoundEvent register(String name)
 	{

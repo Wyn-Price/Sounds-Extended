@@ -58,10 +58,11 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private ISound bossMusic;
 	private Entity dragon, wither;
-	private BlockPos nearestEndCityLocation;
+	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
-	private float timer, backTimer, hellTimer, endTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true;
+	private float timer, backTimer, hellTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
+	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
+			endCityPlay = false, strongholdPlay = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -176,13 +177,26 @@ public class SoundEventPlay
 			else 
 				hellTimer ++;
 			
-			if(endTimer >= (18.5 * 7) && relativeDistance > 0f && SoundConfig.isEndCity)
+			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
 				world.playSound(player, nearestEndCityLocation, SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
 				world.playSound(player, new BlockPos(nearestEndCityLocation.getX(), nearestEndCityLocation.getY() + 25f, nearestEndCityLocation.getX()), SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
 			}
 			else endTimer ++;
+			if(strongholdTimer >= (39 * 60 * 2.5) && strongholdPlay && SoundConfig.isStronghold)
+			{
+				System.out.println(strongholdTimer);
+				strongholdTimer = 0f;
+				for(int i = 0; i < 9; i++)
+				{
+					float x = Arrays.asList(-25, 0, 25).get(i%3) + nearestStrongholdLocation.getX();
+					float z = Arrays.asList(-25, 0, 25).get(Math.floorDiv(i, 3)) + nearestStrongholdLocation.getZ();
+					world.playSound(player, new BlockPos(x, nearestStrongholdLocation.getY(), z), SoundHandler.stronghold, SoundCategory.MASTER, 5f, 1f);
+				}
+			}
+			else strongholdTimer ++;
+			
 			if(timer >= 20f)
 			{
 				backTimer++;
@@ -211,20 +225,6 @@ public class SoundEventPlay
 			{
 				if(world.isRemote)
 					backTimer = 0;
-				/**
-				Iterator<BlockPos> iFirePositions = firePositions.iterator();
-				while(iFirePositions.hasNext())
-				
-				{
-					BlockPos pos = iFirePositions.next();
-					if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 10)	
-						if(world.getBlockState(pos).getBlock() != Blocks.FIRE)
-							firePositions.remove(pos);
-						else 
-							world.playSound(player, pos, SoundHandler.fireCrack.get(randInt(0, SoundHandler.fireCrack.size() - 1)), SoundCategory.BLOCKS, 2, 1);
-				}
-				**/
-				
 				for (int i = 0; i < firePositions.size(); i++)
 				{
 					try
@@ -294,16 +294,29 @@ public class SoundEventPlay
 					if(Math.sqrt(player.getDistanceSq(endCityLocation)) < 250)
 					{
 						nearestEndCityLocation = endCityLocation;
-						float vol = (float) (Math.sqrt(player.getDistanceSq(endCityLocation)) > 50? 1 + ((50 - Math.sqrt(player.getDistanceSq(endCityLocation))) / 200) : 1f);
-						this.relativeDistance = vol;
+						endCityPlay = true;
 					}
-					else this.relativeDistance = -1f;
-				else this.relativeDistance = -1f;
+					else endCityPlay = false;
+				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
 			}	
 		}
 		
 		if(player.dimension != 0)
 			return;
+		if(SoundConfig.isStronghold)
+		{
+			BlockPos strongHoldLocation = world.findNearestStructure("Stronghold", player.getPosition(), false);
+			if(strongHoldLocation != null)
+				if(Math.sqrt(player.getDistanceSq(strongHoldLocation)) < 350)
+				{
+					if(!strongholdPlay && strongholdTimer >= (40 * 60 * 2.5))
+						strongholdTimer = Integer.MAX_VALUE;
+					nearestStrongholdLocation = strongHoldLocation;
+					strongholdPlay = true;
+				}
+				else strongholdPlay = false;
+			else if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false;
+		}
 		Boolean isFoilage = false;
 		Iterator<BlockPos> iFoliagePositions = foliagePositions.iterator();
 		while(iFoliagePositions.hasNext())
