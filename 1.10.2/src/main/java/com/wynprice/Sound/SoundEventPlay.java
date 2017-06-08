@@ -55,11 +55,11 @@ public class SoundEventPlay
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
 			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	private EntityPlayer player;
-	private ISound bossMusic;
+	private ISound bossMusic, hell;
 	private Entity dragon, wither;
 	private World world;
-	private float timer, backTimer, hellTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true;
+	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
+	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -166,13 +166,11 @@ public class SoundEventPlay
 				}
 				
 			}
-			if((hellTimer >= (18.5f * 15)) && nether.contains(player.dimension) && SoundConfig.isHell)
+			if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(hell) && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
-				hellTimer = 0f;
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.MASTER, 100f, 1f);
+				try{Minecraft.getMinecraft().getSoundHandler().playSound(hell);} catch (Exception ex) {}
 			}
-			else 
-				hellTimer ++;
+			
 			if(timer >= 20f)
 			{
 				backTimer++;
@@ -201,20 +199,6 @@ public class SoundEventPlay
 			{
 				if(world.isRemote)
 					backTimer = 0;
-				/**
-				Iterator<BlockPos> iFirePositions = firePositions.iterator();
-				while(iFirePositions.hasNext())
-				
-				{
-					BlockPos pos = iFirePositions.next();
-					if(player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 10)	
-						if(world.getBlockState(pos).getBlock() != Blocks.FIRE)
-							firePositions.remove(pos);
-						else 
-							world.playSound(player, pos, SoundHandler.fireCrack.get(randInt(0, SoundHandler.fireCrack.size() - 1)), SoundCategory.BLOCKS, 2, 1);
-				}
-				**/
-				
 				for (int i = 0; i < firePositions.size(); i++)
 				{
 					try
@@ -246,22 +230,6 @@ public class SoundEventPlay
 		Biome biome = world.getBiome(position);
 		if(biome.equals(biome.equals(7)))
 			return;
-		
-		
-		
-		
-		if(nether.contains(player.dimension))
-		{
-			if(loadHell)
-			{
-				hellTimer = Integer.MAX_VALUE;
-			}
-			loadHell = false;
-			return;
-		}
-		loadHell = true;
-		
-		
 		
 		
 		if(end.contains(player.dimension) && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))
@@ -390,6 +358,7 @@ public class SoundEventPlay
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException
 	{
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
+		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
 		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
 		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
 		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
