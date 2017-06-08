@@ -24,6 +24,7 @@ import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -32,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -41,6 +43,7 @@ import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.ChatColorEntry;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -58,11 +61,11 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private ISound bossMusic, hell;
 	private Entity dragon, wither;
-	private BlockPos nearestEndCityLocation, nearestStrongholdLocation, nearestMonumentLocation;
+	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
-	private float timer, backTimer, endTimer, strongholdTimer, monumentTimer, witherInvulvTimer = 1;
+	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
-			endCityPlay = false, strongholdPlay = false, monumentPlay = false;
+			endCityPlay = false, strongholdPlay = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -173,8 +176,6 @@ public class SoundEventPlay
 			{
 				try{Minecraft.getMinecraft().getSoundHandler().playSound(hell);} catch (Exception ex) {}
 			}
-			
-			
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
@@ -193,13 +194,6 @@ public class SoundEventPlay
 				strongholdTimer = 0f;
 			}
 			else strongholdTimer ++;
-			if(monumentTimer >= (39 * 60 * 2.5) && monumentPlay && SoundConfig.isMonument)
-			{
-				world.playSound(player ,nearestMonumentLocation, SoundHandler.monument, SoundCategory.MASTER, 5f, 1f);
-				monumentTimer = 0f;
-			}
-			else monumentTimer ++;
-			
 			
 			if(timer >= 20f)
 			{
@@ -287,23 +281,9 @@ public class SoundEventPlay
 						endCityPlay = true;
 					}
 					else endCityPlay = false;
-				else try{ if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false; } catch (NullPointerException n) {}
+				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
 			}
 		}
-		
-		if(SoundConfig.isMonument)
-		{
-			BlockPos monumentLocation = world.findNearestStructure("Monument", player.getPosition(), false);
-			if(monumentLocation != null)
-				if(Math.sqrt(player.getDistanceSq(monumentLocation)) < 150)
-				{
-					nearestMonumentLocation = monumentLocation;
-					monumentPlay = true;
-				}
-				else monumentPlay = false;
-			else try{ if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 150) monumentPlay = false; } catch (NullPointerException n) {}
-		}
-		
 		
 		if(!overworld.contains(player.dimension))
 			return;
@@ -319,7 +299,7 @@ public class SoundEventPlay
 					strongholdPlay = true;
 				}
 				else strongholdPlay = false;
-			else try{ if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false; } catch (NullPointerException n) {}
+			else if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false;
 		}
 		Boolean isFoilage = false;
 		Iterator<BlockPos> iFoliagePositions = foliagePositions.iterator();

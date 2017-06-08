@@ -29,7 +29,7 @@ public class SoundConfig
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
 	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, 
-		isEnd, isShulkerSoundEnd, isEndCity, isStronghold, isMonument, runOnServer, useList, foliage;
+		isEnd, isShulkerSoundEnd, isEndCity, isStronghold, runOnServer, useList, foliage;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -196,11 +196,6 @@ public class SoundConfig
 		isStrongholdSound.setComment(isClient? I18n.format("gui.isStronghold.comment") : "");
 		enabledOrder.add(isStrongholdSound.getName());
 		
-		Property isMonumentSound = config.get(CATEGORY_SOUNDS_ENABLED, "isMonument", true);
-		isMonumentSound.setLanguageKey("gui.isMonument");
-		isMonumentSound.setComment(isClient? I18n.format("gui.isMonument.comment") : "");
-		enabledOrder.add(isMonumentSound.getName());
-		
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
@@ -220,7 +215,6 @@ public class SoundConfig
 			isShulkerSoundEnd = isShulkerEndSound.getBoolean();
 			isEndCity = isEndCitySound.getBoolean();
 			isStronghold = isStrongholdSound.getBoolean();
-			isMonument = isMonumentSound.getBoolean();
 			
 			runOnServer = useServer.getBoolean();
 			useList = useBlackList.getBoolean();
@@ -249,7 +243,6 @@ public class SoundConfig
 		isShulkerEndSound.set(isShulkerSoundEnd);
 		isEndCitySound.set(isEndCity);
 		isStrongholdSound.set(isStronghold);
-		isMonumentSound.set(isMonument);
 		
 		useServer.set(runOnServer);
 		useBlackList.set(useList);
