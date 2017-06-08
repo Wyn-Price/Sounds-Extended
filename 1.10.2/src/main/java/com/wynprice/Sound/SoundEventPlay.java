@@ -57,9 +57,8 @@ public class SoundEventPlay
 			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	private EntityPlayer player;
 	private ISound bossMusic;
 	private Entity dragon, wither;
-	private BlockPos nearestEndCityLocation;
 	private World world;
-	private float timer, backTimer, hellTimer, endTimer, relativeDistance, witherInvulvTimer = 1;
+	private float timer, backTimer, hellTimer, relativeDistance, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
@@ -174,14 +173,6 @@ public class SoundEventPlay
 			}
 			else 
 				hellTimer ++;
-			
-			if(endTimer >= (18.5 * 7) && relativeDistance > 0f)
-			{
-				endTimer = 0f;
-				world.playSound(player, nearestEndCityLocation, SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
-				world.playSound(player, new BlockPos(nearestEndCityLocation.getX(), nearestEndCityLocation.getY() + 25f, nearestEndCityLocation.getX()), SoundHandler.endAmbience.get(0), SoundCategory.MASTER, 5f, 1f);
-			}
-			else endTimer ++;
 			if(timer >= 20f)
 			{
 				backTimer++;
@@ -283,7 +274,7 @@ public class SoundEventPlay
 				Entity e = iWorldLoadedEntityList.next();
 				if(e instanceof EntityShulker)
 					if(Math.sqrt(e.getDistanceSq(player.getPosition())) < 25 && randInt(0, 5) == 1) 
-						world.playSound(player, e.getPosition(), SoundHandler.endAmbience.get(1), SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
+						world.playSound(player, e.getPosition(), SoundHandler.endAmbience, SoundCategory.MASTER, 10f, 2 - (randInt(0, 400) / 100));
 			}
 				
 		}
