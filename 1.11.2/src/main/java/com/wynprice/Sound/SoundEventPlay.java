@@ -284,7 +284,6 @@ public class SoundEventPlay
 				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
 			}
 		}
-		
 		if(!overworld.contains(player.dimension))
 			return;
 		if(SoundConfig.isStronghold)
