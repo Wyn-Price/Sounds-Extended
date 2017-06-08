@@ -279,7 +279,7 @@ public class SoundEventPlay
 					}
 					else endCityPlay = false;
 				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
-			}	
+			}
 		}
 		
 		if(!overworld.contains(player.dimension))
