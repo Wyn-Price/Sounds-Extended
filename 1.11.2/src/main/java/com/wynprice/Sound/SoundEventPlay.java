@@ -32,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -57,12 +58,12 @@ public class SoundEventPlay
 	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
 			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
-	private ISound bossMusic;
+	private ISound bossMusic, hell;
 	private Entity dragon, wither;
 	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
-	private float timer, backTimer, hellTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, loadHell = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
+	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
+	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
@@ -170,14 +171,10 @@ public class SoundEventPlay
 				}
 				
 			}
-			if((hellTimer >= (18.5f * 15)) && nether.contains(player.dimension)&& SoundConfig.isHell)
+			if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(hell) && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
-				hellTimer = 0f;
-				world.playSound(player, player.getPosition(), SoundHandler.hell, SoundCategory.MASTER, 100f, 1f);
+				try{Minecraft.getMinecraft().getSoundHandler().playSound(hell);} catch (Exception ex) {}
 			}
-			else 
-				hellTimer ++;
-			
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
@@ -256,20 +253,6 @@ public class SoundEventPlay
 		Biome biome = world.getBiome(position);
 		if(biome.equals(biome.equals(7)))
 			return;
-		
-		
-		
-		
-		if(nether.contains(player.dimension))
-		{
-			if(loadHell)
-			{
-				hellTimer = Integer.MAX_VALUE;
-			}
-			loadHell = false;
-			return;
-		}
-		loadHell = true;
 		
 		
 		
@@ -425,7 +408,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException
 	{
-		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
+		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
 		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
 		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
 		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
