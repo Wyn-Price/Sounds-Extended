@@ -187,14 +187,13 @@ public class SoundEventPlay
 			else endTimer ++;
 			if(strongholdTimer >= (39 * 60 * 2.5) && strongholdPlay && SoundConfig.isStronghold)
 			{
-				System.out.println(strongholdTimer);
-				strongholdTimer = 0f;
 				for(int i = 0; i < 9; i++)
 				{
 					float x = Arrays.asList(-25, 0, 25).get(i%3) + nearestStrongholdLocation.getX();
 					float z = Arrays.asList(-25, 0, 25).get(Math.floorDiv(i, 3)) + nearestStrongholdLocation.getZ();
 					world.playSound(player, new BlockPos(x, nearestStrongholdLocation.getY(), z), SoundHandler.stronghold, SoundCategory.MASTER, 5f, 1f);
 				}
+				strongholdTimer = 0f;
 			}
 			else strongholdTimer ++;
 			
@@ -308,7 +307,7 @@ public class SoundEventPlay
 		{
 			BlockPos strongHoldLocation = world.findNearestStructure("Stronghold", player.getPosition(), false);
 			if(strongHoldLocation != null)
-				if(Math.sqrt(player.getDistanceSq(strongHoldLocation)) < 350)
+				if(Math.sqrt(player.getDistanceSq(strongHoldLocation)) < 100)
 				{
 					if(!strongholdPlay && strongholdTimer >= (40 * 60 * 2.5))
 						strongholdTimer = Integer.MAX_VALUE;
@@ -511,6 +510,8 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void quit(PlayerLoggedOutEvent e)
 	{
+		endTimer = 10000;
+		strongholdTimer = 10000;
 		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 	}
 	
