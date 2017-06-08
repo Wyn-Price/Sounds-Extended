@@ -38,6 +38,7 @@ public class MainRegistry
 	public static void Init(FMLInitializationEvent e)
 	{
 		proxy.Init(e);
+		
 	}
 	
 	@EventHandler

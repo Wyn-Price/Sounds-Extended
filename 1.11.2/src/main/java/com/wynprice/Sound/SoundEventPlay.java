@@ -41,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ChatColorEntry;
@@ -281,9 +282,10 @@ public class SoundEventPlay
 						endCityPlay = true;
 					}
 					else endCityPlay = false;
-				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
+				else try { if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false; } catch (NullPointerException n) {}
 			}
 		}
+		
 		if(!overworld.contains(player.dimension))
 			return;
 		if(SoundConfig.isStronghold)
@@ -298,7 +300,7 @@ public class SoundEventPlay
 					strongholdPlay = true;
 				}
 				else strongholdPlay = false;
-			else if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false;
+			else try { if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false; } catch (NullPointerException n) {}
 		}
 		Boolean isFoilage = false;
 		Iterator<BlockPos> iFoliagePositions = foliagePositions.iterator();
