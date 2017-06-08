@@ -58,11 +58,11 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private ISound bossMusic, hell;
 	private Entity dragon, wither;
-	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
+	private BlockPos nearestEndCityLocation, nearestStrongholdLocation, nearestMonumentLocation;
 	private World world;
-	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
+	private float timer, backTimer, endTimer, strongholdTimer, monumentTimer, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
-			endCityPlay = false, strongholdPlay = false;
+			endCityPlay = false, strongholdPlay = false, monumentPlay = false;
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -173,6 +173,8 @@ public class SoundEventPlay
 			{
 				try{Minecraft.getMinecraft().getSoundHandler().playSound(hell);} catch (Exception ex) {}
 			}
+			
+			
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
@@ -191,6 +193,13 @@ public class SoundEventPlay
 				strongholdTimer = 0f;
 			}
 			else strongholdTimer ++;
+			if(monumentTimer >= (39 * 60 * 2.5) && monumentPlay && SoundConfig.isMonument)
+			{
+				world.playSound(player ,nearestMonumentLocation, SoundHandler.monument, SoundCategory.MASTER, 5f, 1f);
+				monumentTimer = 0f;
+			}
+			else monumentTimer ++;
+			
 			
 			if(timer >= 20f)
 			{
@@ -278,9 +287,23 @@ public class SoundEventPlay
 						endCityPlay = true;
 					}
 					else endCityPlay = false;
-				else if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false;
+				else try{ if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 250) endCityPlay = false; } catch (NullPointerException n) {}
 			}
 		}
+		
+		if(SoundConfig.isMonument)
+		{
+			BlockPos monumentLocation = world.findNearestStructure("Monument", player.getPosition(), false);
+			if(monumentLocation != null)
+				if(Math.sqrt(player.getDistanceSq(monumentLocation)) < 150)
+				{
+					nearestMonumentLocation = monumentLocation;
+					monumentPlay = true;
+				}
+				else monumentPlay = false;
+			else try{ if (Math.sqrt(player.getDistanceSq(nearestEndCityLocation)) >= 150) monumentPlay = false; } catch (NullPointerException n) {}
+		}
+		
 		
 		if(!overworld.contains(player.dimension))
 			return;
@@ -296,7 +319,7 @@ public class SoundEventPlay
 					strongholdPlay = true;
 				}
 				else strongholdPlay = false;
-			else if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false;
+			else try{ if(Math.sqrt(player.getDistanceSq(nearestStrongholdLocation)) >= 350) strongholdPlay = false; } catch (NullPointerException n) {}
 		}
 		Boolean isFoilage = false;
 		Iterator<BlockPos> iFoliagePositions = foliagePositions.iterator();

@@ -47,5 +47,6 @@
 	"end.city":{"category": "master","sounds": [ { "name": "sounds_extended:end_city", "stream": false }]},
 	
 	"wither.spawn.timer":{"category": "master","sounds": [ { "name": "sounds_extended:wither_spawn_timer", "stream": false }]},
-	"stronghold":{"category": "master","sounds": [ { "name": "sounds_extended:stronghold", "stream":false}]}
+	"stronghold":{"category": "master","sounds": [ { "name": "sounds_extended:stronghold", "stream":false}]},
+	"monument":{"category": "master","sounds": [ { "name": "sounds_extended:monument", "stream":false}]}
 }
