@@ -29,7 +29,7 @@ public class guiFactory implements IModGuiFactory
 	public void initialize(Minecraft minecraftInstance) {
 		
 	}
-
+	
 	@Override
 	public boolean hasConfigGui() {
 		return true;

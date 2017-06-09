@@ -32,6 +32,7 @@ import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -45,16 +46,18 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ChatColorEntry;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class SoundEventPlay
 {
-	private ArrayList<Block> foliage = new ArrayList<Block>(Arrays.asList(Blocks.LEAVES, Blocks.LEAVES2, Blocks.GRASS, Blocks.DIRT, Blocks.GRASS, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER));
+	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
@@ -410,8 +413,9 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException
 	{
+		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
-		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear();
+		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
 		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
 		for(Integer i : SoundConfig.moddedCricket){cricketIDs.add(i);}
@@ -424,6 +428,23 @@ public class SoundEventPlay
 		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
 		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
 		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
+		
+		if(Loader.isModLoaded("biomesoplenty"))
+		{
+			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,54,55,58,59,61,63,64,65,69,70,71,
+					72,74,77,78,79,80,81,83,84,86,87,90,91,93,98,99,100)){forestIDs.add(i);stormIDs.add(i);}
+			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,53,54,55,56,57,58,59,60,61,62,63,
+					64,65,66,67,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,86,87,90,91,93,98,99,100)){cricketIDs.add(i);}
+			
+			for(ItemStack i : OreDictionary.getOres("treeLeaves"))
+				foliage.add(Block.getBlockFromItem(i.getItem()));
+			for(ItemStack i : OreDictionary.getOres("dirt"))
+				foliage.add(Block.getBlockFromItem(i.getItem()));
+			for(ItemStack i : OreDictionary.getOres("grass"))
+				foliage.add(Block.getBlockFromItem(i.getItem()));
+			for(ItemStack i : OreDictionary.getOres("tallGrass"))
+				foliage.add(Block.getBlockFromItem(i.getItem()));
+		}
 		
 		if(doUpdate)
 		{

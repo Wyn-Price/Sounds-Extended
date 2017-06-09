@@ -6,8 +6,6 @@ import org.apache.logging.log4j.Logger;
 import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.proxys.CommonProxy;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -30,6 +28,7 @@ public class MainRegistry
 	{
 		getlogger().info("Playing that noteblock nicely");
 		SoundConfig.preInit();
+		
 		proxy.PreInit(e);
 		
 	}
