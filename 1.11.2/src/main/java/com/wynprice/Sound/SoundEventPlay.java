@@ -441,7 +441,7 @@ public class SoundEventPlay
 		if(Loader.isModLoaded(bop)) 
 		{
 			for(String s : Arrays.asList("alps", "bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
-					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", "outback", 
+					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", 
 					"quagmire", "rainforest", "redwood_forest", "sacred_springs", "seasonal_forest", "shrubland","snowy_coniferous_forest", "steppe", "temperate_rainforest", 
 					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island"))
 			{
@@ -450,7 +450,7 @@ public class SoundEventPlay
 				storm.add(loc);
 				cricket.add(loc);
 			}
-			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "overgrown_cliffs", "shield"))
+			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "shield"))
 				cricket.add(new ResourceLocation(bop, s));
 			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 		}
