@@ -71,8 +71,7 @@ gui.overworldDimension=What dimension ID's should act like the overworld
 gui.overworldDimension.comment=Play the sounds for the forest, beach, cricket, stronghold ect...
 
 
-version=[sounds_extended]Mod is out of date. Your version %s, target version: %s.
-
+version=[sounds_extended] The Mod is out of date. Your version %s, target version: %s.
 
 gui.title=Sounds Extended Configuration File
 gui.category.enabled=Which Sounds are Sounds Enabled?
