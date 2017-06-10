@@ -402,6 +402,35 @@ public class SoundEventPlay
 				cricket.add(new ResourceLocation(bop, s));
 			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 		}
+		String ac = "abyssalcraft";
+		if(Loader.isModLoaded(ac))
+		{
+			ResourceLocation loc = new ResourceLocation(ac, "coralium_infested_swamp");
+			forest.add(loc);
+			storm.add(loc);
+			cricket.add(loc);
+		}
+		String t = "traverse";
+		if(Loader.isModLoaded(t))
+		{
+			for(String s : Arrays.asList("autumnal_woods", "woodlands","mini_jungle", "green_swamp", "temperate_rainforest", "forested_hills", "birch_forested_hills",  "autumnal_wooded_hills"))
+			{
+				ResourceLocation loc = new ResourceLocation(t, s);
+				forest.add(loc);
+				storm.add(loc);
+				cricket.add(loc);
+			}
+			for(String s : Arrays.asList("meadow", "badlands", "rocky_plateau"))
+				cricket.add(new ResourceLocation(t, s));
+		}
+		String id = "integrateddynamics";
+		if(Loader.isModLoaded(id))
+		{
+			ResourceLocation loc = new ResourceLocation(id, "meneglin");
+			forest.add(loc);
+			storm.add(loc);
+			cricket.add(loc);
+		}
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
 		for(ItemStack i : OreDictionary.getOres("dirt"))
