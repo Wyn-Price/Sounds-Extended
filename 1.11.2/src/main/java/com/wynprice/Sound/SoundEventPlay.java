@@ -31,7 +31,9 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -206,15 +208,22 @@ public class SoundEventPlay
 				if(!end.contains(player.dimension)|| (end.contains(player.dimension) && (!player.isElytraFlying() && player.posY > 49)))
 				{
 					int x = this.player.getPosition().getX() + randInt(-15, 15);
-					int y = 0;
 					int z = this.player.getPosition().getZ() + randInt(-15, 15);
 					boolean isBlockAir = true;
-					BlockPos highestBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
-					if(world.getBlockState(highestBlock).getBlock() == Blocks.FIRE && !firePositions.contains(highestBlock))
-						firePositions.add(highestBlock);
-					else if(foliage.contains(world.getBlockState(highestBlock).getBlock()) && !foliagePositions.contains(highestBlock))
-						foliagePositions.add(highestBlock);
-					BiomeUpdate(highestBlock);
+					for(int i = 256; isBlockAir; i--)
+					{
+						if(world.getBlockState(new BlockPos(x, i, z)).getBlock() != Blocks.AIR)
+						{
+							isBlockAir = false;
+							BlockPos highestBlock = new BlockPos(x, i, z);
+							if(world.getBlockState(highestBlock).getBlock() == Blocks.FIRE && !firePositions.contains(highestBlock))
+								firePositions.add(highestBlock);
+							else if(foliage.contains(world.getBlockState(highestBlock).getBlock()) && !foliagePositions.contains(highestBlock))
+								foliagePositions.add(highestBlock);
+							BiomeUpdate(highestBlock);
+						}
+					}
+					
 				}
 				else
 					for(int t = 0; t < 3; t ++) BiomeUpdate(new BlockPos(this.player.getPosition().getX() + randInt(-15, 15), this.player.getPosition().getY() + randInt(-10, 20), this.player.getPosition().getZ() + randInt(-15, 15)));
@@ -379,8 +388,6 @@ public class SoundEventPlay
 			vol = vol > 1? 1f : vol;
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
-		
-		 
 	}
 	
 	public static int randInt(int min, int max) {
@@ -435,16 +442,16 @@ public class SoundEventPlay
 					72,74,77,78,79,80,81,83,84,86,87,90,91,93,98,99,100)){forestIDs.add(i);stormIDs.add(i);}
 			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,53,54,55,56,57,58,59,60,61,62,63,
 					64,65,66,67,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,86,87,90,91,93,98,99,100)){cricketIDs.add(i);}
+			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 			
-			for(ItemStack i : OreDictionary.getOres("treeLeaves"))
-				foliage.add(Block.getBlockFromItem(i.getItem()));
-			for(ItemStack i : OreDictionary.getOres("dirt"))
-				foliage.add(Block.getBlockFromItem(i.getItem()));
-			for(ItemStack i : OreDictionary.getOres("grass"))
-				foliage.add(Block.getBlockFromItem(i.getItem()));
-			for(ItemStack i : OreDictionary.getOres("tallGrass"))
-				foliage.add(Block.getBlockFromItem(i.getItem()));
 		}
+		
+		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
+			foliage.add(Block.getBlockFromItem(i.getItem()));
+		for(ItemStack i : OreDictionary.getOres("dirt"))
+			foliage.add(Block.getBlockFromItem(i.getItem()));
+		for(ItemStack i : OreDictionary.getOres("grass"))
+			foliage.add(Block.getBlockFromItem(i.getItem()));
 		
 		if(doUpdate)
 		{
@@ -464,6 +471,7 @@ public class SoundEventPlay
 
 	        String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
 	        String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
+	        
 	        ComparableVersion current = new ComparableVersion(References.VERSION);
 
 	        if (rec != null)
