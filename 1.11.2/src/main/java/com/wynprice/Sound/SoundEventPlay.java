@@ -35,6 +35,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -62,8 +63,8 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
-			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
+	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>();
+	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
 	private ISound bossMusic, hell;
 	private Entity dragon, wither;
@@ -324,7 +325,7 @@ public class SoundEventPlay
 		}
 		if(!SoundConfig.foliage)
 			isFoilage = true;
-		if(beachIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
+		if(beach.contains(biome.getRegistryName()) && SoundConfig.isBeach)
 		{
 			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.MASTER, 2, 1);
 		}
@@ -338,7 +339,7 @@ public class SoundEventPlay
 					if(world.canSeeSky(new BlockPos(player.posX + Arrays.asList(-1f, 0f, 1f).get(i%3), player.posY, player.posZ + Arrays.asList(-1f,-1f,-1f,0f,0f,0f,1f,1f,1f).get(i))))
 						canSeeSky = false; 
 				}
-				if(stormIDs.contains(biome.getIdForBiome(biome)) && !canSeeSky)
+				if(storm.contains(biome.getRegistryName()) && !canSeeSky)
 				{
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
@@ -350,11 +351,11 @@ public class SoundEventPlay
 					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
 					{
 						
-						if(cricketIDs.contains(biome.getIdForBiome(biome)))
+						if(cricket.contains(biome.getRegistryName()))
 						{
 							
 							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(forestIDs.contains(biome.getIdForBiome(biome)) && !world.isThundering() && SoundConfig.isForest)
+							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest)
 								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
@@ -363,7 +364,7 @@ public class SoundEventPlay
 					}
 					else
 					{
-						if(cricketIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isCricket)
+						if(cricket.contains(biome.getRegistryName()) && SoundConfig.isCricket)
 						{
 							world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2, 1);
 						}
@@ -372,7 +373,7 @@ public class SoundEventPlay
 				}
 				else
 				{
-					if(forestIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isForest)
+					if(forest.contains(biome.getRegistryName()) && SoundConfig.isForest)
 					{
 						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
@@ -388,6 +389,8 @@ public class SoundEventPlay
 			vol = vol > 1? 1f : vol;
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
+		
+		System.out.println(biome.getRegistryName());
 	}
 	
 	public static int randInt(int min, int max) {
@@ -422,30 +425,49 @@ public class SoundEventPlay
 	{
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
-		beachIDs.clear(); cricketIDs.clear(); stormIDs.clear(); forestIDs.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
-		for(Integer i : SoundConfig.moddedBeach){beachIDs.add(i);}
-		for(Integer i : Arrays.asList(16,25,26)){beachIDs.add(i);}
-		for(Integer i : SoundConfig.moddedCricket){cricketIDs.add(i);}
-		for(Integer i : Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35)){cricketIDs.add(i);}
-		for(Integer i : SoundConfig.moddedStorm){stormIDs.add(i);}
-		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){stormIDs.add(i);}
-		for(Integer i : SoundConfig.moddedForest){forestIDs.add(i);}
-		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forestIDs.add(i);}
+		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
+		for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : SoundConfig.moddedCricket){cricket.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : SoundConfig.moddedStorm){storm.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){storm.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : SoundConfig.moddedForest){forest.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
 		
 		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
 		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
 		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
 		
-		if(Loader.isModLoaded("biomesoplenty"))
+		String bop = "biomesoplenty";
+		if(Loader.isModLoaded(bop)) 
 		{
-			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,54,55,58,59,61,63,64,65,69,70,71,
-					72,74,77,78,79,80,81,83,84,86,87,90,91,93,98,99,100)){forestIDs.add(i);stormIDs.add(i);}
-			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,53,54,55,56,57,58,59,60,61,62,63,
-					64,65,66,67,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,86,87,90,91,93,98,99,100)){cricketIDs.add(i);}
+			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"alps"), new ResourceLocation(bop,"bamboo_forest"), 
+					new ResourceLocation(bop,"bayou"), new ResourceLocation(bop,"bog"), new ResourceLocation(bop,"boreal_forest"), 
+					new ResourceLocation(bop,"brushland"), new ResourceLocation(bop,"chaparral"), new ResourceLocation(bop,"cold_desert"), 
+					new ResourceLocation(bop,"crag"), new ResourceLocation(bop,"dead_swamp"), new ResourceLocation(bop,"eucalyptus_forest"), 
+					new ResourceLocation(bop,"grassland"), new ResourceLocation(bop,"grove"), new ResourceLocation(bop,"highland"), 
+					new ResourceLocation(bop,"heathland"), new ResourceLocation(bop,"lavender_fields"), new ResourceLocation(bop,"lush_desert"), 
+					new ResourceLocation(bop,"lush_swamp"), new ResourceLocation(bop,"moor"), new ResourceLocation(bop,"mountain_peaks"), 
+					new ResourceLocation(bop,"mystic_grove"),new ResourceLocation(bop,"ominous_woods"), new ResourceLocation(bop,"outback"), 
+					new ResourceLocation(bop,"quagmire"), new ResourceLocation(bop,"rainforest"), new ResourceLocation(bop,"redwood_forest"), 
+					new ResourceLocation(bop,"sacred_springs"), new ResourceLocation(bop,"seasonal_forest"), new ResourceLocation(bop,"shrubland"),
+					new ResourceLocation(bop,"snowy_coniferous_forest"), new ResourceLocation(bop,"steppe"), new ResourceLocation(bop,"temperate_rainforest"), 
+					new ResourceLocation(bop,"wasteland"), new ResourceLocation(bop,"wetland"), new ResourceLocation(bop,"xeric_shrubland"), 
+					new ResourceLocation(bop,"kelp_forest"), new ResourceLocation(bop,"mangrove"), new ResourceLocation(bop,"origin_island")))
+			{
+				forest.add(loc);
+				storm.add(loc);
+				cricket.add(loc);
+			}
+			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"dead_forest"), new ResourceLocation(bop,"fen"), 
+					new ResourceLocation(bop,"flower_field"), new ResourceLocation(bop,"land_of_lakes"), 
+					new ResourceLocation(bop,"maple_woods"), new ResourceLocation(bop,"marsh"), 
+					new ResourceLocation(bop,"meadow"), new ResourceLocation(bop,"orchard"), 
+					new ResourceLocation(bop,"overgrown_cliffs"), new ResourceLocation(bop,"shield")))
+				cricket.add(loc);
 			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
-			
 		}
-		
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
 		for(ItemStack i : OreDictionary.getOres("dirt"))
@@ -528,5 +550,6 @@ public class SoundEventPlay
 		strongholdTimer = 10000;
 		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 	}
+	
 	
 }
