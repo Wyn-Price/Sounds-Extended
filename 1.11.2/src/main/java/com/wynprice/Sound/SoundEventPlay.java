@@ -390,7 +390,6 @@ public class SoundEventPlay
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
 		
-		System.out.println(biome.getRegistryName());
 	}
 	
 	public static int randInt(int min, int max) {
@@ -442,30 +441,18 @@ public class SoundEventPlay
 		String bop = "biomesoplenty";
 		if(Loader.isModLoaded(bop)) 
 		{
-			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"alps"), new ResourceLocation(bop,"bamboo_forest"), 
-					new ResourceLocation(bop,"bayou"), new ResourceLocation(bop,"bog"), new ResourceLocation(bop,"boreal_forest"), 
-					new ResourceLocation(bop,"brushland"), new ResourceLocation(bop,"chaparral"), new ResourceLocation(bop,"cold_desert"), 
-					new ResourceLocation(bop,"crag"), new ResourceLocation(bop,"dead_swamp"), new ResourceLocation(bop,"eucalyptus_forest"), 
-					new ResourceLocation(bop,"grassland"), new ResourceLocation(bop,"grove"), new ResourceLocation(bop,"highland"), 
-					new ResourceLocation(bop,"heathland"), new ResourceLocation(bop,"lavender_fields"), new ResourceLocation(bop,"lush_desert"), 
-					new ResourceLocation(bop,"lush_swamp"), new ResourceLocation(bop,"moor"), new ResourceLocation(bop,"mountain_peaks"), 
-					new ResourceLocation(bop,"mystic_grove"),new ResourceLocation(bop,"ominous_woods"), new ResourceLocation(bop,"outback"), 
-					new ResourceLocation(bop,"quagmire"), new ResourceLocation(bop,"rainforest"), new ResourceLocation(bop,"redwood_forest"), 
-					new ResourceLocation(bop,"sacred_springs"), new ResourceLocation(bop,"seasonal_forest"), new ResourceLocation(bop,"shrubland"),
-					new ResourceLocation(bop,"snowy_coniferous_forest"), new ResourceLocation(bop,"steppe"), new ResourceLocation(bop,"temperate_rainforest"), 
-					new ResourceLocation(bop,"wasteland"), new ResourceLocation(bop,"wetland"), new ResourceLocation(bop,"xeric_shrubland"), 
-					new ResourceLocation(bop,"kelp_forest"), new ResourceLocation(bop,"mangrove"), new ResourceLocation(bop,"origin_island")))
+			for(String s : Arrays.asList("alps", "bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
+					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", "outback", 
+					"quagmire", "rainforest", "redwood_forest", "sacred_springs", "seasonal_forest", "shrubland","snowy_coniferous_forest", "steppe", "temperate_rainforest", 
+					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island"))
 			{
+				ResourceLocation loc = new ResourceLocation(bop, s);
 				forest.add(loc);
 				storm.add(loc);
 				cricket.add(loc);
 			}
-			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"dead_forest"), new ResourceLocation(bop,"fen"), 
-					new ResourceLocation(bop,"flower_field"), new ResourceLocation(bop,"land_of_lakes"), 
-					new ResourceLocation(bop,"maple_woods"), new ResourceLocation(bop,"marsh"), 
-					new ResourceLocation(bop,"meadow"), new ResourceLocation(bop,"orchard"), 
-					new ResourceLocation(bop,"overgrown_cliffs"), new ResourceLocation(bop,"shield")))
-				cricket.add(loc);
+			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "overgrown_cliffs", "shield"))
+				cricket.add(new ResourceLocation(bop, s));
 			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 		}
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
@@ -473,6 +460,8 @@ public class SoundEventPlay
 		for(ItemStack i : OreDictionary.getOres("dirt"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
 		for(ItemStack i : OreDictionary.getOres("grass"))
+			foliage.add(Block.getBlockFromItem(i.getItem()));
+		for(ItemStack i : OreDictionary.getOres("logWood"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
 		
 		if(doUpdate)
@@ -493,9 +482,7 @@ public class SoundEventPlay
 
 	        String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
 	        String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
-	        
 	        ComparableVersion current = new ComparableVersion(References.VERSION);
-
 	        if (rec != null)
 	        {
 	            ComparableVersion recommended = new ComparableVersion(rec);
