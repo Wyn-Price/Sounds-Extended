@@ -385,14 +385,35 @@ public class SoundEventPlay
 		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
 		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
 		
-		if(Loader.isModLoaded("biomesoplenty"))
+		String bop = "biomesoplenty";
+		if(Loader.isModLoaded(bop)) 
 		{
-			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,54,55,58,59,61,63,64,65,69,70,71,
-					72,74,77,78,79,80,81,83,84,86,87,90,91,93,98,99,100)){forestIDs.add(i);stormIDs.add(i);}
-			for(Integer i : Arrays.asList(42,43,44,45,46,47,48,50,52,53,54,55,56,57,58,59,60,61,62,63,
-					64,65,66,67,68,69,70,71,72,73,74,75,77,78,79,80,81,82,83,84,85,86,87,90,91,93,98,99,100)){cricketIDs.add(i);}
-			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
+			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"alps"), new ResourceLocation(bop,"bamboo_forest"), 
+					new ResourceLocation(bop,"bayou"), new ResourceLocation(bop,"bog"), new ResourceLocation(bop,"boreal_forest"), 
+					new ResourceLocation(bop,"brushland"), new ResourceLocation(bop,"chaparral"), new ResourceLocation(bop,"cold_desert"), 
+					new ResourceLocation(bop,"crag"), new ResourceLocation(bop,"dead_swamp"), new ResourceLocation(bop,"eucalyptus_forest"), 
+					new ResourceLocation(bop,"grassland"), new ResourceLocation(bop,"grove"), new ResourceLocation(bop,"highland"), 
+					new ResourceLocation(bop,"heathland"), new ResourceLocation(bop,"lavender_fields"), new ResourceLocation(bop,"lush_desert"), 
+					new ResourceLocation(bop,"lush_swamp"), new ResourceLocation(bop,"moor"), new ResourceLocation(bop,"mountain_peaks"), 
+					new ResourceLocation(bop,"mystic_grove"),new ResourceLocation(bop,"ominous_woods"), new ResourceLocation(bop,"outback"), 
+					new ResourceLocation(bop,"quagmire"), new ResourceLocation(bop,"rainforest"), new ResourceLocation(bop,"redwood_forest"), 
+					new ResourceLocation(bop,"sacred_springs"), new ResourceLocation(bop,"seasonal_forest"), new ResourceLocation(bop,"shrubland"),
+					new ResourceLocation(bop,"snowy_coniferous_forest"), new ResourceLocation(bop,"steppe"), new ResourceLocation(bop,"temperate_rainforest"), 
+					new ResourceLocation(bop,"wasteland"), new ResourceLocation(bop,"wetland"), new ResourceLocation(bop,"xeric_shrubland"), 
+					new ResourceLocation(bop,"kelp_forest"), new ResourceLocation(bop,"mangrove"), new ResourceLocation(bop,"origin_island")))
+			{
+				forest.add(loc);
+				storm.add(loc);
+				cricket.add(loc);
+			}
 			
+			for(ResourceLocation loc : Arrays.asList(new ResourceLocation(bop,"dead_forest"), new ResourceLocation(bop,"fen"), 
+					new ResourceLocation(bop,"flower_field"), new ResourceLocation(bop,"land_of_lakes"), 
+					new ResourceLocation(bop,"maple_woods"), new ResourceLocation(bop,"marsh"), 
+					new ResourceLocation(bop,"meadow"), new ResourceLocation(bop,"orchard"), 
+					new ResourceLocation(bop,"overgrown_cliffs"), new ResourceLocation(bop,"shield")))
+				cricket.add(loc);
+			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 		}
 		
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
