@@ -33,6 +33,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -57,8 +58,9 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<Integer> beachIDs = new ArrayList<Integer>(), forestIDs = new ArrayList<Integer>(), stormIDs = new ArrayList<Integer>(), cricketIDs = new ArrayList<Integer>(),
-			overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	private EntityPlayer player;
+	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>();
+	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	
+	private EntityPlayer player;
 	private ISound bossMusic, hell;
 	private Entity dragon, wither;
 	private World world;
@@ -271,7 +273,7 @@ public class SoundEventPlay
 		}
 		if(!SoundConfig.foliage)
 			isFoilage = true;
-		if(beachIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isBeach)
+		if(beach.contains(biome.getRegistryName()) && SoundConfig.isBeach)
 		{
 			world.playSound(player, position, SoundHandler.beachWave.get(randInt(0, SoundHandler.beachWave.size() - 1)), SoundCategory.MASTER, 2, 1);
 		}
@@ -285,7 +287,7 @@ public class SoundEventPlay
 					if(world.canSeeSky(new BlockPos(player.posX + Arrays.asList(-1f, 0f, 1f).get(i%3), player.posY, player.posZ + Arrays.asList(-1f,-1f,-1f,0f,0f,0f,1f,1f,1f).get(i))))
 						canSeeSky = false; 
 				}
-				if(stormIDs.contains(biome.getIdForBiome(biome)) && !canSeeSky)
+				if(storm.contains(biome.getRegistryName()) && !canSeeSky)
 				{
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
@@ -297,11 +299,11 @@ public class SoundEventPlay
 					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
 					{
 						
-						if(cricketIDs.contains(biome.getIdForBiome(biome)))
+						if(cricket.contains(biome.getRegistryName()))
 						{
 							
 							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(forestIDs.contains(biome.getIdForBiome(biome)) && !world.isThundering() && SoundConfig.isForest)
+							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest)
 								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
@@ -310,7 +312,7 @@ public class SoundEventPlay
 					}
 					else
 					{
-						if(cricketIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isCricket)
+						if(cricket.contains(biome.getRegistryName()) && SoundConfig.isCricket)
 						{
 							world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2, 1);
 						}
@@ -319,7 +321,7 @@ public class SoundEventPlay
 				}
 				else
 				{
-					if(forestIDs.contains(biome.getIdForBiome(biome)) && SoundConfig.isForest)
+					if(forest.contains(biome.getRegistryName()) && SoundConfig.isForest)
 					{
 						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
@@ -443,6 +445,7 @@ public class SoundEventPlay
 		if(doUpdate)
 		{
 			doUpdate = false;
+			
 			Status status = PENDING;
 	        ComparableVersion target = null;
 			URL url = new URL(References.UPDATE_URL);
@@ -458,7 +461,6 @@ public class SoundEventPlay
 	        String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
 	        String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
 	        ComparableVersion current = new ComparableVersion(References.VERSION);
-
 	        if (rec != null)
 	        {
 	            ComparableVersion recommended = new ComparableVersion(rec);
@@ -504,7 +506,6 @@ public class SoundEventPlay
 			
 		}
 	}	
-	
 	
 	@SubscribeEvent
 	public void quit(PlayerLoggedOutEvent e)
