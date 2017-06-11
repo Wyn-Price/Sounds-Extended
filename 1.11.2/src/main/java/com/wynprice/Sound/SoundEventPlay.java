@@ -223,7 +223,10 @@ public class SoundEventPlay
 								foliagePositions.add(highestBlock);
 							BiomeUpdate(highestBlock);
 						}
+						if(i == -1)
+							isBlockAir = false;
 					}
+					
 					
 				}
 				else

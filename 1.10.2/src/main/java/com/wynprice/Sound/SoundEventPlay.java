@@ -198,7 +198,10 @@ public class SoundEventPlay
 								foliagePositions.add(highestBlock);
 							BiomeUpdate(highestBlock);
 						}
+						if(i == -1)
+							isBlockAir = false;
 					}
+					
 				}
 				else
 					for(int t = 0; t < 3; t ++) BiomeUpdate(new BlockPos(this.player.getPosition().getX() + randInt(-15, 15), this.player.getPosition().getY() + randInt(-10, 20), this.player.getPosition().getZ() + randInt(-15, 15)));

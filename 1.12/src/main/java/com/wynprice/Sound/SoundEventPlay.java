@@ -223,6 +223,8 @@ public class SoundEventPlay
 								foliagePositions.add(highestBlock);
 							BiomeUpdate(highestBlock);
 						}
+						if(i == -1)
+							isBlockAir = false;
 					}
 					
 				}
@@ -389,7 +391,6 @@ public class SoundEventPlay
 			vol = vol > 1? 1f : vol;
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
-		ArrayList<String> ss = new ArrayList<String>();
 	}
 	
 	public static int randInt(int min, int max) {
