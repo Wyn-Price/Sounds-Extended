@@ -452,6 +452,8 @@ public class SoundEventPlay
 			}
 			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "shield"))
 				cricket.add(new ResourceLocation(bop, s));
+			for(String s : Arrays.asList("gravel_beach"))
+				beach.add(new ResourceLocation(bop, s));
 			for(int i = 0; i < 16; i++) foliage.add(Block.getBlockFromItem(new ItemStack(Item.getByNameOrId("biomesoplenty:plant_0"),1,i).getItem()));
 		}
 		String ac = "abyssalcraft";
