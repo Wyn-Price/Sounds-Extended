@@ -10,6 +10,10 @@ ehthumbs.db
 /1.10.2/*
 !1.10.2/src
 
+!/1.12
+/1.12/*
+!1.12/src
+
 # Folder config file
 Desktop.ini
 
