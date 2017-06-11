@@ -483,6 +483,18 @@ public class SoundEventPlay
 			storm.add(loc);
 			cricket.add(loc);
 		}
+		if(Loader.isModLoaded("realworld"))
+		{
+			for(String s : Arrays.asList("rw_birch_autumn_forest", "rw_blue_oak_forest", "rw_bombona_beach", "rw_flatland_thicket", "rw_silver_birch_hills", "rw_spiny_forest", "rw_spruce_mountains"))
+			{
+				ResourceLocation loc = new ResourceLocation(s);
+				forest.add(loc);
+				storm.add(loc);
+				cricket.add(loc);
+				if(s.equals("rw_bombona_beach"))
+					beach.add(loc);
+			}
+		}
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
 		for(ItemStack i : OreDictionary.getOres("dirt"))
