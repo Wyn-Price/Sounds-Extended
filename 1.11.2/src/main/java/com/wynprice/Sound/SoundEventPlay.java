@@ -208,7 +208,7 @@ public class SoundEventPlay
 					boolean isBlockAir = true;
 					for(int i = 256; isBlockAir; i--)
 					{
-						if(world.getBlockState(new BlockPos(x, i, z)).getBlock() != Blocks.AIR)
+						if(!Arrays.asList(Blocks.AIR, Blocks.SNOW_LAYER).contains(world.getBlockState(new BlockPos(x, i, z)).getBlock()))
 						{
 							isBlockAir = false;
 							BlockPos highestBlock = new BlockPos(x, i, z);
@@ -221,7 +221,6 @@ public class SoundEventPlay
 						if(i == -1)
 							isBlockAir = false;
 					}
-					
 					
 				}
 				else
@@ -342,19 +341,26 @@ public class SoundEventPlay
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
 			}
-			else if(SoundConfig.isForest || SoundConfig.isCricket)
+			else if(SoundConfig.isForest || SoundConfig.isJungle || SoundConfig.isCricket)
 			{
-				if(world.getWorldTime() <= 23000 && world.getWorldTime() >= 13000)
+				long time = world.getWorldTime() % 24000;
+				if(time <= 23000 && time >= 13000)
 				{
-					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
+					if(time >= 22000 || time <= 14000)
 					{
 						
 						if(cricket.contains(biome.getRegistryName()))
 						{
 							
-							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest)
-								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+							float vol = time >= 22000? (time - 22000) / 500f : (14000f - time) / 500f;
+							if(!world.isThundering())
+							{
+								if(SoundConfig.isForest && forest.contains(biome.getRegistryName()) && randInt(0, 1) != 0)
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+								if(SoundConfig.isJungle && jungle.contains(biome.getRegistryName()))
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+
+							}
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
 								
@@ -373,6 +379,18 @@ public class SoundEventPlay
 				{
 					if(forest.contains(biome.getRegistryName()) && SoundConfig.isForest)
 					{
+						if(time >= 23000)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						if(randInt(0, 1) != 0)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+					}
+					else if(jungle.contains(biome.getRegistryName()) && SoundConfig.isJungle)
+					{
+						if(time >= 23000)
+						{
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						}
 						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
 				}
