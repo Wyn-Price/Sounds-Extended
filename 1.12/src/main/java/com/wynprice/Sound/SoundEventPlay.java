@@ -348,16 +348,17 @@ public class SoundEventPlay
 			}
 			else if(SoundConfig.isForest || SoundConfig.isCricket)
 			{
-				if(world.getWorldTime() <= 23000 && world.getWorldTime() >= 13000)
+				long time = world.getWorldTime() % 24000;
+				if(time <= 23000 && time >= 13000)
 				{
-					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
+					if(time >= 22000 || time <= 14000)
 					{
 						
 						if(cricket.contains(biome.getRegistryName()))
 						{
 							
-							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest)
+							float vol = time >= 22000? (time - 22000) / 500f : (14000f - time) / 500f;
+							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest && randInt(0, 1) != 0)
 								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
@@ -377,7 +378,10 @@ public class SoundEventPlay
 				{
 					if(forest.contains(biome.getRegistryName()) && SoundConfig.isForest)
 					{
-						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						if(time >= 23000)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						if(randInt(0, 1) != 0)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
 				}
 				
