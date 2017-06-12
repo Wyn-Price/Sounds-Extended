@@ -438,14 +438,16 @@ public class SoundEventPlay
 			for(Integer i : Arrays.asList(4,5,18,19,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
 			for(Integer i : SoundConfig.moddedJungle){jungle.add(Biome.getBiome(i).getRegistryName());}
 			for(Integer i : Arrays.asList(21,22,23)){jungle.add(Biome.getBiome(i).getRegistryName());}
-			
+	
 			for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
+			
 			for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
+			
 			for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
 		}
 		catch (Exception ex) 
 		{
-			e.player.sendMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Beach", "Cricket", "Cricket", "Storm", "Storm", "Forest", "Forest", "Jungle", "Jungle", "", "Nether", "End", "Overworld").get(ex.getStackTrace()[0].getLineNumber() - lineNumber)));
+			e.player.sendMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(Math.floorDiv(ex.getStackTrace()[0].getLineNumber() - lineNumber, 2))));
 		}
 		
 		String bop = "biomesoplenty";
