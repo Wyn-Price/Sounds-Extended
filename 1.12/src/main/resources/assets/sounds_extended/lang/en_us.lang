@@ -70,7 +70,7 @@ gui.endDimension.comment=Play the drip sounds when it hits end stone
 gui.overworldDimension=What dimension ID's should act like the overworld
 gui.overworldDimension.comment=Play the sounds for the forest, beach, cricket, stronghold ect...
 
-
+id.notexist=[sounds_extended] Error in config file: Modded %s has an ID that dosn't exist
 version=[sounds_extended] The Mod is out of date. Your version %s, target version: %s.
 
 gui.title=Sounds Extended Configuration File
