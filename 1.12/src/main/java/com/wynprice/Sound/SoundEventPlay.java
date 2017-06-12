@@ -341,7 +341,7 @@ public class SoundEventPlay
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
 			}
-			else if(SoundConfig.isForest || SoundConfig.isCricket)
+			else if(SoundConfig.isForest || SoundConfig.isJungle || SoundConfig.isCricket)
 			{
 				long time = world.getWorldTime() % 24000;
 				if(time <= 23000 && time >= 13000)
@@ -353,8 +353,14 @@ public class SoundEventPlay
 						{
 							
 							float vol = time >= 22000? (time - 22000) / 500f : (14000f - time) / 500f;
-							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest && randInt(0, 1) != 0)
-								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+							if(!world.isThundering())
+							{
+								if(SoundConfig.isForest && forest.contains(biome.getRegistryName()) && randInt(0, 1) != 0)
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+								if(SoundConfig.isJungle && jungle.contains(biome.getRegistryName()))
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+
+							}
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
 								
@@ -377,6 +383,15 @@ public class SoundEventPlay
 							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 						if(randInt(0, 1) != 0)
 							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+					}
+					else if(jungle.contains(biome.getRegistryName()) && SoundConfig.isJungle)
+					{
+						if(time >= 23000)
+						{
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						}
+						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
 				}
 				
