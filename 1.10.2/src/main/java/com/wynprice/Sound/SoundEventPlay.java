@@ -58,7 +58,7 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>();
+	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
 	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	
 	private EntityPlayer player;
 	private ISound bossMusic, hell;
@@ -188,7 +188,7 @@ public class SoundEventPlay
 					boolean isBlockAir = true;
 					for(int i = 256; isBlockAir; i--)
 					{
-						if(world.getBlockState(new BlockPos(x, i, z)).getBlock() != Blocks.AIR)
+						if(!Arrays.asList(Blocks.AIR, Blocks.SNOW_LAYER).contains(world.getBlockState(new BlockPos(x, i, z)).getBlock()))
 						{
 							isBlockAir = false;
 							BlockPos highestBlock = new BlockPos(x, i, z);
@@ -295,19 +295,26 @@ public class SoundEventPlay
 					world.playSound(player, position, SoundHandler.soundForestStorm.get(0), SoundCategory.MASTER, 1, 1);
 				}
 			}
-			else if(SoundConfig.isForest || SoundConfig.isCricket)
+			else if(SoundConfig.isForest || SoundConfig.isJungle || SoundConfig.isCricket)
 			{
-				if(world.getWorldTime() <= 23000 && world.getWorldTime() >= 13000)
+				long time = world.getWorldTime() % 24000;
+				if(time <= 23000 && time >= 13000)
 				{
-					if(world.getWorldTime() >= 22000 || world.getWorldTime() <= 14000)
+					if(time >= 22000 || time <= 14000)
 					{
 						
 						if(cricket.contains(biome.getRegistryName()))
 						{
 							
-							float vol = world.getWorldTime() >= 22000? (world.getWorldTime() - 22000) / 500f : (14000f - world.getWorldTime()) / 500f;
-							if(forest.contains(biome.getRegistryName()) && !world.isThundering() && SoundConfig.isForest)
-								world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+							float vol = time >= 22000? (time - 22000) / 500f : (14000f - time) / 500f;
+							if(!world.isThundering())
+							{
+								if(SoundConfig.isForest && forest.contains(biome.getRegistryName()) && randInt(0, 1) != 0)
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+								if(SoundConfig.isJungle && jungle.contains(biome.getRegistryName()))
+									world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, vol, 1);
+
+							}
 							if(SoundConfig.isCricket)
 								world.playSound(player, position, SoundHandler.cricketNight, SoundCategory.MASTER, 2 - vol, 1);
 								
@@ -326,6 +333,18 @@ public class SoundEventPlay
 				{
 					if(forest.contains(biome.getRegistryName()) && SoundConfig.isForest)
 					{
+						if(time >= 23000)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						if(randInt(0, 1) != 0)
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+					}
+					else if(jungle.contains(biome.getRegistryName()) && SoundConfig.isJungle)
+					{
+						if(time >= 23000)
+						{
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+							world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
+						}
 						world.playSound(player, position, SoundHandler.soundForest.get(randInt(0, SoundHandler.soundForest.size() - 1)), SoundCategory.MASTER, 2.5f, 1);
 					}
 				}
@@ -355,19 +374,13 @@ public class SoundEventPlay
 	{
 		
 		if(e.getState().getBlock() == Blocks.FIRE)
-		{
-			
 			if(!firePositions.contains(e.getPos()))
-			{
 				firePositions.add(e.getPos());
-			}
-		}
 	}
 	
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	public void playerQuit(ClientDisconnectionFromServerEvent e)
 	{
-		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 		this.loadin = true;
 	}
 	
@@ -377,33 +390,45 @@ public class SoundEventPlay
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
-		for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedCricket){cricket.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedStorm){storm.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){storm.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedForest){forest.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
-		
-		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
-		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
-		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
+		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(1,4,5,18,19,27,28,29,30,31,32,33)){storm.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(4,5,18,19,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(21,22,23)){jungle.add(Biome.getBiome(i).getRegistryName());}
+		nether.add(-1);
+		end.add(1);
+		overworld.add(0);
+		int lineNumber = Thread.currentThread().getStackTrace()[1].getLineNumber() + 3;
+		try
+		{
+			for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedCricket){cricket.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedStorm){storm.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedForest){forest.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedJungle){jungle.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedNether){nether.add(i);}
+			for(Integer i : SoundConfig.moddedEnd){end.add(i);}
+			for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}
+		}
+		catch (NullPointerException nul) 
+		{
+			e.player.addChatMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
+		}
 		
 		String bop = "biomesoplenty";
 		if(Loader.isModLoaded(bop)) 
 		{
-			for(String s : Arrays.asList("alps", "bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
+			for(String s : Arrays.asList("bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
 					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", 
 					"quagmire", "rainforest", "redwood_forest", "sacred_springs", "seasonal_forest", "shrubland","snowy_coniferous_forest", "steppe", "temperate_rainforest", 
-					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island"))
+					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island", "maple_woods", "snowy_forest", "shield", "coniferous_forest"))
 			{
 				ResourceLocation loc = new ResourceLocation(bop, s);
 				forest.add(loc);
 				storm.add(loc);
 				cricket.add(loc);
 			}
-			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "shield"))
+			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs"))
 				cricket.add(new ResourceLocation(bop, s));
 			for(String s : Arrays.asList("gravel_beach"))
 				beach.add(new ResourceLocation(bop, s));
@@ -437,6 +462,18 @@ public class SoundEventPlay
 			forest.add(loc);
 			storm.add(loc);
 			cricket.add(loc);
+		}
+		if(Loader.isModLoaded("realworld"))
+		{
+			for(String s : Arrays.asList("rw_birch_autumn_forest", "rw_blue_oak_forest", "rw_bombona_beach", "rw_flatland_thicket", "rw_silver_birch_hills", "rw_spiny_forest", "rw_spruce_mountains"))
+			{
+				ResourceLocation loc = new ResourceLocation(s);
+				forest.add(loc);
+				storm.add(loc);
+				cricket.add(loc);
+				if(s.equals("rw_bombona_beach"))
+					beach.add(loc);
+			}
 		}
 		for(ItemStack i : OreDictionary.getOres("treeLeaves"))
 			foliage.add(Block.getBlockFromItem(i.getItem()));
@@ -511,11 +548,5 @@ public class SoundEventPlay
 			
 		}
 	}	
-	
-	@SubscribeEvent
-	public void quit(PlayerLoggedOutEvent e)
-	{
-		Minecraft.getMinecraft().getSoundHandler().stopSounds();
-	}
 	
 }

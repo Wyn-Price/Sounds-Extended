@@ -28,9 +28,9 @@ public class SoundConfig
 	private static Configuration config = null;
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage, isJungle;
 	public static String[] blackServers;
-	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd;
+	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd, moddedJungle;
 	public static ArrayList<String> readServers = new ArrayList<String>();
 	
 	public static Configuration getConfig()
@@ -96,6 +96,11 @@ public class SoundConfig
 		beachBiomes.setComment(isClient? I18n.format("gui.moddedBeach.comment") : "");
 		moddedOrder.add(beachBiomes.getName());
 		
+		Property jungleBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "moddedJungle", emptyIntArray);
+		jungleBiomes.setLanguageKey("gui.moddedJungle");
+		jungleBiomes.setComment(isClient? I18n.format("gui.moddedJungle.comment") : "");
+		moddedOrder.add(jungleBiomes.getName());
+		
 		Property netherDimension = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "netherDimension", emptyIntArray);
 		netherDimension.setLanguageKey("gui.netherDimension");
 		netherDimension.setComment(isClient? I18n.format("gui.netherDimension.comment") : "");
@@ -140,6 +145,11 @@ public class SoundConfig
 		isBeachSound.setLanguageKey("gui.isBeach");
 		isBeachSound.setComment(isClient? I18n.format("gui.isBeach.comment") : "");
 		enabledOrder.add(isBeachSound.getName());
+		
+		Property isJungleSound = config.get(CATEGORY_SOUNDS_ENABLED, "isJungle", true);
+		isJungleSound.setLanguageKey("gui.isJungle");
+		isJungleSound.setComment(isClient? I18n.format("gui.isJungle.comment") : "");
+		enabledOrder.add(isJungleSound.getName());
 		
 		Property isFireSound = config.get(CATEGORY_SOUNDS_ENABLED, "isFireSound", true);
 		isFireSound.setLanguageKey("gui.isFire");
@@ -194,6 +204,7 @@ public class SoundConfig
 		{
 			isForest = isForestSound.getBoolean();
 			isBeach = isBeachSound.getBoolean();
+			isJungle = isJungleSound.getBoolean();
 			isFire = isFireSound.getBoolean();
 			isCricket = isCricketSound.getBoolean();
 			isWind = isWindSound.getBoolean();
@@ -210,6 +221,7 @@ public class SoundConfig
 			
 			moddedBeach = beachBiomes.getIntList();
 			moddedCricket = cricketBiomes.getIntList();
+			moddedJungle = jungleBiomes.getIntList();
 			moddedStorm = stormBiomes.getIntList();
 			moddedForest = forestBiomes.getIntList();
 			moddedNether = netherDimension.getIntList();
@@ -220,6 +232,7 @@ public class SoundConfig
 		
 		isForestSound.set(isForest);
 		isBeachSound.set(isBeach);
+		isJungleSound.set(isJungle);
 		isFireSound.set(isFire);
 		isCricketSound.set(isCricket);
 		isWindSound.set(isWind);
@@ -236,6 +249,7 @@ public class SoundConfig
 		
 		beachBiomes.set(moddedBeach);
 		cricketBiomes.set(moddedCricket);
+		jungleBiomes.set(moddedJungle);
 		stormBiomes.set(moddedStorm);
 		forestBiomes.set(moddedForest);
 		netherDimension.set(moddedNether);
