@@ -402,13 +402,8 @@ public class SoundEventPlay
 	{
 		
 		if(e.getState().getBlock() == Blocks.FIRE)
-		{
-			
 			if(!firePositions.contains(e.getPos()))
-			{
 				firePositions.add(e.getPos());
-			}
-		}
 	}
 	
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
