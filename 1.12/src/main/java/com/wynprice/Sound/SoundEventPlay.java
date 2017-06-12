@@ -430,6 +430,7 @@ public class SoundEventPlay
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
+		int lineNumber = Thread.currentThread().getStackTrace()[1].getLineNumber() + 3;
 		try
 		{
 			for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
@@ -449,7 +450,7 @@ public class SoundEventPlay
 		}
 		catch (Exception ex) 
 		{
-			MainRegistry.getlogger().info("Error in config file: " + ex.getMessage());
+			e.player.sendMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Beach", "Cricket", "Cricket", "Storm", "Storm", "Forest", "Forest", "Jungle", "Jungle", "", "Nether", "End", "Overworld").get(ex.getStackTrace()[0].getLineNumber() - lineNumber)));
 		}
 		
 		String bop = "biomesoplenty";
