@@ -63,7 +63,7 @@ public class SoundEventPlay
 	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>();
+	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
 	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
 	private ISound bossMusic, hell;
@@ -213,7 +213,7 @@ public class SoundEventPlay
 					boolean isBlockAir = true;
 					for(int i = 256; isBlockAir; i--)
 					{
-						if(world.getBlockState(new BlockPos(x, i, z)).getBlock() != Blocks.AIR)
+						if(!Arrays.asList(Blocks.AIR, Blocks.SNOW_LAYER).contains(world.getBlockState(new BlockPos(x, i, z)).getBlock()))
 						{
 							isBlockAir = false;
 							BlockPos highestBlock = new BlockPos(x, i, z);
