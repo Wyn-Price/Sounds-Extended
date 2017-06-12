@@ -416,18 +416,30 @@ public class SoundEventPlay
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
-		for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedCricket){cricket.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(1,4,5,6,18,19,21,22,23,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedStorm){storm.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(1,4,5,18,19,21,22,23,27,28,29,30,31,32,33)){storm.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : SoundConfig.moddedForest){forest.add(Biome.getBiome(i).getRegistryName());}
-		for(Integer i : Arrays.asList(4,5,18,19,21,22,23,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
-		
-		for(Integer i : SoundConfig.moddedNether){nether.add(i);}nether.add(-1);
-		for(Integer i : SoundConfig.moddedEnd){end.add(i);}end.add(1);
-		for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}overworld.add(0);
+		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(1,4,5,18,19,27,28,29,30,31,32,33)){storm.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(4,5,18,19,27,28,29,30,31,32,33)){forest.add(Biome.getBiome(i).getRegistryName());}
+		for(Integer i : Arrays.asList(21,22,23)){jungle.add(Biome.getBiome(i).getRegistryName());}
+		nether.add(-1);
+		end.add(1);
+		overworld.add(0);
+		int lineNumber = Thread.currentThread().getStackTrace()[1].getLineNumber() + 3;
+		try
+		{
+			for(Integer i : SoundConfig.moddedBeach){beach.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedCricket){cricket.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedStorm){storm.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedForest){forest.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedJungle){jungle.add(Biome.getBiome(i).getRegistryName());}
+			for(Integer i : SoundConfig.moddedNether){nether.add(i);}
+			for(Integer i : SoundConfig.moddedEnd){end.add(i);}
+			for(Integer i : SoundConfig.moddedOverworld){overworld.add(i);}
+		}
+		catch (NullPointerException nul) 
+		{
+			e.player.sendMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
+		}
 		
 		String bop = "biomesoplenty";
 		if(Loader.isModLoaded(bop)) 
