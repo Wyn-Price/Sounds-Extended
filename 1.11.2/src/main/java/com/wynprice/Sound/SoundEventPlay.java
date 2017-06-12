@@ -432,17 +432,17 @@ public class SoundEventPlay
 		String bop = "biomesoplenty";
 		if(Loader.isModLoaded(bop)) 
 		{
-			for(String s : Arrays.asList("alps", "bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
+			for(String s : Arrays.asList("bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "cold_desert", "crag", "dead_swamp", "eucalyptus_forest", 
 					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", 
 					"quagmire", "rainforest", "redwood_forest", "sacred_springs", "seasonal_forest", "shrubland","snowy_coniferous_forest", "steppe", "temperate_rainforest", 
-					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island"))
+					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island", "maple_woods", "snowy_forest", "shield", "coniferous_forest"))
 			{
 				ResourceLocation loc = new ResourceLocation(bop, s);
 				forest.add(loc);
 				storm.add(loc);
 				cricket.add(loc);
 			}
-			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "maple_woods", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "shield"))
+			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs"))
 				cricket.add(new ResourceLocation(bop, s));
 			for(String s : Arrays.asList("gravel_beach"))
 				beach.add(new ResourceLocation(bop, s));
