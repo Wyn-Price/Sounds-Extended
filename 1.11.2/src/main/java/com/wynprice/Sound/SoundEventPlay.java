@@ -414,7 +414,6 @@ public class SoundEventPlay
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	public void playerQuit(ClientDisconnectionFromServerEvent e)
 	{
-		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 		this.loadin = true;
 	}
 	
@@ -577,7 +576,6 @@ public class SoundEventPlay
 	{
 		endTimer = 10000;
 		strongholdTimer = 10000;
-		Minecraft.getMinecraft().getSoundHandler().stopSounds();
 	}
 	
 	
