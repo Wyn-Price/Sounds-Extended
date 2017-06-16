@@ -463,7 +463,7 @@ public class SoundEventPlay
 		if(Loader.isModLoaded(bop)) 
 		{
 			for(String s : Arrays.asList("bamboo_forest", "bayou", "bog", "boreal_forest", "brushland", "chaparral", "oasis",
-					"grassland", "grove", "highland", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", 
+					"grassland", "grove", "heathland", "lavender_fields", "lush_desert", "lush_swamp", "moor", "mountain_peaks", "mystic_grove","ominous_woods", 
 					"quagmire", "rainforest", "redwood_forest", "sacred_springs", "seasonal_forest", "shrubland","snowy_coniferous_forest", "steppe", 
 					"wasteland", "wetland", "xeric_shrubland", "kelp_forest", "mangrove", "origin_island", "maple_woods", "snowy_forest", "shield", "coniferous_forest"))
 			{
@@ -472,7 +472,7 @@ public class SoundEventPlay
 				storm.add(loc);
 				cricket.add(loc);
 			}
-			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "crag", "dead_swamp"))
+			for(String s : Arrays.asList("dead_forest", "fen", "flower_field", "land_of_lakes", "marsh", "meadow", "orchard", "outback", "overgrown_cliffs", "crag", "dead_swamp", "highland"))
 				cricket.add(new ResourceLocation(bop, s));
 			beach.add(new ResourceLocation(bop, "gravel_beach"));
 			for(String s : Arrays.asList("eucalyptus_forest", "temperate_rainforest"))
