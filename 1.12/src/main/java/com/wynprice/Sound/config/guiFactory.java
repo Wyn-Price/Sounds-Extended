@@ -67,6 +67,7 @@ public class guiFactory implements IModGuiFactory
 		private static List<IConfigElement> getConfigElements() 
 		{
 			List<IConfigElement> list = new ArrayList<IConfigElement>();
+			list.add(new DummyCategoryElement("gui.category.general", "gui.category.general", CategoryGeneral.class));
 			list.add(new DummyCategoryElement("gui.category.enabled", "gui.category.enabled", CategoryEnabled.class));
 			list.add(new DummyCategoryElement("gui.category.server", "gui.category.server", CategoryServer.class));
 			list.add(new DummyCategoryElement("gui.category.modded", "gui.category.modded", CategoryModded.class));

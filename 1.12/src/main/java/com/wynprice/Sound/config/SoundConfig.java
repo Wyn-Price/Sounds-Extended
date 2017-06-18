@@ -77,11 +77,11 @@ public class SoundConfig
 		forceMusicOff.setComment(isClient? I18n.format("gui.forceMusic.comment") : "");
 		genralOrder.add(forceMusicOff.getName());
 		
-		
-		Property useFoliage = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "useFoliage", true);
+		Property useFoliage = config.get(CATEGORY_GENERAL , "useFoliage", true);
 		useFoliage.setLanguageKey("gui.useFoliage");
 		useFoliage.setComment(isClient? I18n.format("gui.useFoliage.comment") : "");
 		moddedOrder.add(useFoliage.getName());
+		
 		
 		int[] emptyIntArray = {};
 		Property forestBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "forestBiomes", emptyIntArray);
@@ -213,10 +213,11 @@ public class SoundConfig
 		isStrongholdSound.setComment(isClient? I18n.format("gui.isStronghold.comment") : "");
 		enabledOrder.add(isStrongholdSound.getName());
 		
+		config.setCategoryPropertyOrder(CATEGORY_GENERAL, genralOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
-		config.setCategoryPropertyOrder(CATEGORY_GENERAL, genralOrder);
+		
 		
 		if(read)
 		{
