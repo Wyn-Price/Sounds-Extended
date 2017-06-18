@@ -45,7 +45,8 @@ public class MainRegistry
 	{
 		getlogger().info("Playing that noteblock nicely");
 		SoundConfig.preInit();
-		optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+		if(SoundConfig.forceMusic)
+		{optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
 		List<String> list = IOUtils.readLines(new FileInputStream(optionsFile));
 		ArrayList<String> changedList = new ArrayList<String>();
 		String finalList = "";
@@ -55,10 +56,10 @@ public class MainRegistry
 			else
 				changedList.add(s);		
 		for(String s : changedList)
-		{
 			finalList += s + "\n";
+		writeFile(optionsFile.getAbsolutePath(), finalList);
+			
 		}
-		System.out.println(finalList);
 		proxy.PreInit(e);
 		
 	}
