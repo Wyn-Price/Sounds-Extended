@@ -127,6 +127,23 @@ public class guiFactory implements IModGuiFactory
 				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
 			}
 		}
+		
+		public static class CategoryGeneral extends CategoryEntry
+		{
+			public CategoryGeneral(GuiConfig owningScreen, GuiConfigEntries owningEntryList,
+					IConfigElement configElement) {
+				super(owningScreen, owningEntryList, configElement);
+			}
+			
+			@Override
+			protected GuiScreen buildChildScreen() {
+				Configuration config = SoundConfig.getConfig();
+				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_GENERAL));
+				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
+				String windowTitle = I18n.format("gui.category.general");
+				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
+			}
+		}
 
 			
 		
