@@ -26,9 +26,10 @@ public class SoundConfig
 {
 	private static Boolean isClient = false;
 	private static Configuration config = null;
-	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes";
+	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes",
+			CATEGORY_GENERAL = "Genral settings";;
 	
-	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage, isJungle;
+	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, isEnd, isShulkerSoundEnd, runOnServer, useList, foliage, isJungle, forceMusic;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd, moddedJungle;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -68,12 +69,19 @@ public class SoundConfig
 		List<String> enabledOrder = new ArrayList<String>();
 		List<String> serverOrder = new ArrayList<String>();
 		List<String> moddedOrder = new ArrayList<String>();
+		List<String> generalOrder = new ArrayList<String>();
 		
 		
-		Property useFoliage = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "useFoliage", true);
+		Property forceMusicOff = config.get(CATEGORY_GENERAL, "forceMusic", true);
+		forceMusicOff.setLanguageKey("gui.forceMusic");
+		forceMusicOff.setComment(isClient? I18n.format("gui.forceMusic.comment") : "");
+		generalOrder.add(forceMusicOff.getName());
+		
+		Property useFoliage = config.get(CATEGORY_GENERAL , "useFoliage", true);
 		useFoliage.setLanguageKey("gui.useFoliage");
 		useFoliage.setComment(isClient? I18n.format("gui.useFoliage.comment") : "");
 		moddedOrder.add(useFoliage.getName());
+		
 		
 		int[] emptyIntArray = {};
 		Property forestBiomes = config.get(CATEGORY_MODDED_BIOMES_SUPPORT, "forestBiomes", emptyIntArray);
@@ -196,6 +204,7 @@ public class SoundConfig
 		isShulkerEndSound.setComment(isClient? I18n.format("gui.isShulkerEnd.comment") : "");
 		enabledOrder.add(isShulkerEndSound.getName());
 		
+		config.setCategoryPropertyOrder(CATEGORY_GENERAL, generalOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);
@@ -228,6 +237,8 @@ public class SoundConfig
 			moddedEnd = endDimension.getIntList();
 			moddedOverworld = overworldDimension.getIntList();
 			foliage = useFoliage.getBoolean();
+			
+			forceMusic = forceMusicOff.getBoolean();
 		}
 		
 		isForestSound.set(isForest);
@@ -257,6 +268,7 @@ public class SoundConfig
 		overworldDimension.set(moddedOverworld);
 		useFoliage.set(foliage);
 		
+		forceMusicOff.set(forceMusic);
 		
 		readServers.clear();
 		for(String IP : blackServers)
