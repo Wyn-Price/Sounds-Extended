@@ -37,6 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -78,7 +79,7 @@ public class SoundEventPlay
 		if(Minecraft.getMinecraft().currentScreen != null)
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
 		if(isInCredits && !isInCreditsFirst)
-			Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);
+			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
 		if(isInCredits && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(glassWorksOpening))
 			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
 		isInCreditsFirst = isInCredits;
@@ -125,8 +126,6 @@ public class SoundEventPlay
 			if(previousFrameDragon || previousFrameWither)
 				try{ Minecraft.getMinecraft().getSoundHandler().playSound(bossMusic); }
 				catch (IllegalArgumentException i) {}
-			
-			
 		}
 		this.world = e.getEntity().getEntityWorld();
 		if(e.getEntity() instanceof EntityPlayer)
@@ -430,6 +429,9 @@ public class SoundEventPlay
 			vol = vol > 1? 1f : vol;
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
+		
+		if(player.posY >= 100)
+			world.playSound(player, player.getPosition(), SoundHandler.glassworksOpening, SoundCategory.AMBIENT, 1f, 1f);
 	}
 	
 	public static int randInt(int min, int max) {
