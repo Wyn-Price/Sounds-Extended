@@ -85,3 +85,7 @@ gui.category.modded=Use for Modded Support
 gui.category.modded.tooltip=Use this to decide what modded biomes and dimensions should make what sounds
 gui.category.general=General Settings
 gui.category.general.tooltip=The main overall settings
+
+commands.biomedictonary.success=%s has the traits %s
+commands.biomedictonary.failure.vanilla=%s hasn't got any traits
+commands.biomedictonary.failure.modded=%s hasn't been registered
