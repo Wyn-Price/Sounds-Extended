@@ -73,5 +73,7 @@
 	"end.city":{"category": "master","sounds": [ { "name": "sounds_extended:end_city", "stream": false }]},
 	
 	"wither.spawn.timer":{"category": "master","sounds": [ { "name": "sounds_extended:wither_spawn_timer", "stream": false }]},
-	"stronghold":{"category": "master","sounds": [ { "name": "sounds_extended:stronghold", "stream":false}]}
+	"stronghold":{"category": "master","sounds": [ { "name": "sounds_extended:stronghold", "stream":false}]},
+	
+	"glassworks.opening":{"category": "master","sounds": [ { "name": "sounds_extended:glassworks_opening", "stream":false}]}
 }

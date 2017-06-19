@@ -24,6 +24,7 @@ import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -33,6 +34,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -45,6 +47,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -52,22 +55,36 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
+import scala.collection.parallel.ParIterableLike.Min;
 
 public class SoundEventPlay
 {
 	private ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
-	private ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
+	public static ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
 	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
-	private ISound bossMusic, hell;
+	private ISound bossMusic, hell, glassWorksOpening;
 	private Entity dragon, wither;
 	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
-			endCityPlay = false, strongholdPlay = false;
+			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
+	@SubscribeEvent
+	public void EndScreen(Event e)
+	{
+		if(Minecraft.getMinecraft().currentScreen != null)
+			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
+		if(isInCredits && !isInCreditsFirst)
+			Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);
+		if(isInCredits && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(glassWorksOpening))
+			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
+		isInCreditsFirst = isInCredits;
+				
+	}
+	
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
@@ -143,8 +160,10 @@ public class SoundEventPlay
 							Minecraft.getMinecraft().getSoundHandler().stopSounds();
 							world.playSound(player, dragon.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 5f, 1f);
 						}
-							
-						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
+						if(!world.loadedEntityList.contains(dragon) && previousFrameDragon)
+							Minecraft.getMinecraft().getSoundHandler().stopSounds();
+						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0 || !world.loadedEntityList.contains(dragon));
+						
 					}
 					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && previousFrameDragon)
 						playMusic = true;
@@ -165,7 +184,10 @@ public class SoundEventPlay
 						{
 							Minecraft.getMinecraft().getSoundHandler().stopSounds();;
 						}
-						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
+						previousFrameWither = !(wither.isDead || w.getHealth() == 0 || !world.loadedEntityList.contains(wither));
+						if(!world.loadedEntityList.contains(wither) && previousFrameWither)
+							previousFrameWither = false;
+						
 					}
 					else witherInvulvTimer = 1f;
 					if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(bossMusic) && previousFrameWither && witherInvulvTimer == 0)
@@ -174,9 +196,13 @@ public class SoundEventPlay
 				}
 				
 			}
-			if(!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(hell) && nether.contains(player.dimension)&& SoundConfig.isHell)
+			if(!previousFrameWither && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(hell) && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
 				try{Minecraft.getMinecraft().getSoundHandler().playSound(hell);} catch (Exception ex) {}
+			}
+			if(previousFrameWither && Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(hell) && nether.contains(player.dimension)&& SoundConfig.isHell)
+			{
+				Minecraft.getMinecraft().getSoundHandler().stopSound(hell);
 			}
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
@@ -432,6 +458,7 @@ public class SoundEventPlay
 	{
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
+		this.glassWorksOpening = PositionedSoundRecord.getMasterRecord(SoundHandler.glassworksOpening, 1f, 1f);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
