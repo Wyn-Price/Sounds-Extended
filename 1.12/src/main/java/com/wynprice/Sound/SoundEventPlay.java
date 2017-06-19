@@ -78,9 +78,7 @@ public class SoundEventPlay
 	{
 		if(Minecraft.getMinecraft().currentScreen != null)
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
-		if(isInCredits && !isInCreditsFirst)
-			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
-		if(isInCredits && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(glassWorksOpening))
+		if((isInCredits && !isInCreditsFirst) || (isInCredits && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(glassWorksOpening)))
 			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
 		isInCreditsFirst = isInCredits;
 				
