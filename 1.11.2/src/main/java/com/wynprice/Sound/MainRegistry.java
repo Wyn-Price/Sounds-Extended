@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Splitter;
+import com.wynprice.Sound.commands.CommandBiomeDictonary;
 import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.proxys.CommonProxy;
 
@@ -26,6 +27,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY, canBeDeactivated=true)
 public class MainRegistry
@@ -75,6 +77,13 @@ public class MainRegistry
 	public static void PostInit(FMLPostInitializationEvent e)
 	{
 		proxy.PostInit(e);
+	}
+	
+	
+	@EventHandler
+	public void serverLoad(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandBiomeDictonary());
 	}
 	
 	
