@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.Line;
@@ -118,18 +119,12 @@ public class SoundEventPlay
 	
 	public Clip sound(String location)
 	{
-		File file;
-		try {
-			file = new File(this.getClass().getResource(location).toURI());
-		} catch (URISyntaxException e) 
-		{
-			e.printStackTrace();
-			return null;
-		}
+		File file = null;
+		InputStream iS = this.getClass().getResourceAsStream(location);
 	    try
 	    {
-	        final Clip clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
-
+	        AudioInputStream ais = AudioSystem.getAudioInputStream(iS);
+	        final Clip clip = AudioSystem.getClip();
 	        clip.addLineListener(new LineListener()
 	        {
 	            @Override
@@ -140,7 +135,7 @@ public class SoundEventPlay
 	            }
 	        });
 
-	        clip.open(AudioSystem.getAudioInputStream(file));
+	        clip.open(ais);
 	        return clip;
 	    }
 	    catch (Exception exc)
@@ -149,6 +144,7 @@ public class SoundEventPlay
 	    }
 	    return null;
 	}
+	
 	
 	private Clip s(Clip clip, int i)
 	{
