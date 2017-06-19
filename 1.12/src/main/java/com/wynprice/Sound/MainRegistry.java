@@ -48,8 +48,8 @@ public class MainRegistry
 	{
 		getlogger().info("Playing that noteblock nicely");
 		SoundConfig.preInit();
-		//SoundSystemConfig.setNumberStreamingChannels(11);
-		//SoundSystemConfig.setNumberNormalChannels(21); 
+		SoundSystemConfig.setNumberStreamingChannels(11);
+		SoundSystemConfig.setNumberNormalChannels(21); 
 		if(SoundConfig.forceMusic)
 		{
 			optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
