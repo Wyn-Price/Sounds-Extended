@@ -444,9 +444,6 @@ public class SoundEventPlay
 			vol = vol > 1? 1f : vol;
 			world.playSound(player, player.getPosition(), SoundHandler.highWind.get(randInt(0, SoundHandler.highWind.size() - 1)), SoundCategory.MASTER, vol, 1);
 		}
-		
-		if(player.posY >= 100)
-			world.playSound(player, player.getPosition(), SoundHandler.glassworksOpening, SoundCategory.AMBIENT, 1f, 1f);
 	}
 	
 	public static int randInt(int min, int max) {
