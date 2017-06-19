@@ -16,15 +16,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.wynprice.Sound.config.SoundConfig;
 import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 
+import akka.Main;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -34,10 +38,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,7 +58,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
-import scala.collection.parallel.ParIterableLike.Min;
 
 public class SoundEventPlay
 {
@@ -66,7 +67,7 @@ public class SoundEventPlay
 	public static ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
 	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();
 	private EntityPlayer player;
-	private ISound bossMusic, hell, glassWorksOpening;
+	private ISound bossMusic, hell;
 	private Entity dragon, wither;
 	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
@@ -78,11 +79,27 @@ public class SoundEventPlay
 	{
 		if(Minecraft.getMinecraft().currentScreen != null)
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
-		if((isInCredits && !isInCreditsFirst) || (isInCredits && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(glassWorksOpening)))
-			try{Minecraft.getMinecraft().getSoundHandler().playSound(glassWorksOpening);} catch (Exception exeption) {}
+		if(isInCredits && !isInCreditsFirst && player != null && world != null)
+			playSound("glasswork_opening.wav");
 		isInCreditsFirst = isInCredits;
 				
 	}
+	
+	public static synchronized void playSound(final String url) {
+		  new Thread(new Runnable() {
+		    public void run() {
+		      try {
+		        Clip clip = AudioSystem.getClip();
+		        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+		          Main.class.getResourceAsStream("src/main/resources/assets/sounds_extended/sounds" + url));
+		        clip.open(inputStream);
+		        clip.start(); 
+		      } catch (Exception e) {
+		        System.err.println(e.getMessage());
+		      }
+		    }
+		  }).start();
+		}
 	
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
@@ -458,7 +475,6 @@ public class SoundEventPlay
 	{
 		this.bossMusic = PositionedSoundRecord.getMasterRecord(SoundHandler.bossMusic, 1f, 1f);
 		this.hell = PositionedSoundRecord.getMasterRecord(SoundHandler.hell, 1f, 1f);
-		this.glassWorksOpening = PositionedSoundRecord.getMasterRecord(SoundHandler.glassworksOpening, 1f, 1f);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
