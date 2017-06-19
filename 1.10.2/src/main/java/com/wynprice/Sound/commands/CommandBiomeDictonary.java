@@ -17,18 +17,13 @@ import net.minecraft.world.biome.Biome;
 public class CommandBiomeDictonary extends CommandBase {
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "biomedictonary";
-	}
-	
-	@Override
-	public List<String> getAliases() {
-		return Lists.newArrayList("bd, biomedictonary");
 	}
 	
 
 	@Override
-	public String getUsage(ICommandSender sender) {
+	public String getCommandUsage(ICommandSender sender) {
 		return  "commands.biomedictonary.usage";
 	}
 
@@ -44,7 +39,7 @@ public class CommandBiomeDictonary extends CommandBase {
 		if(SoundEventPlay.storm.contains(biomeRegistryName)) traits.add("storm");
 		if(traits.size() == 0)
 		{
-			sender.sendMessage(new TextComponentTranslation("commands.biomedictonary.failure." + (biomeRegistryName.getResourceDomain().equals("minecraft")? "vanilla" : "modded"), biome.getBiomeName()));
+			sender.addChatMessage(new TextComponentTranslation("commands.biomedictonary.failure." + (biomeRegistryName.getResourceDomain().equals("minecraft")? "vanilla" : "modded"), biome.getBiomeName()));
 			return;
 		}
 		String printTraits = "";
@@ -52,12 +47,13 @@ public class CommandBiomeDictonary extends CommandBase {
 			if(i == traits.size() - 1) printTraits += traits.get(i);
 			else if(i == traits.size() - 2) printTraits += traits.get(i) + " & ";
 			else printTraits += traits.get(i) + ", ";
-		sender.sendMessage(new TextComponentTranslation("commands.biomedictonary.success", biome.getBiomeName(), printTraits));
+		sender.addChatMessage(new TextComponentTranslation("commands.biomedictonary.success", biome.getBiomeName(), printTraits));
 	}
 	
 	@Override
 	public int getRequiredPermissionLevel() {
 		return 2;
 	}
+
 	
 }
