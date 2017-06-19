@@ -10,7 +10,6 @@ import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,18 +20,15 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.wynprice.Sound.config.SoundConfig;
-import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
