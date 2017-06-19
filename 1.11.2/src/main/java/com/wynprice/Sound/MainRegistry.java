@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import paulscode.sound.SoundSystemConfig;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY, canBeDeactivated=true)
 public class MainRegistry
@@ -47,20 +48,22 @@ public class MainRegistry
 	{
 		getlogger().info("Playing that noteblock nicely");
 		SoundConfig.preInit();
+		SoundSystemConfig.setNumberStreamingChannels(11);
+		SoundSystemConfig.setNumberNormalChannels(21); 
 		if(SoundConfig.forceMusic)
-		{optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
-		List<String> list = IOUtils.readLines(new FileInputStream(optionsFile));
-		ArrayList<String> changedList = new ArrayList<String>();
-		String finalList = "";
-		for(String s : list)
-			if(s.split(":")[0].equals("soundCategory_music"))
-				changedList.add("soundCategory_music:0.0");
-			else
-				changedList.add(s);		
-		for(String s : changedList)
-			finalList += s + "\n";
-		writeFile(optionsFile.getAbsolutePath(), finalList);
-			
+		{
+			optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+			List<String> list = IOUtils.readLines(new FileInputStream(optionsFile));
+			ArrayList<String> changedList = new ArrayList<String>();
+			String finalList = "";
+			for(String s : list)
+				if(s.split(":")[0].equals("soundCategory_music"))
+					changedList.add("soundCategory_music:0.0");
+				else
+					changedList.add(s);		
+			for(String s : changedList)
+				finalList += s + "\n";
+			writeFile(optionsFile.getAbsolutePath(), finalList);
 		}
 		proxy.PreInit(e);
 		
@@ -80,13 +83,6 @@ public class MainRegistry
 	}
 	
 	
-	@EventHandler
-	public void serverLoad(FMLServerStartingEvent event)
-	{
-		event.registerServerCommand(new CommandBiomeDictonary());
-	}
-	
-	
 	private static Logger logger; 
 	public static Logger getlogger()
 	{
@@ -95,6 +91,12 @@ public class MainRegistry
 			logger = LogManager.getFormatterLogger(References.MODID);
 		}
 		return logger;
+	}
+	
+	@EventHandler
+	public void serverLoad(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandBiomeDictonary());
 	}
 	
 	 private static NBTTagCompound dataFix(NBTTagCompound p_189988_1_)

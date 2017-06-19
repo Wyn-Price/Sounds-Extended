@@ -32,6 +32,7 @@ import com.wynprice.Sound.vanillaOverride.PositionedSoundRecord;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -41,6 +42,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -80,26 +82,38 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
-		if(Minecraft.getMinecraft().currentScreen != null)
+		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
 		{
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
 			if(isInCredits)
 			{
-				bossMusic = s(bossMusic, 1);
-				hell = s(hell,2);
-			}
-			else
-			{
-				glassworkOpen = s(glassworkOpen, 0);
-				bossMusic = s(bossMusic, 1);
-				hell = s(hell,2);
+				if(bossMusic != null)
+					if(bossMusic.isRunning())
+						bossMusic = s(bossMusic, 1);
+				
+				if(hell != null)
+					if(hell.isRunning())
+						hell = s(hell,2);
 			}
 		}
-		if(isInCredits && !isInCreditsFirst && player != null && world != null)
+		if(isInCredits && !isInCreditsFirst)
+		{
 			glassworkOpen.start();
+		}
+			
 		if(!isInCredits && isInCreditsFirst)
 			glassworkOpen = s(glassworkOpen,0);
 		isInCreditsFirst = isInCredits;
+		if(world == null || Minecraft.getMinecraft().isGamePaused())
+		{
+			if(bossMusic != null)
+				if(bossMusic.isRunning())
+					bossMusic = s(bossMusic, 1);
+			
+			if(hell != null)
+				if(hell.isRunning())
+					hell = s(hell,2);
+		}
 	}
 	
 	public Clip sound(String location)
@@ -146,6 +160,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
+		
 		if(loadin)
 		{
 			loadin = false;
@@ -346,8 +361,6 @@ public class SoundEventPlay
 		Biome biome = world.getBiome(position);
 		if(biome.equals(biome.equals(7)))
 			return;
-		
-		
 		
 		
 		if(end.contains(player.dimension) && (SoundConfig.isEnd || SoundConfig.isShulkerSoundEnd))

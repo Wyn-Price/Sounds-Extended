@@ -61,6 +61,7 @@ public class guiFactory implements IModGuiFactory
 		public SoundConfigGui(GuiScreen parentScreen) 
 		{
 			super(parentScreen, getConfigElements(), References.MODID, false, false, I18n.format("gui.title"));
+			// TODO Auto-generated constructor stub
 		}
 
 		private static List<IConfigElement> getConfigElements() 
