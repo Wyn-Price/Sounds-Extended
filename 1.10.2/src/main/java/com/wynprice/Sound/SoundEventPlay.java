@@ -334,8 +334,6 @@ public class SoundEventPlay
 	{
 		position = new BlockPos(position.getX(), position.getY() - 1f, position.getZ());
 		Biome biome = world.getBiome(position);
-		
-		System.out.println(biome.getIdForBiome(biome));
 		if(biome.equals(biome.equals(7)))
 			return;
 		
