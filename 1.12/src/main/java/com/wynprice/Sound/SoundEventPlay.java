@@ -24,6 +24,8 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.wynprice.Sound.config.SoundConfig;
@@ -118,13 +120,12 @@ public class SoundEventPlay
 	
 	public Clip sound(String location)
 	{
-		File file;
+		File file = null;
+		InputStream iS = this.getClass().getResourceAsStream(location);
 		try {
-			file = new File(this.getClass().getResource(location).toURI());
-		} catch (URISyntaxException e) 
-		{
+			FileUtils.copyInputStreamToFile(iS, file);
+		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
 		}
 	    try
 	    {
