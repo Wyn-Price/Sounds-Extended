@@ -46,19 +46,20 @@ public class MainRegistry
 		getlogger().info("Playing that noteblock nicely");
 		SoundConfig.preInit();
 		if(SoundConfig.forceMusic)
-		{optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
-		List<String> list = IOUtils.readLines(new FileInputStream(optionsFile));
-		ArrayList<String> changedList = new ArrayList<String>();
-		String finalList = "";
-		for(String s : list)
-			if(s.split(":")[0].equals("soundCategory_music"))
-				changedList.add("soundCategory_music:0.0");
-			else
-				changedList.add(s);		
-		for(String s : changedList)
-			finalList += s + "\n";
-		writeFile(optionsFile.getAbsolutePath(), finalList);
-			
+		{
+			optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+			List<String> list = IOUtils.readLines(new FileInputStream(optionsFile));
+			ArrayList<String> changedList = new ArrayList<String>();
+			String finalList = "";
+			for(String s : list)
+				if(s.split(":")[0].equals("soundCategory_music"))
+					changedList.add("soundCategory_music:0.0");
+				else
+					changedList.add(s);		
+			for(String s : changedList)
+				finalList += s + "\n";
+			writeFile(optionsFile.getAbsolutePath(), finalList);
+				
 		}
 		proxy.PreInit(e);
 		
