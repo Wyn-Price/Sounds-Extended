@@ -78,7 +78,7 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
 	private static Clip glassworkOpen, bossMusic, hell;
-	private static final String glassLoc = "glassworks_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
+	private static  String glassLoc = "glassworks_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
