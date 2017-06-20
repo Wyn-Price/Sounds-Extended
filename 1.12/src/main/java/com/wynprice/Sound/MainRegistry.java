@@ -256,8 +256,8 @@ public class MainRegistry
             printwriter.println("realmsNotifications:" + g.realmsNotifications);
             printwriter.println("enableWeakAttacks:" + g.enableWeakAttacks);
             printwriter.println("autoJump:" + g.autoJump);
-            printwriter.println("narrator:" + g.field_192571_R);
-            printwriter.println("tutorialStep:" + g.field_193631_S.func_193308_a());
+            printwriter.println("narrator:" + g.narrator);
+            printwriter.println("tutorialStep:" + g.tutorialStep.getName());
 
             for (KeyBinding keybinding : g.keyBindings)
             {
