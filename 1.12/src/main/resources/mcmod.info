@@ -1,14 +1,12 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "modid": "sounds_extended",
+  "name": "Sounds Extended",
+  "description": "A mod that re-invnts the sound system in minecraft",
+  "version": "1.6.0-1.12",
+   "mcversion": "1.12",
+  "authorList": ["Wyn Price"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
