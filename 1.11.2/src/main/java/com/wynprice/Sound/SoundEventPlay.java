@@ -119,44 +119,18 @@ public class SoundEventPlay
 	{
 		Clip clip = null;
 		URL url = getClass().getResource(location);
-		AudioInputStream ais;
 		try {
-			ais = AudioSystem.getAudioInputStream(url);
+			AudioInputStream ais = AudioSystem.getAudioInputStream(url);
 			clip = AudioSystem.getClip();
 			clip.open(ais);
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return clip;
-//		InputStream is = this.getClass().getClassLoader().getResourceAsStream(location);
-//	    try
-//	    {
-//	        final Clip clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
-//
-//	        clip.addLineListener(new LineListener()
-//	        {
-//	            @Override
-//	            public void update(LineEvent event)
-//	            {
-//	                if (event.getType() == LineEvent.Type.STOP)
-//	                    clip.close();
-//	            }
-//	        });
-//	        System.out.println(AudioSystem.getAudioFileFormat(is));
-//	        clip.open(AudioSystem.getAudioInputStream(is));
-//	        return clip;
-//	    }
-//	    catch (Exception exc)
-//	    {
-//	        exc.printStackTrace(System.out);
-//	    }
-//	    return null;
 	}
 	
 	private Clip s(Clip clip, int i)
