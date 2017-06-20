@@ -36,6 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -187,6 +188,19 @@ public class SoundEventPlay
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
+			if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
+			{
+				EntityBoat boat = (EntityBoat) player.getRidingEntity();
+				double x = boat.motionX > 0? boat.motionX : -boat.motionX;
+				double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
+				double velo = Math.sqrt((x*x) + (z*z));
+				double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
+				if(velo > 0.35d)
+					;//super secret settings
+				System.out.println(vol);
+			}
+				
+			
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
 				Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
