@@ -78,7 +78,7 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
 	private static Clip glassworkOpen, bossMusic, hell;
-	private static  String glassLoc = "glassworks_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
+	private static final String glassLoc = "glassworks_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
@@ -118,7 +118,8 @@ public class SoundEventPlay
 	
 	public Clip sound(String location)
 	{
-		location = "/assets/sounds_extended/sounds/" + location;
+		location = "/assets/" + References.MODID + "/sounds/" + location;
+		System.out.println(location);
 		Clip clip = null;
 		URL url = getClass().getResource(location);
 		try {
