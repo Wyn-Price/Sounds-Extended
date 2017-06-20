@@ -7,7 +7,6 @@ import static net.minecraftforge.common.ForgeVersion.Status.OUTDATED;
 import static net.minecraftforge.common.ForgeVersion.Status.PENDING;
 import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,8 +19,8 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
