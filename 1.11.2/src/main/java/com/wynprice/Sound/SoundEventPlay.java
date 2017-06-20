@@ -21,8 +21,11 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -114,32 +117,47 @@ public class SoundEventPlay
 	
 	public Clip sound(String location)
 	{
-		File file = null;
-		InputStream iS = this.getClass().getResourceAsStream(location);
-	    try
-	    {
-	        AudioInputStream ais = AudioSystem.getAudioInputStream(iS);
-	        final Clip clip = AudioSystem.getClip();
-	        clip.addLineListener(new LineListener()
-	        {
-	            @Override
-	            public void update(LineEvent event)
-	            {
-	                if (event.getType() == LineEvent.Type.STOP)
-	                    clip.close();
-	            }
-	        });
-
-	        clip.open(ais);
-	        return clip;
-	    }
-	    catch (Exception exc)
-	    {
-	        exc.printStackTrace(System.out);
-	    }
-	    return null;
+		Clip clip = null;
+		URL url = getClass().getResource(location);
+		AudioInputStream ais;
+		try {
+			ais = AudioSystem.getAudioInputStream(url);
+			clip = AudioSystem.getClip();
+			clip.open(ais);
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return clip;
+//		InputStream is = this.getClass().getClassLoader().getResourceAsStream(location);
+//	    try
+//	    {
+//	        final Clip clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
+//
+//	        clip.addLineListener(new LineListener()
+//	        {
+//	            @Override
+//	            public void update(LineEvent event)
+//	            {
+//	                if (event.getType() == LineEvent.Type.STOP)
+//	                    clip.close();
+//	            }
+//	        });
+//	        System.out.println(AudioSystem.getAudioFileFormat(is));
+//	        clip.open(AudioSystem.getAudioInputStream(is));
+//	        return clip;
+//	    }
+//	    catch (Exception exc)
+//	    {
+//	        exc.printStackTrace(System.out);
+//	    }
+//	    return null;
 	}
-	
 	
 	private Clip s(Clip clip, int i)
 	{
