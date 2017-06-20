@@ -119,7 +119,6 @@ public class SoundEventPlay
 	public Clip sound(String location)
 	{
 		location = "/assets/" + References.MODID + "/sounds/" + location;
-		System.out.println(location);
 		Clip clip = null;
 		URL url = getClass().getResource(location);
 		try {
