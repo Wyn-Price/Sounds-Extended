@@ -78,6 +78,7 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
 	private static Clip glassworkOpen, bossMusic, hell;
+	private static final String glassLoc = "glassworks_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
@@ -117,6 +118,7 @@ public class SoundEventPlay
 	
 	public Clip sound(String location)
 	{
+		location = "/assets/sounds_extended/sounds/" + location;
 		Clip clip = null;
 		URL url = getClass().getResource(location);
 		try {
@@ -136,7 +138,7 @@ public class SoundEventPlay
 	private Clip s(Clip clip, int i)
 	{
 		clip.stop();
-		return sound("/assets/sounds_extended/sounds/" + Arrays.asList("glasswork_opening.wav", "boss_fight.wav", "hell.wav").get(i));
+		return sound(Arrays.asList(glassLoc, bossLoc, hellLoc).get(i));
 	}
 
 	
@@ -507,9 +509,9 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException, URISyntaxException
 	{
-		glassworkOpen = sound("/assets/sounds_extended/sounds/glasswork_opening.wav");
-		bossMusic = sound("/assets/sounds_extended/sounds/boss_fight.wav");
-		hell = sound("/assets/sounds_extended/sounds/hell.wav");
+		glassworkOpen = sound(glassLoc);
+		bossMusic = sound(bossLoc);
+		hell = sound(hellLoc);
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
