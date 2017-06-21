@@ -30,7 +30,7 @@ public class SoundConfig
 			CATEGORY_GENERAL = "Genral settings";
 	
 	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, 
-		isEnd, isShulkerSoundEnd, isEndCity, isStronghold, runOnServer, useList, foliage, isJungle, forceMusic;
+		isEnd, isShulkerSoundEnd, isEndCity, isStronghold, runOnServer, useList, foliage, isJungle, forceMusic, mode2;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd, moddedJungle;
 	public static ArrayList<String> readServers = new ArrayList<String>();
@@ -81,6 +81,11 @@ public class SoundConfig
 		useFoliage.setLanguageKey("gui.useFoliage");
 		useFoliage.setComment(isClient? I18n.format("gui.useFoliage.comment") : "");
 		moddedOrder.add(useFoliage.getName());
+		
+		Property mode = config.get(CATEGORY_GENERAL, "mode2", false);
+		mode.setLanguageKey("gui.mode2");
+		mode.setComment(isClient? I18n.format("gui.mode2.comment") : "");
+		genralOrder.add(mode.getName());
 		
 		
 		int[] emptyIntArray = {};
@@ -251,6 +256,7 @@ public class SoundConfig
 			foliage = useFoliage.getBoolean();
 			
 			forceMusic = forceMusicOff.getBoolean();
+			mode2 = mode.getBoolean();
 		}
 		
 		isForestSound.set(isForest);
@@ -283,6 +289,7 @@ public class SoundConfig
 		useFoliage.set(foliage);
 		
 		forceMusicOff.set(forceMusic);
+		mode.set(mode2);
 		
 		readServers.clear();
 		for(String IP : blackServers)

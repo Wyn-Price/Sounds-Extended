@@ -17,11 +17,13 @@ public class SoundSystem
 	public static Clip pauseSound(Clip clip, int i)
 	{
 		Clip c = clip;
-		if(clip != null)
-			{int tic = clip.getFramePosition();
+		if(c != null)
+		{
+			int tic = clip.getFramePosition();
 			if(clip.isRunning())
 				c = resetSound(clip,i);
-			c.setFramePosition(tic);}
+			c.setFramePosition(tic);
+		}
 		return c;
 	}
 	
@@ -40,11 +42,7 @@ public class SoundSystem
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}catch (java.lang.OutOfMemoryError e) {
-			MainRegistry.getlogger().error("UNABLE TO LOAD SOUND");
-			e.printStackTrace();
 		}
-		
 		return clip;
 	}
 	

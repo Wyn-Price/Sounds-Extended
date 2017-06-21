@@ -81,19 +81,18 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
-	private static ArrayList<Clip> sClips = new ArrayList<Clip>(); 
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
 	void define()
 	{
-		sClips.clear();
+		SoundSystem.sClips.clear();
 		for(String s : Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
-			sClips.add(SoundSystem.sound(s));
-		glassworkOpen = sClips.get(0);
-		bossMusic = sClips.get(1);
-		hell = sClips.get(2);
-		mPiarate = sClips.get(3);
-		mPiarateB = sClips.get(4);
+			SoundSystem.sClips.add(SoundSystem.sound(s));
+		glassworkOpen = SoundSystem.sClips.get(0);
+		bossMusic = SoundSystem.sClips.get(1);
+		hell = SoundSystem.sClips.get(2);
+		mPiarate = SoundSystem.sClips.get(3);
+		mPiarateB = SoundSystem.sClips.get(4);
 		
 	}
 	@SubscribeEvent
@@ -173,48 +172,49 @@ public class SoundEventPlay
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
-			if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
-			{
-				EntityBoat boat = (EntityBoat) player.getRidingEntity();
-				double x = boat.motionX > 0? boat.motionX : -boat.motionX;
-				double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
-				double velo = Math.sqrt((x*x) + (z*z));
-				double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
-				if(!(mPiarate.isRunning() || mPiarateB.isRunning()))
-					(velo > 0.35 ? mPiarateB : mPiarate).start();
-				if(velo > 0.35)
+			if(SoundConfig.mode2)
+				if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
 				{
-					if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
-						Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
-					if(!mPiarateB.isRunning())
+					EntityBoat boat = (EntityBoat) player.getRidingEntity();
+					double x = boat.motionX > 0? boat.motionX : -boat.motionX;
+					double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
+					double velo = Math.sqrt((x*x) + (z*z));
+					double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
+					if(!(mPiarate.isRunning() || mPiarateB.isRunning()))
+						(velo > 0.35 ? mPiarateB : mPiarate).start();
+					if(velo > 0.35)
 					{
-						mPiarateB.setFramePosition(mPiarate.getFramePosition());
-						mPiarate = SoundSystem.resetSound(mPiarate, 3);
-						mPiarateB.start();
-					}	
-				}
-				else
-				{
-					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-						Minecraft.getMinecraft().entityRenderer.stopUseShader();
-					if(!mPiarate.isRunning())
+						if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
+							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
+						if(!mPiarateB.isRunning())
+						{
+							mPiarateB.setFramePosition(mPiarate.getFramePosition());
+							mPiarate = SoundSystem.resetSound(mPiarate, 3);
+							mPiarateB.start();
+						}	
+					}
+					else
 					{
-						if(mPiarateB.getFramePosition() != 0)
-							mPiarate.setFramePosition(mPiarateB.getFramePosition());
-						mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
-						mPiarate.start();
+						if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
+							Minecraft.getMinecraft().entityRenderer.stopUseShader();
+						if(!mPiarate.isRunning())
+						{
+							if(mPiarateB.getFramePosition() != 0)
+								mPiarate.setFramePosition(mPiarateB.getFramePosition());
+							mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
+							mPiarate.start();
+						}
 					}
 				}
-			}
-			else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat))
-			{
-				if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-					try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
-				if(mPiarate.isRunning())
-					mPiarate = SoundSystem.resetSound(mPiarate, 3);
-				if(mPiarateB.isRunning())
-					mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
-			}
+				else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat))
+				{
+					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
+						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
+					if(mPiarate.isRunning())
+						mPiarate = SoundSystem.resetSound(mPiarate, 3);
+					if(mPiarateB.isRunning())
+						mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
+				}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
 				Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
@@ -275,18 +275,12 @@ public class SoundEventPlay
 					else witherInvulvTimer = 1f;
 					if(!bossMusic.isRunning() && previousFrameWither && witherInvulvTimer == 0)
 						playMusic = true;
-						
 				}
-				
 			}
 			if(!previousFrameWither && !hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell)
-			{
 				hell.start();
-			}
 			if((previousFrameWither && hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell) || (!nether.contains(player.dimension) && hell.isRunning()))
-			{
 				hell = SoundSystem.resetSound(hell,2);	
-			}
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
@@ -355,10 +349,7 @@ public class SoundEventPlay
 								world.playSound(player, firePositions.get(i), SoundHandler.fireCrack.get(randInt(0, SoundHandler.fireCrack.size() - 1)), SoundCategory.BLOCKS, 2, 1);
 						}	
 					}
-					catch (IndexOutOfBoundsException index) 
-					{
-						
-					}
+					catch (IndexOutOfBoundsException index) {continue;}
 				
 				}
 			}
