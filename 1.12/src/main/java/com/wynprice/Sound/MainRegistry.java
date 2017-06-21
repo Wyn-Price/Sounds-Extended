@@ -110,6 +110,7 @@ public class MainRegistry
 	@EventHandler
 	public static void Init(FMLInitializationEvent e)
 	{
+		SoundEventPlay.define();
 		proxy.Init(e);
 		
 	}

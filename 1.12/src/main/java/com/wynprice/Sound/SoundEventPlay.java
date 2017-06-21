@@ -83,7 +83,7 @@ public class SoundEventPlay
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
-	void define()
+	static void define()
 	{
 		SoundSystem.sClips.clear();
 		for(String s : Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
@@ -93,7 +93,6 @@ public class SoundEventPlay
 		hell = SoundSystem.sClips.get(2);
 		mPiarate = SoundSystem.sClips.get(3);
 		mPiarateB = SoundSystem.sClips.get(4);
-		
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
@@ -524,6 +523,7 @@ public class SoundEventPlay
 	{
 		this.loadin = true;
 	}
+	
 	
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException, URISyntaxException
