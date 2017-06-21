@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
@@ -77,6 +79,7 @@ public class SoundEventPlay
 	private Entity dragon, wither;
 	private BlockPos nearestEndCityLocation, nearestStrongholdLocation;
 	private World world;
+	private static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
@@ -132,6 +135,9 @@ public class SoundEventPlay
 		inPauseMenu = true;
 		if(loadin)
 		{
+			for(ITextComponent text : onJoin)
+				if(e.getEntity() instanceof EntityPlayer)
+					((EntityPlayer)e.getEntity()).sendMessage(text);
 			loadin = false;
 			try
 			{
@@ -524,9 +530,7 @@ public class SoundEventPlay
 		this.loadin = true;
 	}
 	
-	
-	@SubscribeEvent
-	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException, URISyntaxException
+	public void load() throws IOException
 	{
 		define();
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
@@ -552,7 +556,7 @@ public class SoundEventPlay
 		}
 		catch (NullPointerException nul) 
 		{
-			e.player.sendMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
+			onJoin.add((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
 		}
 		
 		String bop = "biomesoplenty";
@@ -684,12 +688,11 @@ public class SoundEventPlay
 	        else
 	            status = BETA;
 	        if(status == Status.OUTDATED)
-	        	e.player.sendMessage((ITextComponent)  new TextComponentTranslation("version", References.VERSION, target));
+	        	onJoin.add((ITextComponent)  new TextComponentTranslation("version", References.VERSION, target));
 			MainRegistry.getlogger().info("Update checker returned: " + status);
 			
 		}
-	}	
-	
+	}
 	
 	@SubscribeEvent
 	public void quit(PlayerLoggedOutEvent e)
