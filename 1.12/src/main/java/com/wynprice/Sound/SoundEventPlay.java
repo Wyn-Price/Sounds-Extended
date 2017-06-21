@@ -21,6 +21,7 @@ import java.util.Random;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -78,8 +79,18 @@ public class SoundEventPlay
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
-	private static Clip glassworkOpen, bossMusic, hell;
-	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
+	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
+	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
+			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
+	void define()
+	{
+		glassworkOpen = sound(glassLoc);
+		bossMusic = sound(bossLoc);
+		hell = sound(hellLoc);
+		mPiarate = sound(mPiarateLoc);
+		mPiarateB = sound(mPiarateBLoc);
+		
+	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
@@ -88,13 +99,10 @@ public class SoundEventPlay
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
 			if(isInCredits)
 			{
-				if(bossMusic != null)
-					if(bossMusic.isRunning())
-						bossMusic = s(bossMusic, 1);
-				
-				if(hell != null)
-					if(hell.isRunning())
-						hell = s(hell,2);
+				bossMusic = pauseSound(bossMusic, 1);
+				hell = pauseSound(hell, 2);
+				mPiarate = pauseSound(mPiarate, 3);
+				mPiarateB = pauseSound(mPiarateB, 4);
 			}
 		}
 		if(isInCredits && !isInCreditsFirst)
@@ -107,14 +115,22 @@ public class SoundEventPlay
 		isInCreditsFirst = isInCredits;
 		if(world == null || Minecraft.getMinecraft().isGamePaused())
 		{
-			if(bossMusic != null)
-				if(bossMusic.isRunning())
-					bossMusic = s(bossMusic, 1);
-			
-			if(hell != null)
-				if(hell.isRunning())
-					hell = s(hell,2);
+			bossMusic = pauseSound(bossMusic, 1);
+			hell = pauseSound(hell, 2);
+			mPiarate = pauseSound(mPiarate, 3);
+			mPiarateB = pauseSound(mPiarateB, 4);
 		}
+	}
+	
+	public Clip pauseSound(Clip clip, int i)
+	{
+		Clip c = clip;
+		if(clip != null)
+			{int tic = clip.getFramePosition();
+			if(clip.isRunning())
+				c = s(clip,i);
+			c.setFramePosition(tic);}
+		return c;
 	}
 	
 	public Clip sound(String location)
@@ -139,9 +155,9 @@ public class SoundEventPlay
 	private Clip s(Clip clip, int i)
 	{
 		clip.stop();
-		return sound(Arrays.asList(glassLoc, bossLoc, hellLoc).get(i));
+		return sound(Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc).get(i));
 	}
-
+	
 	
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
@@ -195,12 +211,41 @@ public class SoundEventPlay
 				double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
 				double velo = Math.sqrt((x*x) + (z*z));
 				double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
-				if(velo > 0.35d)
-					;//super secret settings
-				System.out.println(vol);
+				if(!(mPiarate.isRunning() || mPiarateB.isRunning()))
+					(velo > 0.35 ? mPiarateB : mPiarate).start();
+				if(velo > 0.35) // movin
+				{
+					if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
+						Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/sobel.json"));
+					if(!mPiarateB.isRunning())
+					{
+						mPiarateB.setFramePosition(mPiarate.getFramePosition());
+						mPiarate = s(mPiarate, 3);
+						mPiarateB.start();
+					}	
+				}
+				else
+				{
+					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
+						Minecraft.getMinecraft().entityRenderer.stopUseShader();
+					if(!mPiarate.isRunning())
+					{
+						if(mPiarateB.getFramePosition() != 0)
+							mPiarate.setFramePosition(mPiarateB.getFramePosition());
+						mPiarateB = s(mPiarateB, 4);
+						mPiarate.start();
+					}
+				}
 			}
-				
-			
+			else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat))
+			{
+				if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
+					try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
+				if(mPiarate.isRunning())
+					mPiarate = s(mPiarate, 3);
+				if(mPiarateB.isRunning())
+					mPiarateB = s(mPiarateB, 4);
+			}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
 				Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
@@ -523,9 +568,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException, URISyntaxException
 	{
-		glassworkOpen = sound(glassLoc);
-		bossMusic = sound(bossLoc);
-		hell = sound(hellLoc);
+		define();
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
