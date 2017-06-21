@@ -88,6 +88,12 @@ public class SoundEventPlay
 	{
 		for(String s : Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
 			sClips.add(sound(s));
+		glassworkOpen = sClips.get(0);
+		bossMusic = sClips.get(1);
+		hell = sClips.get(2);
+		mPiarate = sClips.get(3);
+		mPiarateB = sClips.get(4);
+		
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
@@ -120,6 +126,7 @@ public class SoundEventPlay
 			mPiarateB = pauseSound(mPiarateB, 4);
 		}
 	}
+	
 	
 	public Clip pauseSound(Clip clip, int i)
 	{
