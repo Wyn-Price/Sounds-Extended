@@ -10,6 +10,7 @@ import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,18 +79,15 @@ public class SoundEventPlay
 	private World world;
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
-			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false;
+			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
+	private static ArrayList<Clip> sClips = new ArrayList<Clip>(); 
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
 	void define()
 	{
-		glassworkOpen = sound(glassLoc);
-		bossMusic = sound(bossLoc);
-		hell = sound(hellLoc);
-		mPiarate = sound(mPiarateLoc);
-		mPiarateB = sound(mPiarateBLoc);
-		
+		for(String s : Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
+			sClips.add(sound(s));
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
@@ -113,8 +111,9 @@ public class SoundEventPlay
 		if(!isInCredits && isInCreditsFirst)
 			glassworkOpen = s(glassworkOpen,0);
 		isInCreditsFirst = isInCredits;
-		if(world == null || Minecraft.getMinecraft().isGamePaused())
+		if(world == null || Minecraft.getMinecraft().isGamePaused() && inPauseMenu)
 		{
+			inPauseMenu = false;
 			bossMusic = pauseSound(bossMusic, 1);
 			hell = pauseSound(hell, 2);
 			mPiarate = pauseSound(mPiarate, 3);
@@ -148,21 +147,25 @@ public class SoundEventPlay
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}catch (java.lang.OutOfMemoryError e) {
+			MainRegistry.getlogger().error("UNABLE TO LOAD SOUND");
+			e.printStackTrace();
 		}
+		
 		return clip;
 	}
 	
 	private Clip s(Clip clip, int i)
 	{
 		clip.stop();
-		return sound(Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc).get(i));
+		return sClips.get(i);
 	}
 	
 	
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
-		
+		inPauseMenu = true;
 		if(loadin)
 		{
 			loadin = false;
@@ -213,10 +216,10 @@ public class SoundEventPlay
 				double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
 				if(!(mPiarate.isRunning() || mPiarateB.isRunning()))
 					(velo > 0.35 ? mPiarateB : mPiarate).start();
-				if(velo > 0.35) // movin
+				if(velo > 0.35)
 				{
 					if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
-						Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/sobel.json"));
+						Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/deconverge.json"));
 					if(!mPiarateB.isRunning())
 					{
 						mPiarateB.setFramePosition(mPiarate.getFramePosition());
