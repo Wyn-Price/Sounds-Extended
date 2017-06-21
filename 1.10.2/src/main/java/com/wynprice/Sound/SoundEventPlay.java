@@ -64,7 +64,7 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private Entity dragon, wither;
 	private World world;
-	private static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
+	public static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;;
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
@@ -118,11 +118,11 @@ public class SoundEventPlay
 	public void playerUpdate(LivingUpdateEvent e)
 	{
 		inPauseMenu = true;
-		if(loadin)
+		if(loadin && e.getEntity() instanceof EntityPlayer)
 		{
+			System.out.println(onJoin);
 			for(ITextComponent text : onJoin)
-				if(e.getEntity() instanceof EntityPlayer)
-					((EntityPlayer)e.getEntity()).addChatMessage(text);
+				((EntityPlayer)e.getEntity()).addChatMessage(text);
 			loadin = false;
 			try
 			{

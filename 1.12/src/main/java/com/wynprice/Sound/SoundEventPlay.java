@@ -133,11 +133,11 @@ public class SoundEventPlay
 	public void playerUpdate(LivingUpdateEvent e)
 	{
 		inPauseMenu = true;
-		if(loadin)
+		if(loadin && e.getEntity() instanceof EntityPlayer)
 		{
+			System.out.println(onJoin);
 			for(ITextComponent text : onJoin)
-				if(e.getEntity() instanceof EntityPlayer)
-					((EntityPlayer)e.getEntity()).sendMessage(text);
+				((EntityPlayer)e.getEntity()).sendMessage(text);
 			loadin = false;
 			try
 			{
