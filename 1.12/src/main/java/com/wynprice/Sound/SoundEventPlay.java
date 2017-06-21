@@ -530,6 +530,12 @@ public class SoundEventPlay
 		this.loadin = true;
 	}
 	
+	@SubscribeEvent
+	public void playerJoin(ClientConnectedToServerEvent e ) throws IOException
+	{
+		load();
+	}
+	
 	public void load() throws IOException
 	{
 		define();
