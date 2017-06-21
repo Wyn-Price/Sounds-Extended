@@ -108,10 +108,10 @@ public class MainRegistry
 	}
 	
 	@EventHandler
-	public static void Init(FMLInitializationEvent e)
+	public static void Init(FMLInitializationEvent e) throws IOException
 	{
+		new SoundEventPlay().load();
 		proxy.Init(e);
-		
 	}
 	
 	@EventHandler

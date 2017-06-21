@@ -49,7 +49,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
@@ -64,6 +64,7 @@ public class SoundEventPlay
 	private EntityPlayer player;
 	private Entity dragon, wither;
 	private World world;
+	private static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;;
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
@@ -119,6 +120,9 @@ public class SoundEventPlay
 		inPauseMenu = true;
 		if(loadin)
 		{
+			for(ITextComponent text : onJoin)
+				if(e.getEntity() instanceof EntityPlayer)
+					((EntityPlayer)e.getEntity()).addChatMessage(text);
 			loadin = false;
 			try
 			{
@@ -479,7 +483,12 @@ public class SoundEventPlay
 	}
 	
 	@SubscribeEvent
-	public void onPlayerJoin(PlayerLoggedInEvent e) throws IOException
+	public void playerJoin(ClientConnectedToServerEvent e) throws IOException
+	{
+		load();
+	}
+	
+	public void load() throws IOException
 	{
 		define();
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
@@ -505,7 +514,7 @@ public class SoundEventPlay
 		}
 		catch (NullPointerException nul) 
 		{
-			e.player.addChatMessage((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
+			onJoin.add((ITextComponent) new TextComponentTranslation("id.notexist", Arrays.asList("Beach", "Cricket", "Storm", "Forest", "Jungle", "Nether", "End", "Overworld").get(nul.getStackTrace()[0].getLineNumber() - lineNumber)));
 		}
 		
 		String bop = "biomesoplenty";
@@ -637,7 +646,7 @@ public class SoundEventPlay
 	        else
 	            status = BETA;
 	        if(status == Status.OUTDATED)
-	        	e.player.addChatMessage((ITextComponent)  new TextComponentTranslation("version", References.VERSION, target));
+	        	onJoin.add((ITextComponent)  new TextComponentTranslation("version", References.VERSION, target));
 			MainRegistry.getlogger().info("Update checker returned: " + status);
 			
 		}
