@@ -67,6 +67,9 @@ gui.overworldDimension.comment=Play the sounds for the forest, beach, cricket, s
 gui.forceMusic=Should the music be forced off
 gui.forceMusic.comment=Happenes everytime the game is launched
 
+gui.mode2=Should the second "secret" mode be on
+gui.mode2.comment=Not very secret
+
 version=[sounds_extended] The Mod is out of date. Your version %s, target version: %s.
 
 gui.title=Sounds Extended Configuration File
