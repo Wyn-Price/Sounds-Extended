@@ -116,6 +116,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void playerUpdate(LivingUpdateEvent e)
 	{
+		inPauseMenu = true;
 		if(loadin)
 		{
 			loadin = false;
