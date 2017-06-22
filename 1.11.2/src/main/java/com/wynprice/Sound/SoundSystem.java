@@ -19,7 +19,6 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 
 public class SoundSystem 
 {
-	private static boolean f = false;
 	private static Thread glassWorksThread;
 	public static ArrayList<Clip> sClips = new ArrayList<Clip>(); 
 	
