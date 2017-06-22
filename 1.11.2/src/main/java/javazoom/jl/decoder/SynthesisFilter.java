@@ -31,6 +31,9 @@
 package javazoom.jl.decoder;
 
 import java.io.IOException;
+import java.io.InputStream;
+
+import com.wynprice.Sound.SoundSystem;
 
 /**
  * A class for the synthesis filter bank.
@@ -87,7 +90,11 @@ final class SynthesisFilter
      reset();
   }
   
-  public void setEQ(float[] eq0)
+  public SynthesisFilter() {
+		
+	}
+
+public void setEQ(float[] eq0)
   {
 	 this.eq = eq0;	 
 	 if (eq==null)
@@ -1618,13 +1625,23 @@ private void compute_pcm_samples(Obuffer buffer)
 		try
 		{
 			Class elemType = Float.TYPE;
-			Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
+			Object o = JavaLayerUtils.deserializeArray(getLoc("sfd.ser"), elemType, 512);
 			return (float[])o;
 		}
 		catch (IOException ex)
 		{
 			throw new ExceptionInInitializerError(ex);
 		}		
+	}
+	
+	private Class<? extends SynthesisFilter> c()
+	{
+		return getClass();
+	}
+	
+	private static InputStream getLoc(String name)
+	{
+		return new SynthesisFilter().c().getResourceAsStream("/jl/" + name);
 	}
 	
 	/**
