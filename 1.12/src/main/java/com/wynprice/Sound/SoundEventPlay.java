@@ -240,7 +240,7 @@ public class SoundEventPlay
 						}
 						if(!world.loadedEntityList.contains(dragon) && previousFrameDragon)
 							bossMusic = SoundSystem.resetSound(bossMusic, 0);
-						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0 || !world.loadedEntityList.contains(dragon));
+						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
 						
 					}
 					if(!bossMusic.isRunning() && previousFrameDragon)
@@ -262,8 +262,8 @@ public class SoundEventPlay
 						{
 							bossMusic = SoundSystem.resetSound(bossMusic, 0);
 						}
-						previousFrameWither = !(wither.isDead || w.getHealth() == 0 || !world.loadedEntityList.contains(wither));
-						if(!world.loadedEntityList.contains(wither) && previousFrameWither)
+						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
+						if(previousFrameWither)
 							previousFrameWither = false;
 						
 					}

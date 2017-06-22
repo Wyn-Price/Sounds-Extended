@@ -84,7 +84,13 @@ public class SoundSystem
 	{
 		if(glassWorksThread == null)
 			glassWorksThread = glassworks();
-		glassWorksThread.start(); 
+		try
+		{
+			glassWorksThread.start(); 
+		}
+		catch (IllegalThreadStateException e) {
+			MainRegistry.getlogger().error("Unable to play music");
+		}
 	}
 	
 	

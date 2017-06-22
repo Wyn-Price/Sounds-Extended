@@ -66,51 +66,48 @@ public class SoundEventPlay
 	private World world;
 	public static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;;
+	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, printMessages = false;
 	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
-	void define()
+	static void define()
 	{
 		SoundSystem.sClips.clear();
-		for(String s : Arrays.asList(glassLoc, bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
+		for(String s : Arrays.asList(bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
 			SoundSystem.sClips.add(SoundSystem.sound(s));
-		glassworkOpen = SoundSystem.sClips.get(0);
-		bossMusic = SoundSystem.sClips.get(1);
-		hell = SoundSystem.sClips.get(2);
-		mPiarate = SoundSystem.sClips.get(3);
-		mPiarateB = SoundSystem.sClips.get(4);
-		
+		bossMusic = SoundSystem.sClips.get(0);
+		hell = SoundSystem.sClips.get(1);
+		mPiarate = SoundSystem.sClips.get(2);
+		mPiarateB = SoundSystem.sClips.get(3);
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
+		if(world == null)
+			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
 		{
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
 			if(isInCredits)
 			{
-				bossMusic = SoundSystem.pauseSound(bossMusic, 1);
-				hell = SoundSystem.pauseSound(hell, 2);
-				mPiarate = SoundSystem.pauseSound(mPiarate, 3);
-				mPiarateB = SoundSystem.pauseSound(mPiarateB, 4);
+				bossMusic = SoundSystem.pauseSound(bossMusic, 0);
+				hell = SoundSystem.pauseSound(hell, 1);
+				mPiarate = SoundSystem.pauseSound(mPiarate, 2);
+				mPiarateB = SoundSystem.pauseSound(mPiarateB, 3);
 			}
 		}
 		if(isInCredits && !isInCreditsFirst)
-		{
-			glassworkOpen.start();
-		}
-			
+			SoundSystem.playGlassworks();
 		if(!isInCredits && isInCreditsFirst)
-			glassworkOpen = SoundSystem.resetSound(glassworkOpen,0);
+			SoundSystem.stopGlassworks();
 		isInCreditsFirst = isInCredits;
 		if(world == null || Minecraft.getMinecraft().isGamePaused() && inPauseMenu)
 		{
 			inPauseMenu = false;
-			bossMusic = SoundSystem.pauseSound(bossMusic, 1);
-			hell = SoundSystem.pauseSound(hell, 2);
-			mPiarate = SoundSystem.pauseSound(mPiarate, 3);
-			mPiarateB = SoundSystem.pauseSound(mPiarateB, 4);
+			bossMusic = SoundSystem.pauseSound(bossMusic, 0);
+			hell = SoundSystem.pauseSound(hell, 1);
+			mPiarate = SoundSystem.pauseSound(mPiarate, 2);
+			mPiarateB = SoundSystem.pauseSound(mPiarateB, 3);
 		}
 	}
 	
@@ -118,11 +115,8 @@ public class SoundEventPlay
 	public void playerUpdate(LivingUpdateEvent e)
 	{
 		inPauseMenu = true;
-		if(loadin && e.getEntity() instanceof EntityPlayer)
+		if(loadin)
 		{
-			System.out.println(onJoin);
-			for(ITextComponent text : onJoin)
-				((EntityPlayer)e.getEntity()).addChatMessage(text);
 			loadin = false;
 			try
 			{
@@ -132,15 +126,21 @@ public class SoundEventPlay
 			}
 			catch (Exception exeption) 
 			{
-				
 				MainRegistry.getlogger().info("Loading system for SinglePlayer");
 				single = true;
 			}
 		}
 		
+		if(!printMessages && e.getEntity() instanceof EntityPlayer)
+		{
+			printMessages = true;
+			for(ITextComponent text : onJoin)
+				((EntityPlayer)e.getEntity()).addChatMessage(text);
+		}
+		
 		if(!SoundConfig.isBeach && !SoundConfig.isCricket && !SoundConfig.isFire && !SoundConfig.isForest && !SoundConfig.isForestStorm && !SoundConfig.isWind 
 				&& !SoundConfig.isHell && !SoundConfig.isEndDragon && !SoundConfig.isWither && !SoundConfig.isEnd && !SoundConfig.isShulkerSoundEnd)
-				return;
+			return;
 		
 		else if(!single)
 		{
@@ -179,7 +179,7 @@ public class SoundEventPlay
 						if(!mPiarateB.isRunning())
 						{
 							mPiarateB.setFramePosition(mPiarate.getFramePosition());
-							mPiarate = SoundSystem.resetSound(mPiarate, 3);
+							mPiarate = SoundSystem.resetSound(mPiarate, 2);
 							mPiarateB.start();
 						}	
 					}
@@ -191,7 +191,7 @@ public class SoundEventPlay
 						{
 							if(mPiarateB.getFramePosition() != 0)
 								mPiarate.setFramePosition(mPiarateB.getFramePosition());
-							mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
+							mPiarateB = SoundSystem.resetSound(mPiarateB, 3);
 							mPiarate.start();
 						}
 					}
@@ -201,9 +201,9 @@ public class SoundEventPlay
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
 						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
 					if(mPiarate.isRunning())
-						mPiarate = SoundSystem.resetSound(mPiarate, 3);
+						mPiarate = SoundSystem.resetSound(mPiarate, 2);
 					if(mPiarateB.isRunning())
-						mPiarateB = SoundSystem.resetSound(mPiarateB, 4);
+						mPiarateB = SoundSystem.resetSound(mPiarateB, 3);
 				}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
@@ -230,12 +230,12 @@ public class SoundEventPlay
 							playMusic = true;
 						if((dragon.isDead || d.getHealth() == 0) && previousFrameDragon)
 						{
-							bossMusic = SoundSystem.resetSound(bossMusic,1);
+							bossMusic = SoundSystem.resetSound(bossMusic, 0);
 							world.playSound(player, dragon.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 5f, 1f);
 						}
 						if(!world.loadedEntityList.contains(dragon) && previousFrameDragon)
-							bossMusic = SoundSystem.resetSound(bossMusic,1);
-						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0 || !world.loadedEntityList.contains(dragon));
+							bossMusic = SoundSystem.resetSound(bossMusic, 0);
+						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
 						
 					}
 					if(!bossMusic.isRunning() && previousFrameDragon)
@@ -255,19 +255,17 @@ public class SoundEventPlay
 						}
 						if((wither.isDead || w.getHealth() == 0) && previousFrameWither)
 						{
-							bossMusic = SoundSystem.resetSound(bossMusic,1);
+							bossMusic = SoundSystem.resetSound(bossMusic, 0);
 						}
-						previousFrameWither = !(wither.isDead || w.getHealth() == 0 || !world.loadedEntityList.contains(wither));
-						if(!world.loadedEntityList.contains(wither) && previousFrameWither)
+						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
+						if(previousFrameWither)
 							previousFrameWither = false;
 						
 					}
 					else witherInvulvTimer = 1f;
 					if(!bossMusic.isRunning() && previousFrameWither && witherInvulvTimer == 0)
 						playMusic = true;
-						
 				}
-				
 			}
 			if(!previousFrameWither && !hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
