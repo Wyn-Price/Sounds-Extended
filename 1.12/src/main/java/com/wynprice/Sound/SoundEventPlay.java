@@ -75,18 +75,18 @@ public class SoundEventPlay
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
-	private static Clip bossMusic, hell, piarate;
-	private static final String bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
-			piarateLoc = "piarate.wav";
-	private static final String[] wavSound = "b h p".split(" ");
+	
+	private static int glassWorkPausePosition;
+	private static Clip bossMusic, hell;
+	private static final String bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
+	private static final String[] wavSound = "b h".split(" ");
 	static void define()
 	{
 		SoundSystem.sClips.clear();
-		for(String s : Arrays.asList(bossLoc, hellLoc, piarateLoc))
+		for(String s : Arrays.asList(bossLoc, hellLoc))
 			SoundSystem.sClips.add(SoundSystem.sound(s));
 		bossMusic = getSound("b");
 		hell = getSound("h");
-		piarate = getSound("p");
 	}
 	
 	private static Clip getSound(String key)
@@ -103,7 +103,6 @@ public class SoundEventPlay
 	{
 		bossMusic = SoundSystem.pauseSound(bossMusic, i("b"));
 		hell = SoundSystem.pauseSound(hell, i("b"));
-		piarate = SoundSystem.pauseSound(piarate, i("p"));
 	}
 	
 	private static Clip rs(Clip clip, String key)

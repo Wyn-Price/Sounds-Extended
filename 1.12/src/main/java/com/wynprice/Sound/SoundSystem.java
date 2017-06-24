@@ -63,68 +63,8 @@ public class SoundSystem
 		return c;
 	}
 	
-	private Class<? extends SoundSystem> c()
+	public Class<? extends SoundSystem> c()
 	{
 		return getClass();
-	}
-	
-	
-	
-	
-	public static class glassworks
-	{
-		private static AudioDevice device;
-		private static Thread thread;
-		private final static String name = "glasswork_opening";
-		private static Thread getThread()
-		{
-			return new Thread(){
-				  public void run(){
-					  	try {
-					  		registerThread().play();
-						} catch (JavaLayerException e) {
-							e.printStackTrace();
-						}
-				  }
-				};
-		}
-		
-		public static void play()
-		{
-			if(thread == null)
-				thread = getThread();
-			try
-			{
-				thread.start(); 
-			}
-			catch (IllegalThreadStateException e) {
-				MainRegistry.getlogger().error("Unable to play music");
-			}
-		}
-		
-		
-		public static void stop()
-		{
-			thread.stop();
-			thread = null;
-		}
-		
-		private static AdvancedPlayer registerThread()
-		{
-			AdvancedPlayer player = null;
-			String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
-			try {
-				device = FactoryRegistry.systemRegistry().createAudioDevice();
-				player = new AdvancedPlayer(new SoundSystem().c().getResourceAsStream(location), device); 
-			} catch (JavaLayerException e) {
-			    e.printStackTrace();
-			}
-			return player;
-		}
-		
-		public static int pos()
-		{
-			return device.getPosition();
-		}
 	}
 }
