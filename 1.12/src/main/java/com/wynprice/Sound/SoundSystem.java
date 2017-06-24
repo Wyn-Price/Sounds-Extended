@@ -14,12 +14,13 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.FactoryRegistry;
 import javazoom.jl.player.advanced.AdvancedPlayer;
+import javazoom.jl.player.advanced.PlaybackListener;
 
 public class SoundSystem 
 {
-	private static Thread glassWorksThread;
 	public static ArrayList<Clip> sClips = new ArrayList<Clip>(); 
 	
 	public static Clip pauseSound(Clip clip, int i)
@@ -67,49 +68,63 @@ public class SoundSystem
 		return getClass();
 	}
 	
-	private static Thread glassworks()
-	{
-		return new Thread(){
-			  public void run(){
-				  	try {
-				  		registerGlassworks().play();
-					} catch (JavaLayerException e) {
-						e.printStackTrace();
-					}
-			  }
-			};
-	}
 	
-	public static void playGlassworks()
+	
+	
+	public static class glassworks
 	{
-		if(glassWorksThread == null)
-			glassWorksThread = glassworks();
-		try
+		private static AudioDevice device;
+		private static Thread thread;
+		private final static String name = "glasswork_opening";
+		private static Thread getThread()
 		{
-			glassWorksThread.start(); 
+			return new Thread(){
+				  public void run(){
+					  	try {
+					  		registerThread().play();
+						} catch (JavaLayerException e) {
+							e.printStackTrace();
+						}
+				  }
+				};
 		}
-		catch (IllegalThreadStateException e) {
-			MainRegistry.getlogger().error("Unable to play music");
+		
+		public static void play()
+		{
+			if(thread == null)
+				thread = getThread();
+			try
+			{
+				thread.start(); 
+			}
+			catch (IllegalThreadStateException e) {
+				MainRegistry.getlogger().error("Unable to play music");
+			}
 		}
-	}
-	
-	
-	public static void stopGlassworks()
-	{
-		glassWorksThread.stop();
-		glassWorksThread = null;
-	}
-	
-	public static AdvancedPlayer registerGlassworks()
-	{
-		AdvancedPlayer player = null;
-		String location = "/assets/" + References.MODID + "/sounds/glasswork_opening.mp3";
-		try {
-			player = new AdvancedPlayer(new SoundSystem().c().getResourceAsStream(location)); 
-		    FactoryRegistry.systemRegistry().createAudioDevice();
-		} catch (JavaLayerException e) {
-		    e.printStackTrace();
+		
+		
+		public static void stop()
+		{
+			thread.stop();
+			thread = null;
 		}
-		return player;
+		
+		private static AdvancedPlayer registerThread()
+		{
+			AdvancedPlayer player = null;
+			String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
+			try {
+				device = FactoryRegistry.systemRegistry().createAudioDevice();
+				player = new AdvancedPlayer(new SoundSystem().c().getResourceAsStream(location), device); 
+			} catch (JavaLayerException e) {
+			    e.printStackTrace();
+			}
+			return player;
+		}
+		
+		public static int pos()
+		{
+			return device.getPosition();
+		}
 	}
 }
