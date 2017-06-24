@@ -29,6 +29,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityShulker;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -66,23 +67,29 @@ public class SoundEventPlay
 	private World world;
 	public static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, printMessages = false;
-	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB;
+	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, printMessages = false, firstUpdate = false;
+	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB, pig90;
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
-			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav";
+			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav", pig90Loc = "pig90.wav";
 	static void define()
 	{
 		SoundSystem.sClips.clear();
-		for(String s : Arrays.asList(bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc))
+		for(String s : Arrays.asList(bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc, pig90Loc))
 			SoundSystem.sClips.add(SoundSystem.sound(s));
 		bossMusic = SoundSystem.sClips.get(0);
 		hell = SoundSystem.sClips.get(1);
 		mPiarate = SoundSystem.sClips.get(2);
 		mPiarateB = SoundSystem.sClips.get(3);
+		pig90 = SoundSystem.sClips.get(4);
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
+		if(!firstUpdate)
+		{
+			firstUpdate = true;
+			define();
+		}
 		if(world == null)
 			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
@@ -108,6 +115,7 @@ public class SoundEventPlay
 			hell = SoundSystem.pauseSound(hell, 1);
 			mPiarate = SoundSystem.pauseSound(mPiarate, 2);
 			mPiarateB = SoundSystem.pauseSound(mPiarateB, 3);
+			pig90 = SoundSystem.sClips.get(4);
 		}
 	}
 	
@@ -196,7 +204,9 @@ public class SoundEventPlay
 						}
 					}
 				}
-				else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat))
+				else if(player.isRiding() && player.getRidingEntity() instanceof EntityPig && world.isRemote && !pig90.isRunning())
+					pig90.start();
+				else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity() instanceof EntityPig))
 				{
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
 						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
@@ -204,6 +214,8 @@ public class SoundEventPlay
 						mPiarate = SoundSystem.resetSound(mPiarate, 2);
 					if(mPiarateB.isRunning())
 						mPiarateB = SoundSystem.resetSound(mPiarateB, 3);
+					if(pig90.isRunning())
+						pig90 = SoundSystem.resetSound(pig90, 4);
 				}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
