@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import paulscode.sound.SoundSystemConfig;
+import sounds_extended.MP3Player;
 import sounds_extended.WAVPlayer;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY, canBeDeactivated=true)
@@ -83,7 +84,7 @@ public class MainRegistry
 	
 	public static void createNew()
 	{
-		createOptions();
+		createOptions(); 
 		try {
 			changeFiles();
 		} catch (FileNotFoundException e) {
