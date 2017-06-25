@@ -1,5 +1,6 @@
 package com.wynprice.Sound;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 
@@ -9,11 +10,11 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class WynClip {
+public class WAVPlayer {
 	private Clip originalClip;
 	private Clip playingClip;
 	
-	public WynClip(String location)
+	public WAVPlayer(String location)
 	{
 		location = "/assets/" + References.MODID + "/sounds/" + location + ".wav";
 		Clip clip = null;
@@ -56,7 +57,7 @@ public class WynClip {
 		playingClip = originalClip;
 	}
 	
-	private Class<? extends WynClip> c()
+	private Class<? extends WAVPlayer> c()
 	{
 		return getClass();
 	}
@@ -69,6 +70,16 @@ public class WynClip {
 	public float getMicrosecondPosition()
 	{
 		return originalClip.getMicrosecondPosition();
+	}
+
+	public int getFramePosition() 
+	{
+		return playingClip.getFramePosition();
+	}
+
+	public void setFramePosition(int framePosition) 
+	{
+		playingClip.setFramePosition(framePosition);
 	}
 
 }
