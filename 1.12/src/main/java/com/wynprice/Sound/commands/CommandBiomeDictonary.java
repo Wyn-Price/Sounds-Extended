@@ -6,9 +6,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.wynprice.Sound.SoundEventPlay;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;

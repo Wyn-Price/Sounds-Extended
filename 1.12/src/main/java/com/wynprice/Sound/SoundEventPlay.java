@@ -24,6 +24,7 @@ import com.wynprice.Sound.config.SoundConfig;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -35,6 +36,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -95,6 +97,7 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
+		//System.out.println(MP3Player.findWithName("glasswork_opening").getPosition());
 		if(world == null)
 			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
@@ -104,7 +107,7 @@ public class SoundEventPlay
 				pauseAll();
 		}
 		if(isInCredits && !isInCreditsFirst)
-			glassworks.start();
+			glassworks.play();
 		if(!isInCredits && isInCreditsFirst)
 			glassworks.stop();
 		isInCreditsFirst = isInCredits;
@@ -172,7 +175,7 @@ public class SoundEventPlay
 				{
 					if(!pirate.isRunning());
 					{
-						pirate.start();
+						pirate.play();
 					}	
 					if((pirate.getPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
 					{

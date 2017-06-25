@@ -14,7 +14,6 @@ public class MP3Player
 	private AudioDevice device;
 	/** The Thread that holds the playing function */
 	private Thread thread;
-	private Runnable runnable;
 	/** The name of the file */
 	private final  String name;
 	/**The frame at which the audio is paused on*/
@@ -25,59 +24,58 @@ public class MP3Player
 	public MP3Player (String name)
 	{
 		this.name = name;
-		player = register();
+		try {
+			device = FactoryRegistry.systemRegistry().createAudioDevice();
+		} catch (JavaLayerException e) {
+			e.printStackTrace();
+		}
 		allMp3.add(this);
 	}
-	private class getThread implements Runnable
+	
+	private Thread getThread()
 	{
-		int frame;
-		AdvancedPlayer player;
-		private  getThread(int frame)
-		{
-			this.frame = frame;
-		}
-
-		@Override
-		public void run() {
-			try {
-		  		register().play();
-			} catch (JavaLayerException e) {
-				e.printStackTrace();
-			}	
-		}
+		return new Thread(){
+			  public void run(){
+				  	try {
+				  		registerThread().play();
+					} catch (JavaLayerException e) {
+						e.printStackTrace();
+					}
+			  }
+			};
 	}
 	
-	public void start(int frame)
+	public void play()
 	{
-		isRunning = true;
 		if(thread == null)
-		{
-			runnable = new getThread(frame);
-			thread = new Thread(runnable);
-		}
-			
+			thread = getThread();
 		try
 		{
 			thread.start(); 
 		}
 		catch (IllegalThreadStateException e) {
-			System.err.println("Unable to play Music\n");
-			e.printStackTrace();
+			System.err.println("Unable to play Music\n" + e.getStackTrace());
 		}
-	}
-	
-	public void start()
-	{
-		start(0);
 	}
 	
 	
 	public void stop()
 	{
-		isRunning = false;
 		if(thread != null)
 			thread.stop();
 		thread = null;
+	}
+	
+	private AdvancedPlayer registerThread()
+	{
+		AdvancedPlayer player = null;
+		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
+		try {
+			player = new AdvancedPlayer(new getClass().get().getResourceAsStream(location), device);
+		} catch (JavaLayerException e) {
+			e.printStackTrace();
+		} 
+		return player;
 	}
 	
 	public void pause()
@@ -93,26 +91,12 @@ public class MP3Player
 	
 	public void resume()
 	{
-		start(frameOnPaused);
+		play();
 	}
 	
 	private void playSound(int frame) throws JavaLayerException
 	{
 		player.play(frame, Integer.MAX_VALUE);
-	}
-	
-	private AdvancedPlayer register()
-	{
-		AdvancedPlayer player = null;
-		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
-		try {
-			device = FactoryRegistry.systemRegistry().createAudioDevice();
-			player = new AdvancedPlayer(new getClass().get().getResourceAsStream(location), device); 
-		} catch (JavaLayerException e) {
-		    e.printStackTrace();
-		}
-		this.player = player;
-		return player;
 	}
 	
 	public int getPosition()
@@ -146,6 +130,18 @@ public class MP3Player
 			if(m.getName().equals(name))
 				return m;
 		return null;
+	}
+	
+	private void registerPlayFromThread() throws JavaLayerException
+	{
+		player.play();
+	}
+	
+	public MP3Player playSound(MP3Player mp3)
+	{
+		MP3Player m = mp3;
+		m.play();
+		return m;
 	}
 }
 
