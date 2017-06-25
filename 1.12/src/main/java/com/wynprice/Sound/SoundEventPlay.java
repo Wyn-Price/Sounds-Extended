@@ -211,7 +211,6 @@ public class SoundEventPlay
 								shadersOff();
 							if(!piarate.isRunning())
 							{
-								
 								if(piarateB.getFramePosition() != 0)
 									piarate.setFramePosition(piarateB.getFramePosition());
 								piarateB.stop();
@@ -221,10 +220,10 @@ public class SoundEventPlay
 					}
 					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
 					{
-						if(!justFinishedPig)
-							justFinishedPig = true;
 						if(!pig90.isRunning())
 						{
+							if(justFinishedPig)
+								justFinishedPig = false;
 							MainRegistry.getlogger().info("Get ready for spam :(");
 							pig90.play();
 						}
@@ -249,7 +248,7 @@ public class SoundEventPlay
 							else if(!justFinishedPig)
 								{
 									justFinishedPig = true;
-									player.addChatMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
+									player.sendMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
 									shadersOff();
 								}
 					}

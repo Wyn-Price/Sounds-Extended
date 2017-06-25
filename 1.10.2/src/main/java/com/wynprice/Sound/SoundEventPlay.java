@@ -215,10 +215,10 @@ public class SoundEventPlay
 					}
 					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
 					{
-						if(!justFinishedPig)
-							justFinishedPig = true;
 						if(!pig90.isRunning())
 						{
+							if(justFinishedPig)
+								justFinishedPig = false;
 							MainRegistry.getlogger().info("Get ready for spam :(");
 							pig90.play();
 						}
