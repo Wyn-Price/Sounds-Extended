@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.sound.sampled.Clip;
 
@@ -98,7 +99,6 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
-		MP3Player.findWithName("glasswork_opening").stop();
 		if(world == null)
 			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)

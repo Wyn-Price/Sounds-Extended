@@ -1,6 +1,7 @@
 package com.wynprice.Sound;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.AudioDevice;
@@ -29,7 +30,7 @@ public class MP3Player
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
 		}
-		this.player = registerThread();
+		this.player = register();
 		allMp3.add(this);
 	}
 	
@@ -49,21 +50,25 @@ public class MP3Player
 	public void play()
 	{
 		isRunning = true;
-		thread = getThread();
-		thread.start();
+		Thread t = getThread();
+		t.start();
+		t.setName(name + " soundPlayer");
 	}
 	
 	
 	public void stop()
 	{
-		//System.out.println("stopping");
-		isRunning = false;
-		if(thread != null)
-			thread.stop();
-		thread = null;
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+		for(Thread t : threadArray)
+		{
+			if(t.getName().equals(name + " soundPlayer"))
+				t.suspend();
+				
+		}
 	}
 	
-	private AdvancedPlayer registerThread()
+	private AdvancedPlayer register()
 	{
 		AdvancedPlayer player = null;
 		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
