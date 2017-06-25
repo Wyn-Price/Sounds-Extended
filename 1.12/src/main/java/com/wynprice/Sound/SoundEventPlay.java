@@ -64,7 +64,7 @@ public class SoundEventPlay
 	private static final ArrayList<Float> pigSwapPositions = new ArrayList<Float>(Arrays.asList(13.015f, 19.102f, 23.563f, 23.753f, 23.947f, 24.123f, 24.32f, 24.508f, 24.692f, 24.879f, 25.074f));
 	
 	private static int timesSwapped = 0;
-	private static final ArrayList<String> allShaders = new ArrayList<String>(Arrays.asList("art bits blobs2 blur bumpy deconverge entity_outline green invert notch ntsc outline pencil phosphor scan_pincushion sobel spider".split(" ")));
+	private static final ArrayList<String> allShaders = new ArrayList<String>(Arrays.asList("art bits blobs2 blur bumpy deconverge green invert notch ntsc outline pencil phosphor scan_pincushion sobel spider".split(" ")));
 	private static ArrayList<Block> foliage = new ArrayList<Block>();
 	private ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
@@ -98,6 +98,16 @@ public class SoundEventPlay
 		piarate.stop();
 		piarateB.stop();
 		hell.pause();
+	}
+	
+	private void shadersOff()
+	{
+		try
+		{
+			Minecraft.getMinecraft().entityRenderer.stopUseShader();
+		} catch (RuntimeException run) {
+			
+		}
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
@@ -157,9 +167,6 @@ public class SoundEventPlay
 			if((SoundConfig.runOnServer && SoundConfig.useList && SoundConfig.readServers.contains(Minecraft.getMinecraft().getCurrentServerData().serverIP)) || !SoundConfig.runOnServer)
 				return;
 		}
-			
-		
-		
 		
 		if(playMusic && !bossMusic.isRunning())
 		{
@@ -191,7 +198,6 @@ public class SoundEventPlay
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
 							if(!piarateB.isRunning())
 							{
-								
 								piarateB.setFramePosition(piarate.getFramePosition());
 								piarate.stop();
 								piarateB.play();
@@ -200,7 +206,7 @@ public class SoundEventPlay
 						else
 						{
 							if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-								Minecraft.getMinecraft().entityRenderer.stopUseShader();
+								shadersOff();
 							if(!piarate.isRunning())
 							{
 								
@@ -215,33 +221,35 @@ public class SoundEventPlay
 					{
 						if(!pig90.isRunning())
 						{
-							MainRegistry.getlogger().info("Get ready for spam (;");
+							MainRegistry.getlogger().info("Get ready for spam :(");
 							pig90.play();
 						}
 							
 						if(pig90.getPosition() / 1000f > pigSwapPositions.get(timesSwapped))
 						{
-							if(Arrays.asList(0,1).contains(timesSwapped))
+							if(timesSwapped == 0)
+								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/phosphor.json"));
+							if(timesSwapped == 1)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
 							else if(Arrays.asList(2,3,4,5,6,7,8,9).contains(timesSwapped))
 								if(timesSwapped % 2 == 0)
 									Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));	
 								else
-									try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
+									shadersOff();
 							if(pigSwapPositions.size() != timesSwapped + 1)
 								timesSwapped ++;
 						}
 						if(timesSwapped == 10)
 							if(pig90.getPosition() / 1000 < 35.738f)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
-							else timesSwapped ++;
+							else shadersOff();
 					}
 				}
 				else
 				{
 					timesSwapped = 0;
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
+						shadersOff();
 					if(piarate.isRunning())
 						piarate.stop();
 					if(piarateB.isRunning())
@@ -265,7 +273,6 @@ public class SoundEventPlay
 					{
 						wither = entity;
 					}
-					
 				}
 				if(SoundConfig.isEndDragon)
 				{

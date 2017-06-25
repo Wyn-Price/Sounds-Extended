@@ -12,10 +12,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class WAVPlayer {
 	private Clip clip;
+	private String name;
 	
-	public WAVPlayer(String location)
+	public WAVPlayer(String name)
 	{
-		location = "/assets/" + References.MODID + "/sounds/" + location + ".wav";
+		this.name = name;
+		String location = "/assets/" + References.MODID + "/sounds/" + name + ".wav";
 		Clip clip = null;
 		URL url = new getClass().get().getResource(location);
 		try {
@@ -80,4 +82,8 @@ public class WAVPlayer {
 		clip.setFramePosition(framePosition);
 	}
 
+	public String toString()
+	{
+		return name;
+	}
 }
