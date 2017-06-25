@@ -58,8 +58,8 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
-import soundSystem.javazoom.jl.MP3Player;
-import soundSystem.javazoom.jl.WAVPlayer;
+import sounds_extended_Sound_System.MP3Player;
+import sounds_extended_Sound_System.WAVPlayer;
 
 public class SoundEventPlay
 {
