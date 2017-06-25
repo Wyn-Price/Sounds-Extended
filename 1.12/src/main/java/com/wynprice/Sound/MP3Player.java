@@ -29,6 +29,7 @@ public class MP3Player
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
 		}
+		this.player = registerThread();
 		allMp3.add(this);
 	}
 	
@@ -37,7 +38,7 @@ public class MP3Player
 		return new Thread(){
 			  public void run(){
 				  	try {
-				  		registerThread().play();
+				  		player.play();
 					} catch (JavaLayerException e) {
 						e.printStackTrace();
 					}
@@ -47,20 +48,16 @@ public class MP3Player
 	
 	public void play()
 	{
-		if(thread == null)
-			thread = getThread();
-		try
-		{
-			thread.start(); 
-		}
-		catch (IllegalThreadStateException e) {
-			System.err.println("Unable to play Music\n" + e.getStackTrace());
-		}
+		isRunning = true;
+		thread = getThread();
+		thread.start();
 	}
 	
 	
 	public void stop()
 	{
+		//System.out.println("stopping");
+		isRunning = false;
 		if(thread != null)
 			thread.stop();
 		thread = null;
@@ -76,22 +73,6 @@ public class MP3Player
 			e.printStackTrace();
 		} 
 		return player;
-	}
-	
-	public void pause()
-	{
-		frameOnPaused = milliSecondsToFrames();
-		stop();
-	}
-	
-	private int milliSecondsToFrames()
-	{
-		return (int) Math.floor(getPosition() * 0.028f);
-	}
-	
-	public void resume()
-	{
-		play();
 	}
 	
 	private void playSound(int frame) throws JavaLayerException

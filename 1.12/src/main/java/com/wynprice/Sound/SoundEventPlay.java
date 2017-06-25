@@ -89,15 +89,16 @@ public class SoundEventPlay
 		return new ArrayList<String>(Arrays.asList(wavSound)).indexOf(key);
 	}
 	
-	public void pauseAll()
+	private void pauseAll()
 	{
-		glassworks.pause();
+		inPauseMenu = false;
+		bossMusic.pause();
+		hell.pause();
 	}
-	
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
-		//System.out.println(MP3Player.findWithName("glasswork_opening").getPosition());
+		MP3Player.findWithName("glasswork_opening").stop();
 		if(world == null)
 			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
