@@ -61,8 +61,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class SoundEventPlay
 {
-	private static final ArrayList<Float> pirateSwapPositions = new ArrayList<Float>(Arrays.asList(
-			5.561f, 5.916f, 6.418f, 6.736f, 7.097f, 7.1925f, 7.305f, 7.524f, 7.796f));
+	private static final ArrayList<Float> pirateSwapPositions = new ArrayList<Float>(Arrays.asList((float)Integer.MAX_VALUE));
 	private static int timesSwitched = 0;
 	private static ArrayList<Block> foliage = new ArrayList<Block>();
 	private ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
@@ -129,12 +128,10 @@ public class SoundEventPlay
 			try
 			{
 				String s = Minecraft.getMinecraft().getCurrentServerData().serverIP;
-				System.out.println("mul");
 				MainRegistry.getlogger().info("Loading system for MultiPlayer");	
 			}
 			catch (Exception exeption) 
 			{
-				System.out.println("sin");
 				MainRegistry.getlogger().info("Loading system for SinglePlayer");
 				single = true;
 			}
@@ -174,17 +171,18 @@ public class SoundEventPlay
 			if(SoundConfig.mode2)
 				if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
 				{
-					if(!pirate.isRunning());
-					{
+					
+					if(!pirate.isRunning())
 						pirate.play();
-					}	
+						
 					if((pirate.getPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
 					{
 						if(Arrays.asList(timesSwitched, timesSwitched % 2).contains(0))
 							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));
 						else
 							try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
-						timesSwitched ++;
+						if(pirateSwapPositions.size() != timesSwitched + 1)
+							timesSwitched ++;
 					}
 					
 				}
@@ -192,7 +190,7 @@ public class SoundEventPlay
 				{
 					
 				}
-				else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity() instanceof EntityPig))
+				else if(!(player.isRiding() && (player.getRidingEntity() instanceof EntityBoat || player.getRidingEntity() instanceof EntityPig)))
 				{
 					timesSwitched = 0;
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
