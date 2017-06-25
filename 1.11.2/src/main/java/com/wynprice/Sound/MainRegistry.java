@@ -39,6 +39,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import paulscode.sound.SoundSystemConfig;
+import sounds_extended.MP3Player;
+import sounds_extended.WAVPlayer;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY, canBeDeactivated=true)
 public class MainRegistry
@@ -53,10 +55,13 @@ public class MainRegistry
 	private static File optionsFile;
 	public static final Splitter COLON_SPLITTER = Splitter.on(':');
 	
+	private static WAVPlayer startup = new WAVPlayer("startup");
+	
 	@EventHandler
 	public static void PreInit(FMLPreInitializationEvent e) throws IOException
 	{
 		getlogger().info("Playing that noteblock nicely");
+		startup.play();
 		SoundConfig.preInit();
 		SoundSystemConfig.setNumberStreamingChannels(11);
 		SoundSystemConfig.setNumberNormalChannels(21); 
@@ -79,7 +84,7 @@ public class MainRegistry
 	
 	public static void createNew()
 	{
-		createOptions();
+		createOptions(); 
 		try {
 			changeFiles();
 		} catch (FileNotFoundException e) {
@@ -110,7 +115,7 @@ public class MainRegistry
 	@EventHandler
 	public static void Init(FMLInitializationEvent e) throws IOException
 	{
-		new SoundEventPlay().load();
+		SoundEventPlay.load();
 		proxy.Init(e);
 		
 	}
@@ -274,7 +279,7 @@ public class MainRegistry
                 printwriter.println("modelPart_" + enumplayermodelparts.getPartName() + ":true");
             }
         }
-        catch (Exception exception)
+        catch (FileNotFoundException exception)
         {
             MainRegistry.getlogger().error("Failed to save options", (Throwable)exception);
         }
