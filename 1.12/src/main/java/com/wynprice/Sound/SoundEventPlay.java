@@ -76,8 +76,7 @@ public class SoundEventPlay
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	
 	private static MP3Player glassworks = new MP3Player("glasswork_opening");
-	private static WynClip bossMusic, hell, pirate;
-	private static final String bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
+	private static WynClip bossMusic = new WynClip("boss_fight"), hell = new WynClip("hell"), pirate;
 	private static final String[] wavSound = "b h".split(" ");
 
 	

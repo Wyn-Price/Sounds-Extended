@@ -83,7 +83,7 @@ public class MP3Player
 		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
 		try {
 			device = FactoryRegistry.systemRegistry().createAudioDevice();
-			player = new AdvancedPlayer(new MP3Player(name).c().getResourceAsStream(location), device); 
+			player = new AdvancedPlayer(new getClass().get().getResourceAsStream(location), device); 
 		} catch (JavaLayerException e) {
 		    e.printStackTrace();
 		}

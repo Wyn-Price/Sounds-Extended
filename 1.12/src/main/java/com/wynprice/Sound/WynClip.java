@@ -15,9 +15,9 @@ public class WynClip {
 	
 	public WynClip(String location)
 	{
-		location = "/assets/" + References.MODID + "/sounds/" + location;
+		location = "/assets/" + References.MODID + "/sounds/" + location + ".wav";
 		Clip clip = null;
-		URL url = new WynClip(location).c().getResource(location);
+		URL url = new getClass().get().getResource(location);
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(url);
 			clip = AudioSystem.getClip();
