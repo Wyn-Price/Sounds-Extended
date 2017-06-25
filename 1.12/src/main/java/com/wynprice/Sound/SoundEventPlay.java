@@ -76,7 +76,7 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	
-	private static int glassWorkPausePosition;
+	private static MP3Player glassworks = new MP3Player("glasswork_opening");
 	private static Clip bossMusic, hell;
 	private static final String bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
 	private static final String[] wavSound = "b h".split(" ");
@@ -112,7 +112,6 @@ public class SoundEventPlay
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
-		System.out.println(SoundSystem.glassworks.pos());
 		if(world == null)
 			return;
 		if(Minecraft.getMinecraft().currentScreen != null && !loadin)
@@ -122,9 +121,9 @@ public class SoundEventPlay
 				pauseAll();
 		}
 		if(isInCredits && !isInCreditsFirst)
-			SoundSystem.glassworks.play();
+			glassworks.play();
 		if(!isInCredits && isInCreditsFirst)
-			SoundSystem.glassworks.stop();
+			glassworks.stop();
 		isInCreditsFirst = isInCredits;
 		if(world == null || Minecraft.getMinecraft().isGamePaused() && inPauseMenu)
 		{
