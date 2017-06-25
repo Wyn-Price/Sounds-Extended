@@ -110,7 +110,7 @@ public class MainRegistry
 	@EventHandler
 	public static void Init(FMLInitializationEvent e) throws IOException
 	{
-		new SoundEventPlay().load();
+		SoundEventPlay.load();
 		proxy.Init(e);
 		
 	}
@@ -276,7 +276,7 @@ public class MainRegistry
                 printwriter.println("modelPart_" + enumplayermodelparts.getPartName() + ":true");
             }
         }
-        catch (Exception exception)
+        catch (FileNotFoundException exception)
         {
             MainRegistry.getlogger().error("Failed to save options", (Throwable)exception);
         }

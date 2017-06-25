@@ -1,5 +1,7 @@
 package com.wynprice.Sound;
 
+import java.util.ArrayList;
+
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.FactoryRegistry;
@@ -17,27 +19,28 @@ public class MP3Player
 	private final  String name;
 	/**The frame at which the audio is paused on*/
 	private int frameOnPaused;
+	public static ArrayList<MP3Player> allMp3 = new ArrayList<MP3Player>();
 	private Boolean isRunning = false;
 	
 	public MP3Player (String name)
 	{
 		this.name = name;
 		player = register();
+		allMp3.add(this);
 	}
 	private class getThread implements Runnable
 	{
 		int frame;
 		AdvancedPlayer player;
-		private  getThread(AdvancedPlayer player, int frame)
+		private  getThread(int frame)
 		{
 			this.frame = frame;
-			this.player = player;
 		}
 
 		@Override
 		public void run() {
 			try {
-		  		player.play(frame, Integer.MAX_VALUE);/ERROR HERE
+		  		register().play();
 			} catch (JavaLayerException e) {
 				e.printStackTrace();
 			}	
@@ -49,7 +52,7 @@ public class MP3Player
 		isRunning = true;
 		if(thread == null)
 		{
-			runnable = new getThread(player, frame);
+			runnable = new getThread(frame);
 			thread = new Thread(runnable);
 		}
 			
@@ -74,8 +77,6 @@ public class MP3Player
 		isRunning = false;
 		if(thread != null)
 			thread.stop();
-		else
-			System.err.println("stop() was called before start() for " + name); 
 		thread = null;
 	}
 	
@@ -95,6 +96,11 @@ public class MP3Player
 		start(frameOnPaused);
 	}
 	
+	private void playSound(int frame) throws JavaLayerException
+	{
+		player.play(frame, Integer.MAX_VALUE);
+	}
+	
 	private AdvancedPlayer register()
 	{
 		AdvancedPlayer player = null;
@@ -105,6 +111,7 @@ public class MP3Player
 		} catch (JavaLayerException e) {
 		    e.printStackTrace();
 		}
+		this.player = player;
 		return player;
 	}
 	
@@ -118,6 +125,11 @@ public class MP3Player
 		return device.isOpen();
 	}
 	
+	public String getName()
+	{
+		return name;
+	}
+	
 	private Class<? extends MP3Player> c()
 	{
 		return getClass();
@@ -126,6 +138,14 @@ public class MP3Player
 	public boolean isRunning() 
 	{
 		return isRunning;
+	}
+	
+	public static MP3Player findWithName(String name)
+	{
+		for(MP3Player m : allMp3)
+			if(m.getName().equals(name))
+				return m;
+		return null;
 	}
 }
 
