@@ -39,6 +39,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import paulscode.sound.SoundSystemConfig;
+import sounds_extended.MP3Player;
+import sounds_extended.WAVPlayer;
 
 @Mod(modid = References.MODID , name = References.NAME , version =References.VERSION, guiFactory = References.GUI_FACTORY, canBeDeactivated=true)
 public class MainRegistry
@@ -53,10 +55,13 @@ public class MainRegistry
 	private static File optionsFile;
 	public static final Splitter COLON_SPLITTER = Splitter.on(':');
 	
+	private static WAVPlayer startup = new WAVPlayer("startup");
+	
 	@EventHandler
 	public static void PreInit(FMLPreInitializationEvent e) throws IOException
 	{
 		getlogger().info("Playing that noteblock nicely");
+		startup.play();
 		SoundConfig.preInit();
 		SoundSystemConfig.setNumberStreamingChannels(11);
 		SoundSystemConfig.setNumberNormalChannels(21); 
@@ -79,7 +84,7 @@ public class MainRegistry
 	
 	public static void createNew()
 	{
-		createOptions();
+		createOptions(); 
 		try {
 			changeFiles();
 		} catch (FileNotFoundException e) {
@@ -110,8 +115,9 @@ public class MainRegistry
 	@EventHandler
 	public static void Init(FMLInitializationEvent e) throws IOException
 	{
-		new SoundEventPlay().load();
+		SoundEventPlay.load();
 		proxy.Init(e);
+		
 	}
 	
 	@EventHandler
@@ -120,11 +126,6 @@ public class MainRegistry
 		proxy.PostInit(e);
 	}
 	
-	@EventHandler
-	public void serverLoad(FMLServerStartingEvent event)
-	{
-		event.registerServerCommand(new CommandBiomeDictonary());
-	}
 	
 	private static Logger logger; 
 	public static Logger getlogger()
@@ -134,6 +135,12 @@ public class MainRegistry
 			logger = LogManager.getFormatterLogger(References.MODID);
 		}
 		return logger;
+	}
+	
+	@EventHandler
+	public void serverLoad(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandBiomeDictonary());
 	}
 	
 	 private static NBTTagCompound dataFix(NBTTagCompound p_189988_1_)
@@ -170,118 +177,116 @@ public class MainRegistry
 		    } catch(IOException ignored) {
 		    }
 		}
-		
+	
+	
+	
+	
+	
+	
+	
 
+	
+	
 		
-		
-		
-		
-		
-		
-		
+	public static void createOptions()
+	{
+		MainRegistry.getlogger().info("Options file does not exist. Creating now");
+		PrintWriter printwriter = null;
+		GameSettings g = new GameSettings();
+		File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+		final Gson GSON = new Gson();
+        try
+        {
+            printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(optionsFile), StandardCharsets.UTF_8));
+            printwriter.println("version:1139");
+            printwriter.println("invertYMouse:" + g.invertMouse);
+            printwriter.println("mouseSensitivity:" + g.mouseSensitivity);
+            printwriter.println("fov:" + (g.fovSetting - 70.0F) / 40.0F);
+            printwriter.println("gamma:" + g.gammaSetting);
+            printwriter.println("saturation:" + g.saturation);
+            printwriter.println("renderDistance:" + g.renderDistanceChunks);
+            printwriter.println("guiScale:" + g.guiScale);
+            printwriter.println("particles:" + g.particleSetting);
+            printwriter.println("bobView:" + g.viewBobbing);
+            printwriter.println("anaglyph3d:" + g.anaglyph);
+            printwriter.println("maxFps:" + g.limitFramerate);
+            printwriter.println("fboEnable:" + g.fboEnable);
+            printwriter.println("difficulty:" + g.difficulty.getDifficultyId());
+            printwriter.println("fancyGraphics:" + g.fancyGraphics);
+            printwriter.println("ao:" + g.ambientOcclusion);
 
-		
-		
-		
-		public static void createOptions()
-		{
-			MainRegistry.getlogger().info("Options file does not exist. Creating now");
-			PrintWriter printwriter = null;
-			GameSettings g = new GameSettings();
-			File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
-			final Gson GSON = new Gson();
-	        try
-	        {
-	            printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(optionsFile), StandardCharsets.UTF_8));
-	            printwriter.println("version:1139");
-	            printwriter.println("invertYMouse:" + g.invertMouse);
-	            printwriter.println("mouseSensitivity:" + g.mouseSensitivity);
-	            printwriter.println("fov:" + (g.fovSetting - 70.0F) / 40.0F);
-	            printwriter.println("gamma:" + g.gammaSetting);
-	            printwriter.println("saturation:" + g.saturation);
-	            printwriter.println("renderDistance:" + g.renderDistanceChunks);
-	            printwriter.println("guiScale:" + g.guiScale);
-	            printwriter.println("particles:" + g.particleSetting);
-	            printwriter.println("bobView:" + g.viewBobbing);
-	            printwriter.println("anaglyph3d:" + g.anaglyph);
-	            printwriter.println("maxFps:" + g.limitFramerate);
-	            printwriter.println("fboEnable:" + g.fboEnable);
-	            printwriter.println("difficulty:" + g.difficulty.getDifficultyId());
-	            printwriter.println("fancyGraphics:" + g.fancyGraphics);
-	            printwriter.println("ao:" + g.ambientOcclusion);
+            switch (g.clouds)
+            {
+                case 0:
+                    printwriter.println("renderClouds:false");
+                    break;
+                case 1:
+                    printwriter.println("renderClouds:fast");
+                    break;
+                case 2:
+                    printwriter.println("renderClouds:true");
+            }
 
-	            switch (g.clouds)
-	            {
-	                case 0:
-	                    printwriter.println("renderClouds:false");
-	                    break;
-	                case 1:
-	                    printwriter.println("renderClouds:fast");
-	                    break;
-	                case 2:
-	                    printwriter.println("renderClouds:true");
-	            }
+            printwriter.println("resourcePacks:" + GSON.toJson(g.resourcePacks));
+            printwriter.println("incompatibleResourcePacks:" + GSON.toJson(g.incompatibleResourcePacks));
+            printwriter.println("lastServer:" + g.lastServer);
+            printwriter.println("lang:" + g.language);
+            printwriter.println("chatVisibility:" + g.chatVisibility.getChatVisibility());
+            printwriter.println("chatColors:" + g.chatColours);
+            printwriter.println("chatLinks:" + g.chatLinks);
+            printwriter.println("chatLinksPrompt:" + g.chatLinksPrompt);
+            printwriter.println("chatOpacity:" + g.chatOpacity);
+            printwriter.println("snooperEnabled:" + g.snooperEnabled);
+            printwriter.println("fullscreen:" + g.fullScreen);
+            printwriter.println("enableVsync:" + g.enableVsync);
+            printwriter.println("useVbo:" + g.useVbo);
+            printwriter.println("hideServerAddress:" + g.hideServerAddress);
+            printwriter.println("advancedItemTooltips:" + g.advancedItemTooltips);
+            printwriter.println("pauseOnLostFocus:" + g.pauseOnLostFocus);
+            printwriter.println("touchscreen:" + g.touchscreen);
+            printwriter.println("overrideWidth:" + g.overrideWidth);
+            printwriter.println("overrideHeight:" + g.overrideHeight);
+            printwriter.println("heldItemTooltips:" + g.heldItemTooltips);
+            printwriter.println("chatHeightFocused:" + g.chatHeightFocused);
+            printwriter.println("chatHeightUnfocused:" + g.chatHeightUnfocused);
+            printwriter.println("chatScale:" + g.chatScale);
+            printwriter.println("chatWidth:" + g.chatWidth);
+            printwriter.println("mipmapLevels:" + g.mipmapLevels);
+            printwriter.println("forceUnicodeFont:" + g.forceUnicodeFont);
+            printwriter.println("reducedDebugInfo:" + g.reducedDebugInfo);
+            printwriter.println("useNativeTransport:" + g.useNativeTransport);
+            printwriter.println("entityShadows:" + g.entityShadows);
+            printwriter.println("mainHand:" + (g.mainHand == EnumHandSide.LEFT ? "left" : "right"));
+            printwriter.println("attackIndicator:" + g.attackIndicator);
+            printwriter.println("showSubtitles:" + g.showSubtitles);
+            printwriter.println("realmsNotifications:" + g.realmsNotifications);
+            printwriter.println("enableWeakAttacks:" + g.enableWeakAttacks);
+            printwriter.println("autoJump:" + g.autoJump);
 
-	            printwriter.println("resourcePacks:" + GSON.toJson(g.resourcePacks));
-	            printwriter.println("incompatibleResourcePacks:" + GSON.toJson(g.incompatibleResourcePacks));
-	            printwriter.println("lastServer:" + g.lastServer);
-	            printwriter.println("lang:" + g.language);
-	            printwriter.println("chatVisibility:" + g.chatVisibility.getChatVisibility());
-	            printwriter.println("chatColors:" + g.chatColours);
-	            printwriter.println("chatLinks:" + g.chatLinks);
-	            printwriter.println("chatLinksPrompt:" + g.chatLinksPrompt);
-	            printwriter.println("chatOpacity:" + g.chatOpacity);
-	            printwriter.println("snooperEnabled:" + g.snooperEnabled);
-	            printwriter.println("fullscreen:" + g.fullScreen);
-	            printwriter.println("enableVsync:" + g.enableVsync);
-	            printwriter.println("useVbo:" + g.useVbo);
-	            printwriter.println("hideServerAddress:" + g.hideServerAddress);
-	            printwriter.println("advancedItemTooltips:" + g.advancedItemTooltips);
-	            printwriter.println("pauseOnLostFocus:" + g.pauseOnLostFocus);
-	            printwriter.println("touchscreen:" + g.touchscreen);
-	            printwriter.println("overrideWidth:" + g.overrideWidth);
-	            printwriter.println("overrideHeight:" + g.overrideHeight);
-	            printwriter.println("heldItemTooltips:" + g.heldItemTooltips);
-	            printwriter.println("chatHeightFocused:" + g.chatHeightFocused);
-	            printwriter.println("chatHeightUnfocused:" + g.chatHeightUnfocused);
-	            printwriter.println("chatScale:" + g.chatScale);
-	            printwriter.println("chatWidth:" + g.chatWidth);
-	            printwriter.println("mipmapLevels:" + g.mipmapLevels);
-	            printwriter.println("forceUnicodeFont:" + g.forceUnicodeFont);
-	            printwriter.println("reducedDebugInfo:" + g.reducedDebugInfo);
-	            printwriter.println("useNativeTransport:" + g.useNativeTransport);
-	            printwriter.println("entityShadows:" + g.entityShadows);
-	            printwriter.println("mainHand:" + (g.mainHand == EnumHandSide.LEFT ? "left" : "right"));
-	            printwriter.println("attackIndicator:" + g.attackIndicator);
-	            printwriter.println("showSubtitles:" + g.showSubtitles);
-	            printwriter.println("realmsNotifications:" + g.realmsNotifications);
-	            printwriter.println("enableWeakAttacks:" + g.enableWeakAttacks);
-	            printwriter.println("autoJump:" + g.autoJump);
+            for (KeyBinding keybinding : g.keyBindings)
+            {
+                String keyString = "key_" + keybinding.getKeyDescription() + ":" + keybinding.getKeyCode();
+                printwriter.println(keybinding.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? keyString + ":" + keybinding.getKeyModifier() : keyString);
+            }
 
-	            for (KeyBinding keybinding : g.keyBindings)
-	            {
-	                String keyString = "key_" + keybinding.getKeyDescription() + ":" + keybinding.getKeyCode();
-	                printwriter.println(keybinding.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? keyString + ":" + keybinding.getKeyModifier() : keyString);
-	            }
+            for (SoundCategory soundcategory : SoundCategory.values())
+            {
+                printwriter.println("soundCategory_" + soundcategory.getName() + ":" +  (soundcategory.getName().equals("music")? "false" : "true"));
+            }
 
-	            for (SoundCategory soundcategory : SoundCategory.values())
-	            {
-	                printwriter.println("soundCategory_" + soundcategory.getName() + ":" +  (soundcategory.getName().equals("music")? "false" : "true"));
-	            }
-
-	            for (EnumPlayerModelParts enumplayermodelparts : EnumPlayerModelParts.values())
-	            {
-	                printwriter.println("modelPart_" + enumplayermodelparts.getPartName() + ":true");
-	            }
-	        }
-	        catch (Exception exception)
-	        {
-	            MainRegistry.getlogger().error("Failed to save options", (Throwable)exception);
-	        }
-	        finally
-	        {
-	            IOUtils.closeQuietly((Writer)printwriter);
-	        }
-		}
+            for (EnumPlayerModelParts enumplayermodelparts : EnumPlayerModelParts.values())
+            {
+                printwriter.println("modelPart_" + enumplayermodelparts.getPartName() + ":true");
+            }
+        }
+        catch (FileNotFoundException exception)
+        {
+            MainRegistry.getlogger().error("Failed to save options", (Throwable)exception);
+        }
+        finally
+        {
+            IOUtils.closeQuietly((Writer)printwriter);
+        }
+	}	
 }
  

@@ -67,7 +67,7 @@ public class SoundEventPlay
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	public static ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
-	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	
+	private static ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	
 	private EntityPlayer player;
 	private Entity dragon, wither, lastRiding;
 	private World world;
@@ -538,7 +538,7 @@ public class SoundEventPlay
 		load();
 	}
 	
-	public void load() throws IOException
+	public static void load() throws IOException
 	{
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
