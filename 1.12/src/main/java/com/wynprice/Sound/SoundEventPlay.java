@@ -81,7 +81,7 @@ public class SoundEventPlay
 	private static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, endTimer, strongholdTimer = 10000f, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
-			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
+			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, justFinishedPig = false;
 	
 	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90");
 	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight"), hell = new WAVPlayer("hell"), piarate = new WAVPlayer("piarate"), piarateB = new WAVPlayer("piarateB");
@@ -221,6 +221,8 @@ public class SoundEventPlay
 					}
 					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
 					{
+						if(!justFinishedPig)
+							justFinishedPig = true;
 						if(!pig90.isRunning())
 						{
 							MainRegistry.getlogger().info("Get ready for spam :(");
@@ -244,7 +246,12 @@ public class SoundEventPlay
 						if(timesSwapped == 10)
 							if(pig90.getPosition() / 1000 < 35.738f)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
-							else shadersOff();
+							else if(!justFinishedPig)
+								{
+									justFinishedPig = true;
+									player.addChatMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
+									shadersOff();
+								}
 					}
 				}
 				else

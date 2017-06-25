@@ -73,7 +73,8 @@ public class SoundEventPlay
 	private World world;
 	public static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
-	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, printMessages = false;
+	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false,
+			isInCreditsFirst = false, inPauseMenu = true, printMessages = false, justFinishedPig = false;
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav", pig90Loc = "pig90.wav";
 	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90");
@@ -214,6 +215,8 @@ public class SoundEventPlay
 					}
 					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
 					{
+						if(!justFinishedPig)
+							justFinishedPig = true;
 						if(!pig90.isRunning())
 						{
 							MainRegistry.getlogger().info("Get ready for spam :(");
@@ -237,8 +240,9 @@ public class SoundEventPlay
 						if(timesSwapped == 10)
 							if(pig90.getPosition() / 1000 < 35.738f)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
-							else 
+							else if(!justFinishedPig)
 								{
+									justFinishedPig = true;
 									player.addChatMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
 									shadersOff();
 								}
