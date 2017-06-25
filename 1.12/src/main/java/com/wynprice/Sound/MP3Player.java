@@ -24,12 +24,11 @@ public class MP3Player
 		registerThread();
 	}
 	
-	private Thread getThread(int frame)
+	private Thread getThread(AdvancedPlayer player, int frame)
 	{
 		return new Thread(){
 			  public void run(){
 				  	try {
-				  		player = registerThread();
 				  		player.play(frame, Integer.MAX_VALUE);
 					} catch (JavaLayerException e) {
 						e.printStackTrace();
@@ -40,14 +39,17 @@ public class MP3Player
 	
 	public void start(int frame)
 	{
+		if(player == null)
+			player = registerThread();
 		if(thread == null)
-			thread = getThread(frame);
+			thread = getThread(player, frame);
 		try
 		{
 			thread.start(); 
 		}
 		catch (IllegalThreadStateException e) {
-			System.err.println("Unable to play Music\n" + e.getStackTrace());
+			System.err.println("Unable to play Music\n");
+			e.printStackTrace();
 		}
 		isRunning = true;
 	}
