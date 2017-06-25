@@ -54,33 +54,55 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.oredict.OreDictionary;
+import sounds_extended.MP3Player;
+import sounds_extended.WAVPlayer;
 
 public class SoundEventPlay
 {
-	private ArrayList<Block> foliage = new ArrayList<Block>();
+	private static final ArrayList<Float> pigSwapPositions = new ArrayList<Float>(Arrays.asList(13.015f, 19.102f, 23.563f, 23.753f, 23.947f, 24.123f, 24.32f, 24.508f, 24.692f, 24.879f, 25.074f));
+	
+	private static int timesSwapped = 0;
+	private static final ArrayList<String> allShaders = new ArrayList<String>(Arrays.asList("art bits blobs2 blur bumpy deconverge green invert notch ntsc outline pencil phosphor scan_pincushion sobel spider".split(" ")));
+	private static ArrayList<Block> foliage = new ArrayList<Block>();
 	public ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
 	public static ArrayList<ResourceLocation> beach = new ArrayList<ResourceLocation>(), forest = new ArrayList<ResourceLocation>(), storm = new ArrayList<ResourceLocation>(), cricket = new ArrayList<ResourceLocation>(), jungle = new ArrayList<ResourceLocation>();
 	private ArrayList<Integer> overworld = new ArrayList<Integer>(), nether = new ArrayList<Integer>(), end = new ArrayList<Integer>();	
 	private EntityPlayer player;
-	private Entity dragon, wither;
+	private Entity dragon, wither, lastRiding;
 	private World world;
 	public static ArrayList<ITextComponent> onJoin = new ArrayList<ITextComponent>();
 	private float timer, backTimer, relativeDistance, witherInvulvTimer = 1;
 	private static Boolean single = false, loadin = true, previousFrameDragon = false, previousFrameWither = false, playMusic = false, doUpdate = true, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, printMessages = false;
-	private static Clip glassworkOpen, bossMusic, hell, mPiarate, mPiarateB, pig90;
 	private static final String glassLoc = "glasswork_opening.wav", bossLoc = "boss_fight.wav", hellLoc = "hell.wav",
 			mPiarateLoc = "mPiarate.wav", mPiarateBLoc = "mPiarateB.wav", pig90Loc = "pig90.wav";
-	static void define()
+	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90");
+	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight"), hell = new WAVPlayer("hell"), piarate = new WAVPlayer("piarate"), piarateB = new WAVPlayer("piarateB");
+	private static final String[] wavSound = "b h".split(" ");
+
+	
+	private static int i(String key)
 	{
-		SoundSystem.sClips.clear();
-		for(String s : Arrays.asList(bossLoc, hellLoc, mPiarateLoc, mPiarateBLoc, pig90Loc))
-			SoundSystem.sClips.add(SoundSystem.sound(s));
-		bossMusic = SoundSystem.sClips.get(0);
-		hell = SoundSystem.sClips.get(1);
-		mPiarate = SoundSystem.sClips.get(2);
-		mPiarateB = SoundSystem.sClips.get(3);
-		pig90 = SoundSystem.sClips.get(4);
+		return new ArrayList<String>(Arrays.asList(wavSound)).indexOf(key);
+	}
+	
+	private void pauseAll()
+	{
+		inPauseMenu = false;
+		bossMusic.pause();
+		piarate.stop();
+		piarateB.stop();
+		hell.pause();
+	}
+	
+	private void shadersOff()
+	{
+		try
+		{
+			Minecraft.getMinecraft().entityRenderer.stopUseShader();
+		} catch (RuntimeException run) {
+			
+		}
 	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
@@ -91,27 +113,17 @@ public class SoundEventPlay
 		{
 			isInCredits = Minecraft.getMinecraft().currentScreen.getClass().getName() == "net.minecraft.client.gui.GuiWinGame";
 			if(isInCredits)
-			{
-				bossMusic = SoundSystem.pauseSound(bossMusic, 0);
-				hell = SoundSystem.pauseSound(hell, 1);
-				mPiarate = SoundSystem.pauseSound(mPiarate, 2);
-				mPiarateB = SoundSystem.pauseSound(mPiarateB, 3);
-				pig90 = SoundSystem.pauseSound(pig90, 4);
-			}
+				pauseAll();
 		}
 		if(isInCredits && !isInCreditsFirst)
-			SoundSystem.playGlassworks();
+			glassworks.play();
 		if(!isInCredits && isInCreditsFirst)
-			SoundSystem.stopGlassworks();
+			glassworks.stop();
 		isInCreditsFirst = isInCredits;
 		if(world == null || Minecraft.getMinecraft().isGamePaused() && inPauseMenu)
 		{
 			inPauseMenu = false;
-			bossMusic = SoundSystem.pauseSound(bossMusic, 0);
-			hell = SoundSystem.pauseSound(hell, 1);
-			mPiarate = SoundSystem.pauseSound(mPiarate, 2);
-			mPiarateB = SoundSystem.pauseSound(mPiarateB, 3);
-			pig90 = SoundSystem.pauseSound(pig90, 4);
+			pauseAll();
 		}
 	}
 	
@@ -125,8 +137,7 @@ public class SoundEventPlay
 			try
 			{
 				String s = Minecraft.getMinecraft().getCurrentServerData().serverIP;
-				MainRegistry.getlogger().info("Loading system for MultiPlayer");
-				
+				MainRegistry.getlogger().info("Loading system for MultiPlayer");	
 			}
 			catch (Exception exeption) 
 			{
@@ -151,72 +162,102 @@ public class SoundEventPlay
 			if((SoundConfig.runOnServer && SoundConfig.useList && SoundConfig.readServers.contains(Minecraft.getMinecraft().getCurrentServerData().serverIP)) || !SoundConfig.runOnServer)
 				return;
 		}
-			
-		
-		
 		
 		if(playMusic && !bossMusic.isRunning())
 		{
 			Minecraft.getMinecraft().getSoundHandler().stop(References.MODID + ":wither.spawn.timer", SoundCategory.MASTER);
 			playMusic = false;
 			if(previousFrameDragon || previousFrameWither)
-				bossMusic.start();
+				bossMusic.play();
 		}
 		this.world = e.getEntity().getEntityWorld();
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
 			if(SoundConfig.mode2)
-				if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
+			{
+				if(player.isRiding())
 				{
-					EntityBoat boat = (EntityBoat) player.getRidingEntity();
-					double x = boat.motionX > 0? boat.motionX : -boat.motionX;
-					double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
-					double velo = Math.sqrt((x*x) + (z*z));
-					double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
-					if(!(mPiarate.isRunning() || mPiarateB.isRunning()))
-						(velo > 0.35 ? mPiarateB : mPiarate).start();
-					if(velo > 0.35)
+					if(player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
 					{
-						if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
-							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
-						if(!mPiarateB.isRunning())
+						EntityBoat boat = (EntityBoat) player.getRidingEntity();
+						double x = boat.motionX > 0? boat.motionX : -boat.motionX;
+						double z = boat.motionZ > 0? boat.motionZ : -boat.motionZ;
+						double velo = Math.sqrt((x*x) + (z*z));
+						double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
+						if(!(piarate.isRunning() || piarateB.isRunning()))
+							(velo > 0.35 ? piarateB : piarate).play();
+						if(velo > 0.35)
 						{
-							mPiarateB.setFramePosition(mPiarate.getFramePosition());
-							mPiarate = SoundSystem.resetSound(mPiarate, 2);
-							mPiarateB.start();
+							if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
+								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
+							if(!piarateB.isRunning())
+							{
+								piarateB.setFramePosition(piarate.getFramePosition());
+								piarate.stop();
+								piarateB.play();
+							}	
 						}	
-					}
-					else
-					{
-						if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-							Minecraft.getMinecraft().entityRenderer.stopUseShader();
-						if(!mPiarate.isRunning())
+						else
 						{
-							if(mPiarateB.getFramePosition() != 0)
-								mPiarate.setFramePosition(mPiarateB.getFramePosition());
-							mPiarateB = SoundSystem.resetSound(mPiarateB, 3);
-							mPiarate.start();
+							if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
+								shadersOff();
+							if(!piarate.isRunning())
+							{
+								
+								if(piarateB.getFramePosition() != 0)
+									piarate.setFramePosition(piarateB.getFramePosition());
+								piarateB.stop();
+								piarate.play();
+							}
 						}
 					}
+					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
+					{
+						if(!pig90.isRunning())
+						{
+							MainRegistry.getlogger().info("Get ready for spam :(");
+							pig90.play();
+						}
+							
+						if(pig90.getPosition() / 1000f > pigSwapPositions.get(timesSwapped))
+						{
+							if(timesSwapped == 0)
+								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/phosphor.json"));
+							if(timesSwapped == 1)
+								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
+							else if(Arrays.asList(2,3,4,5,6,7,8,9).contains(timesSwapped))
+								if(timesSwapped % 2 == 0)
+									Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));	
+								else
+									shadersOff();
+							if(pigSwapPositions.size() != timesSwapped + 1)
+								timesSwapped ++;
+						}
+						if(timesSwapped == 10)
+							if(pig90.getPosition() / 1000 < 35.738f)
+								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
+							else 
+								{
+									player.addChatMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
+									shadersOff();
+								}
+					}
 				}
-				else if(player.isRiding() && player.getRidingEntity() instanceof EntityPig && world.isRemote && !pig90.isRunning())
+				else
 				{
-					pig90.start();
-					System.out.println(pig90.getFrameLength());
-				}
-					
-				else if(!(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity() instanceof EntityPig))
-				{
+					timesSwapped = 0;
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
-					if(mPiarate.isRunning())
-						mPiarate = SoundSystem.resetSound(mPiarate, 2);
-					if(mPiarateB.isRunning())
-						mPiarateB = SoundSystem.resetSound(mPiarateB, 3);
+						shadersOff();
+					if(piarate.isRunning())
+						piarate.stop();
+					if(piarateB.isRunning())
+						piarateB.stop();
 					if(pig90.isRunning())
-						pig90 = SoundSystem.resetSound(pig90, 4);
+						pig90.stop();
 				}
+				lastRiding = player.getRidingEntity();
+			}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
 				Iterator<Entity> iWorldLoadedEntityList = world.loadedEntityList.iterator();
@@ -231,7 +272,6 @@ public class SoundEventPlay
 					{
 						wither = entity;
 					}
-					
 				}
 				if(SoundConfig.isEndDragon)
 				{
@@ -242,11 +282,11 @@ public class SoundEventPlay
 							playMusic = true;
 						if((dragon.isDead || d.getHealth() == 0) && previousFrameDragon)
 						{
-							bossMusic = SoundSystem.resetSound(bossMusic, 0);
+							bossMusic.stop();
 							world.playSound(player, dragon.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 5f, 1f);
 						}
 						if(!world.loadedEntityList.contains(dragon) && previousFrameDragon)
-							bossMusic = SoundSystem.resetSound(bossMusic, 0);
+							bossMusic.stop();
 						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
 						
 					}
@@ -267,7 +307,7 @@ public class SoundEventPlay
 						}
 						if((wither.isDead || w.getHealth() == 0) && previousFrameWither)
 						{
-							bossMusic = SoundSystem.resetSound(bossMusic, 0);
+							bossMusic.stop();
 						}
 						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
 						if(previousFrameWither)
@@ -281,11 +321,11 @@ public class SoundEventPlay
 			}
 			if(!previousFrameWither && !hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell)
 			{
-				hell.start();
+				hell.play();
 			}
 			if((previousFrameWither && hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell) || (!nether.contains(player.dimension) && hell.isRunning()))
 			{
-				hell = SoundSystem.resetSound(hell,2);	
+				hell.stop();	
 			}
 			if(timer >= 20f)
 			{
@@ -500,7 +540,6 @@ public class SoundEventPlay
 	
 	public void load() throws IOException
 	{
-		define();
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}

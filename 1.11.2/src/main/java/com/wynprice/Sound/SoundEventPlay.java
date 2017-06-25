@@ -244,7 +244,11 @@ public class SoundEventPlay
 						if(timesSwapped == 10)
 							if(pig90.getPosition() / 1000 < 35.738f)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
-							else shadersOff();
+							else 
+								{
+									player.sendMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
+									shadersOff();
+								}
 					}
 				}
 				else
