@@ -12,6 +12,7 @@ public class MP3Player
 	private AudioDevice device;
 	/** The Thread that holds the playing function */
 	private Thread thread;
+	private Runnable runnable;
 	/** The name of the file */
 	private final  String name;
 	/**The frame at which the audio is paused on*/
@@ -21,28 +22,37 @@ public class MP3Player
 	public MP3Player (String name)
 	{
 		this.name = name;
-		registerThread();
+		player = register();
 	}
-	
-	private Thread getThread(AdvancedPlayer player, int frame)
+	private class getThread implements Runnable
 	{
-		return new Thread(){
-			  public void run(){
-				  	try {
-				  		player.play(frame, Integer.MAX_VALUE);
-					} catch (JavaLayerException e) {
-						e.printStackTrace();
-					}
-			  }
-			};
+		int frame;
+		AdvancedPlayer player;
+		private  getThread(AdvancedPlayer player, int frame)
+		{
+			this.frame = frame;
+			this.player = player;
+		}
+
+		@Override
+		public void run() {
+			try {
+		  		player.play(frame, Integer.MAX_VALUE);/ERROR HERE
+			} catch (JavaLayerException e) {
+				e.printStackTrace();
+			}	
+		}
 	}
 	
 	public void start(int frame)
 	{
-		if(player == null)
-			player = registerThread();
+		isRunning = true;
 		if(thread == null)
-			thread = getThread(player, frame);
+		{
+			runnable = new getThread(player, frame);
+			thread = new Thread(runnable);
+		}
+			
 		try
 		{
 			thread.start(); 
@@ -51,7 +61,6 @@ public class MP3Player
 			System.err.println("Unable to play Music\n");
 			e.printStackTrace();
 		}
-		isRunning = true;
 	}
 	
 	public void start()
@@ -65,6 +74,8 @@ public class MP3Player
 		isRunning = false;
 		if(thread != null)
 			thread.stop();
+		else
+			System.err.println("stop() was called before start() for " + name); 
 		thread = null;
 	}
 	
@@ -84,7 +95,7 @@ public class MP3Player
 		start(frameOnPaused);
 	}
 	
-	private AdvancedPlayer registerThread()
+	private AdvancedPlayer register()
 	{
 		AdvancedPlayer player = null;
 		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
