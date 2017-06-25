@@ -1,7 +1,9 @@
-package com.wynprice.Sound;
+package soundSystem.javazoom.jl;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import com.wynprice.Sound.References;
 
 import soundSystem.javazoom.jl.decoder.JavaLayerException;
 import soundSystem.javazoom.jl.player.AudioDevice;

@@ -1,4 +1,4 @@
-package com.wynprice.Sound;
+package soundSystem.javazoom.jl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
+import com.wynprice.Sound.References;
 
 public class WAVPlayer {
 	private Clip clip;
