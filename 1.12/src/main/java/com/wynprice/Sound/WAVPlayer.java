@@ -11,8 +11,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class WAVPlayer {
-	private Clip originalClip;
-	private Clip playingClip;
+	private Clip clip;
 	
 	public WAVPlayer(String location)
 	{
@@ -30,31 +29,30 @@ public class WAVPlayer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.originalClip = clip;
-		this.playingClip = clip;
+		this.clip = clip;
 	}
 	
-	public void start()
+	public void play()
 	{
-		playingClip.start();
+		clip.start();
 	}
 	
 	public void stop()
 	{
-		playingClip.stop();
+		clip.stop();
 		resetClip();
 	}
 	
 	public void pause()
 	{
-		int position = playingClip.getFramePosition();
+		int position = clip.getFramePosition();
 		stop();
-		playingClip.setFramePosition(position);
+		clip.setFramePosition(position);
 	}
 	
 	private void resetClip()
 	{
-		playingClip = originalClip;
+		clip.setFramePosition(0);
 	}
 	
 	private Class<? extends WAVPlayer> c()
@@ -64,22 +62,22 @@ public class WAVPlayer {
 	
 	public Boolean isRunning()
 	{
-		return playingClip.isRunning();
+		return clip.isRunning();
 	}
 	
 	public float getMicrosecondPosition()
 	{
-		return originalClip.getMicrosecondPosition();
+		return clip.getMicrosecondPosition();
 	}
 
 	public int getFramePosition() 
 	{
-		return playingClip.getFramePosition();
+		return clip.getFramePosition();
 	}
 
 	public void setFramePosition(int framePosition) 
 	{
-		playingClip.setFramePosition(framePosition);
+		clip.setFramePosition(framePosition);
 	}
 
 }

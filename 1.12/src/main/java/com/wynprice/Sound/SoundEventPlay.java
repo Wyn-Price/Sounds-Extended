@@ -166,7 +166,7 @@ public class SoundEventPlay
 			Minecraft.getMinecraft().getSoundHandler().stop(References.MODID + ":wither.spawn.timer", SoundCategory.MASTER);
 			playMusic = false;
 			if(previousFrameDragon || previousFrameWither)
-				bossMusic.start();
+				bossMusic.play();
 		}
 		this.world = e.getEntity().getEntityWorld();
 		if(e.getEntity() instanceof EntityPlayer)
@@ -184,17 +184,17 @@ public class SoundEventPlay
 						double velo = Math.sqrt((x*x) + (z*z));
 						double vol = Math.round((velo > 0.35d? 1d : (velo < 0.1d?  0.1d : velo + 0.1d / 0.25d)) * 1000) / 1000d;
 						if(!(piarate.isRunning() || piarateB.isRunning()))
-							(velo > 0.35 ? piarateB : piarate).start();
-						System.out.println(piarate.isRunning());
+							(velo > 0.35 ? piarateB : piarate).play();
 						if(velo > 0.35)
 						{
 							if(!Minecraft.getMinecraft().entityRenderer.isShaderActive())
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/blobs2.json"));
 							if(!piarateB.isRunning())
 							{
+								
 								piarateB.setFramePosition(piarate.getFramePosition());
 								piarate.stop();
-								piarateB.start();
+								piarateB.play();
 							}	
 						}	
 						else
@@ -203,10 +203,11 @@ public class SoundEventPlay
 								Minecraft.getMinecraft().entityRenderer.stopUseShader();
 							if(!piarate.isRunning())
 							{
+								
 								if(piarateB.getFramePosition() != 0)
 									piarate.setFramePosition(piarateB.getFramePosition());
 								piarateB.stop();
-								piarate.start();
+								piarate.play();
 							}
 						}
 					}
@@ -235,16 +236,6 @@ public class SoundEventPlay
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
 							else timesSwapped ++;
 					}
-					else
-					{
-						timesSwapped = 0;
-						if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
-							try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
-						if(piarate.isRunning())
-							piarate.stop();
-						if(pig90.isRunning())
-							pig90.stop();
-					}
 				}
 				else
 				{
@@ -253,11 +244,12 @@ public class SoundEventPlay
 						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
 					if(piarate.isRunning())
 						piarate.stop();
+					if(piarateB.isRunning())
+						piarateB.stop();
 					if(pig90.isRunning())
 						pig90.stop();
-				}	
-				if(lastRiding != player.getRidingEntity())
-					timesSwapped = 0;
+				}
+				lastRiding = player.getRidingEntity();
 			}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
@@ -322,7 +314,7 @@ public class SoundEventPlay
 				}
 			}
 			if(!previousFrameWither && !hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell)
-				hell.start();
+				hell.play();
 			if((previousFrameWither && hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell) || (!nether.contains(player.dimension) && hell.isRunning()))
 				hell.stop();	
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)

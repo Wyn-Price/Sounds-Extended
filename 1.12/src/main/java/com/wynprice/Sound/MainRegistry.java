@@ -53,10 +53,13 @@ public class MainRegistry
 	private static File optionsFile;
 	public static final Splitter COLON_SPLITTER = Splitter.on(':');
 	
+	private static WAVPlayer startup = new WAVPlayer("startup");
+	
 	@EventHandler
 	public static void PreInit(FMLPreInitializationEvent e) throws IOException
 	{
 		getlogger().info("Playing that noteblock nicely");
+		startup.play();
 		SoundConfig.preInit();
 		SoundSystemConfig.setNumberStreamingChannels(11);
 		SoundSystemConfig.setNumberNormalChannels(21); 
