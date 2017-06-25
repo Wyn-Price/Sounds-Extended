@@ -75,8 +75,8 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	
-	private static MP3Player glassworks = new MP3Player("glasswork_opening");
-	private static WynClip bossMusic = new WynClip("boss_fight"), hell = new WynClip("hell"), pirate;
+	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pirate = new MP3Player("pirate");
+	private static WynClip bossMusic = new WynClip("boss_fight"), hell = new WynClip("hell");
 	private static final String[] wavSound = "b h".split(" ");
 
 	
@@ -87,7 +87,7 @@ public class SoundEventPlay
 	
 	public void pauseAll()
 	{
-		
+		glassworks.pause();
 	}
 	
 	@SubscribeEvent
@@ -102,7 +102,7 @@ public class SoundEventPlay
 				pauseAll();
 		}
 		if(isInCredits && !isInCreditsFirst)
-			glassworks.play();
+			glassworks.start();
 		if(!isInCredits && isInCreditsFirst)
 			glassworks.stop();
 		isInCreditsFirst = isInCredits;
@@ -169,8 +169,10 @@ public class SoundEventPlay
 				if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
 				{
 					if(!pirate.isRunning());
+					{
 						pirate.start();
-					if((pirate.getMicrosecondPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
+					}	
+					if((pirate.getPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
 					{
 						if(Arrays.asList(timesSwitched, timesSwitched % 2).contains(0))
 							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));

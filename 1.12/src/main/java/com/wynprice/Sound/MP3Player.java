@@ -16,10 +16,12 @@ public class MP3Player
 	private final  String name;
 	/**The frame at which the audio is paused on*/
 	private int frameOnPaused;
+	private Boolean isRunning = false;
 	
 	public MP3Player (String name)
 	{
 		this.name = name;
+		registerThread();
 	}
 	
 	private Thread getThread(int frame)
@@ -36,7 +38,7 @@ public class MP3Player
 			};
 	}
 	
-	public void play(int frame)
+	public void start(int frame)
 	{
 		if(thread == null)
 			thread = getThread(frame);
@@ -47,17 +49,20 @@ public class MP3Player
 		catch (IllegalThreadStateException e) {
 			System.err.println("Unable to play Music\n" + e.getStackTrace());
 		}
+		isRunning = true;
 	}
 	
-	public void play()
+	public void start()
 	{
-		play(0);
+		start(0);
 	}
 	
 	
 	public void stop()
 	{
-		thread.stop();
+		isRunning = false;
+		if(thread != null)
+			thread.stop();
 		thread = null;
 	}
 	
@@ -74,7 +79,7 @@ public class MP3Player
 	
 	public void resume()
 	{
-		play(frameOnPaused);
+		start(frameOnPaused);
 	}
 	
 	private AdvancedPlayer registerThread()
@@ -103,6 +108,11 @@ public class MP3Player
 	private Class<? extends MP3Player> c()
 	{
 		return getClass();
+	}
+
+	public boolean isRunning() 
+	{
+		return isRunning;
 	}
 }
 
