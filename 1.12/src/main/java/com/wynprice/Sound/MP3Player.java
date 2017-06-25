@@ -25,11 +25,6 @@ public class MP3Player
 	public MP3Player (String name)
 	{
 		this.name = name;
-		try {
-			device = FactoryRegistry.systemRegistry().createAudioDevice();
-		} catch (JavaLayerException e) {
-			e.printStackTrace();
-		}
 		this.player = register();
 		allMp3.add(this);
 	}
@@ -40,6 +35,7 @@ public class MP3Player
 			  public void run(){
 				  	try {
 				  		player.play();
+				  		isRunning = false;
 					} catch (JavaLayerException e) {
 						e.printStackTrace();
 					}
@@ -50,6 +46,7 @@ public class MP3Player
 	public void play()
 	{
 		isRunning = true;
+		player = register();
 		Thread t = getThread();
 		t.start();
 		t.setName(name + " soundPlayer");
@@ -58,6 +55,7 @@ public class MP3Player
 	
 	public void stop()
 	{
+		isRunning = false;
 		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
 		Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
 		for(Thread t : threadArray)
@@ -73,16 +71,12 @@ public class MP3Player
 		AdvancedPlayer player = null;
 		String location = "/assets/" + References.MODID + "/sounds/" + name + ".mp3";
 		try {
+			device = FactoryRegistry.systemRegistry().createAudioDevice();
 			player = new AdvancedPlayer(new getClass().get().getResourceAsStream(location), device);
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
 		} 
 		return player;
-	}
-	
-	private void playSound(int frame) throws JavaLayerException
-	{
-		player.play(frame, Integer.MAX_VALUE);
 	}
 	
 	public int getPosition()

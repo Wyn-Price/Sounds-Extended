@@ -61,7 +61,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class SoundEventPlay
 {
-	private static final ArrayList<Float> pirateSwapPositions = new ArrayList<Float>(Arrays.asList((float)Integer.MAX_VALUE));
+	private static final ArrayList<Float> pirateSwapPositions = new ArrayList<Float>(Arrays.asList(15f));
 	private static int timesSwitched = 0;
 	private static ArrayList<Block> foliage = new ArrayList<Block>();
 	private ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
@@ -173,9 +173,8 @@ public class SoundEventPlay
 				{
 					
 					if(!pirate.isRunning())
-						pirate.play();
-						
-					if((pirate.getPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
+						pirate.play();	
+					if((pirate.getPosition() / 1000f) > pirateSwapPositions.get(timesSwitched))
 					{
 						if(Arrays.asList(timesSwitched, timesSwitched % 2).contains(0))
 							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));
