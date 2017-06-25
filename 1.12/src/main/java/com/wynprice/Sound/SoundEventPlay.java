@@ -9,7 +9,6 @@ import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,38 +76,21 @@ public class SoundEventPlay
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true;
 	
 	private static MP3Player glassworks = new MP3Player("glasswork_opening");
-	private static Clip bossMusic, hell;
+	private static WynClip bossMusic, hell, pirate;
 	private static final String bossLoc = "boss_fight.wav", hellLoc = "hell.wav";
 	private static final String[] wavSound = "b h".split(" ");
-	static void define()
-	{
-		SoundSystem.sClips.clear();
-		for(String s : Arrays.asList(bossLoc, hellLoc))
-			SoundSystem.sClips.add(SoundSystem.sound(s));
-		bossMusic = getSound("b");
-		hell = getSound("h");
-	}
-	
-	private static Clip getSound(String key)
-	{
-		return SoundSystem.sClips.get(i(key));
-	}
+
 	
 	private static int i(String key)
 	{
 		return new ArrayList<String>(Arrays.asList(wavSound)).indexOf(key);
 	}
 	
-	private static void pauseAll()
+	public void pauseAll()
 	{
-		bossMusic = SoundSystem.pauseSound(bossMusic, i("b"));
-		hell = SoundSystem.pauseSound(hell, i("b"));
+		
 	}
 	
-	private static Clip rs(Clip clip, String key)
-	{
-		return SoundSystem.resetSound(clip, i(key));
-	}
 	@SubscribeEvent
 	public void MultiUpdate(Event e)
 	{
@@ -187,9 +169,9 @@ public class SoundEventPlay
 			if(SoundConfig.mode2)
 				if(player.isRiding() && player.getRidingEntity() instanceof EntityBoat && player.getRidingEntity().isInWater() && world.isRemote)
 				{
-					if(!piarate.isRunning());
-						piarate.start();
-					if((piarate.getMicrosecondLength() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
+					if(!pirate.isRunning());
+						pirate.start();
+					if((pirate.getMicrosecondPosition() / 1e-6f) > pirateSwapPositions.get(timesSwitched))
 					{
 						if(Arrays.asList(timesSwitched, timesSwitched % 2).contains(0))
 							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));
@@ -208,8 +190,8 @@ public class SoundEventPlay
 					timesSwitched = 0;
 					if(Minecraft.getMinecraft().entityRenderer.isShaderActive())
 						try{Minecraft.getMinecraft().entityRenderer.stopUseShader();} catch (RuntimeException run) {}
-					if(piarate.isRunning())
-						piarate = rs(piarate, "p");
+					if(pirate.isRunning())
+						pirate.stop();
 				}
 			if(SoundConfig.isEndDragon || SoundConfig.isWither)
 			{
@@ -236,11 +218,11 @@ public class SoundEventPlay
 							playMusic = true;
 						if((dragon.isDead || d.getHealth() == 0) && previousFrameDragon)
 						{
-							bossMusic = rs(bossMusic, "b");
+							bossMusic.stop();
 							world.playSound(player, dragon.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 5f, 1f);
 						}
 						if(!world.loadedEntityList.contains(dragon) && previousFrameDragon)
-							bossMusic = rs(bossMusic, "b");
+							bossMusic.stop();
 						previousFrameDragon = !(dragon.isDead || d.getHealth() == 0);
 						
 					}
@@ -261,7 +243,7 @@ public class SoundEventPlay
 						}
 						if((wither.isDead || w.getHealth() == 0) && previousFrameWither)
 						{
-							bossMusic = rs(bossMusic, "b");
+							bossMusic.stop();
 						}
 						previousFrameWither = !(wither.isDead || w.getHealth() == 0);
 						if(previousFrameWither)
@@ -276,7 +258,7 @@ public class SoundEventPlay
 			if(!previousFrameWither && !hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell)
 				hell.start();
 			if((previousFrameWither && hell.isRunning() && nether.contains(player.dimension)&& SoundConfig.isHell) || (!nether.contains(player.dimension) && hell.isRunning()))
-				hell = rs(hell, "h");	
+				hell.stop();	
 			if(endTimer >= (18.5 * 7) && endCityPlay && SoundConfig.isEndCity)
 			{
 				endTimer = 0f;
@@ -529,7 +511,6 @@ public class SoundEventPlay
 	
 	public void load() throws IOException
 	{
-		define();
 		beach.clear(); cricket.clear(); storm.clear(); forest.clear(); nether.clear(); end.clear(); overworld.clear(); foliage.clear();
 		for(Integer i : Arrays.asList(16,25,26)){beach.add(Biome.getBiome(i).getRegistryName());}
 		for(Integer i : Arrays.asList(1,4,5,6,18,19,27,28,29,30,31,32,33,35)){cricket.add(Biome.getBiome(i).getRegistryName());}
