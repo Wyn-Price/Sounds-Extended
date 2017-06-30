@@ -20,7 +20,6 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
 import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
-import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 
 public class guiFactory implements IModGuiFactory
 {
@@ -39,21 +38,22 @@ public class guiFactory implements IModGuiFactory
 	public GuiScreen createConfigGui(GuiScreen parentScreen) {
 		return new SoundConfigGui(parentScreen);
 	}
+	
 
-	@Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() {
-		return SoundConfigGui.class;
-	}
+//	@Override
+//	public Class<? extends GuiScreen> mainConfigGuiClass() {
+//		return SoundConfigGui.class;
+//	}
 
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
 		return null;
 	}
 
-	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
-		return null;
-	}
+//	@Override
+//	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
+//		return null;
+//	}
 	
 	public static class SoundConfigGui extends GuiConfig
 	{

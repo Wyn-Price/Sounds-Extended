@@ -141,5 +141,9 @@ public class MP3Player
 		m.play();
 		return m;
 	}
+
+	public void pause() {
+		stop();
+	}
 }
 

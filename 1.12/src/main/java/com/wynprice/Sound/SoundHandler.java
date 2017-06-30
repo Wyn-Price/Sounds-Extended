@@ -6,6 +6,7 @@ import java.util.Arrays;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.RegistryNamespaced;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class SoundHandler 
@@ -13,7 +14,6 @@ public class SoundHandler
 	public static ArrayList<SoundEvent> soundForest, highWind, fireCrack, beachWave, soundForestStorm, endDrip, endAmbience;
 	public static SoundEvent cricketNight, witherTimer, stronghold;
 	private static int soundEventId;
-	public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = net.minecraftforge.fml.common.registry.GameData.getSoundEventRegistry();
 	
 	
 	public static void init()
@@ -37,6 +37,7 @@ public class SoundHandler
 	public static SoundEvent register(String name)
 	{
 		ResourceLocation loc = new ResourceLocation(References.MODID, name);
-		return GameRegistry.register(new SoundEvent(loc).setRegistryName(loc));
+		ForgeRegistries.SOUND_EVENTS.register(new SoundEvent(loc).setRegistryName(loc));
+		return ForgeRegistries.SOUND_EVENTS.getValue(loc);
 	}
 }
