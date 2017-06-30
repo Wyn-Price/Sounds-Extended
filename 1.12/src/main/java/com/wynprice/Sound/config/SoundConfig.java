@@ -27,13 +27,14 @@ public class SoundConfig
 	private static Boolean isClient = false;
 	private static Configuration config = null;
 	public static final String CATEGORY_SOUNDS_ENABLED = "Sounds that are enabled", CATEGORY_SERVER_SETTINGS = "Server Settings", CATEGORY_MODDED_BIOMES_SUPPORT = "Config for use with other mods that have biomes",
-			CATEGORY_GENERAL = "Genral settings";
+			CATEGORY_GENERAL = "Genral settings", CATEGORY_VOLUME="Volume";
 	
 	public static Boolean isFire, isForest, isForestStorm, isBeach, isCricket, isWind, isHell, isEndDragon, isWither, 
 		isEnd, isShulkerSoundEnd, isEndCity, isStronghold, runOnServer, useList, foliage, isJungle, forceMusic, mode2;
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd, moddedJungle;
 	public static ArrayList<String> readServers = new ArrayList<String>();
+	public static float volBoss, volPiarate;
 	
 	public static Configuration getConfig()
 	{
@@ -71,6 +72,14 @@ public class SoundConfig
 		List<String> serverOrder = new ArrayList<String>();
 		List<String> moddedOrder = new ArrayList<String>();
 		List<String> genralOrder = new ArrayList<String>();
+		List<String> volumeOrder = new ArrayList<String>();
+		
+		
+		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1f, null, 0f, 1f);
+		vboss.setLanguageKey("gui.vboss");
+		vboss.setComment(isClient? I18n.format("gui.vboss.comment") : "");
+		volumeOrder.add(vboss.getName());
+		
 		
 		Property forceMusicOff = config.get(CATEGORY_GENERAL, "forceMusic", true);
 		forceMusicOff.setLanguageKey("gui.forceMusic");
@@ -219,6 +228,7 @@ public class SoundConfig
 		enabledOrder.add(isStrongholdSound.getName());
 		
 		config.setCategoryPropertyOrder(CATEGORY_GENERAL, genralOrder);
+		config.setCategoryPropertyOrder(CATEGORY_VOLUME, volumeOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SOUNDS_ENABLED, enabledOrder);
 		config.setCategoryPropertyOrder(CATEGORY_SERVER_SETTINGS, serverOrder);
 		config.setCategoryPropertyOrder(CATEGORY_MODDED_BIOMES_SUPPORT, moddedOrder);

@@ -61,13 +61,13 @@ public class guiFactory implements IModGuiFactory
 		public SoundConfigGui(GuiScreen parentScreen) 
 		{
 			super(parentScreen, getConfigElements(), References.MODID, false, false, I18n.format("gui.title"));
-			// TODO Auto-generated constructor stub
 		}
 
 		private static List<IConfigElement> getConfigElements() 
 		{
 			List<IConfigElement> list = new ArrayList<IConfigElement>();
 			list.add(new DummyCategoryElement("gui.category.general", "gui.category.general", CategoryGeneral.class));
+			list.add(new DummyCategoryElement("gui.category.volume", "gui.category.volume", CategoryVolume.class));
 			list.add(new DummyCategoryElement("gui.category.enabled", "gui.category.enabled", CategoryEnabled.class));
 			list.add(new DummyCategoryElement("gui.category.server", "gui.category.server", CategoryServer.class));
 			list.add(new DummyCategoryElement("gui.category.modded", "gui.category.modded", CategoryModded.class));
@@ -142,6 +142,23 @@ public class guiFactory implements IModGuiFactory
 				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_GENERAL));
 				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
 				String windowTitle = I18n.format("gui.category.general");
+				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
+			}
+		}
+		
+		public static class CategoryVolume extends CategoryEntry
+		{
+			public CategoryVolume(GuiConfig owningScreen, GuiConfigEntries owningEntryList,
+					IConfigElement configElement) {
+				super(owningScreen, owningEntryList, configElement);
+			}
+			
+			@Override
+			protected GuiScreen buildChildScreen() {
+				Configuration config = SoundConfig.getConfig();
+				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_VOLUME));
+				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
+				String windowTitle = I18n.format("gui.category.volume");
 				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
 			}
 		}
