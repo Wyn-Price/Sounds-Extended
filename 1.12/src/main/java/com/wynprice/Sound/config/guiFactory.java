@@ -158,12 +158,11 @@ public class guiFactory implements IModGuiFactory
 				Configuration config = SoundConfig.getConfig();
 				ConfigElement catEnabled = new ConfigElement(config.getCategory(SoundConfig.CATEGORY_VOLUME));
 				List<IConfigElement> propOnScreen = catEnabled.getChildElements();
-				String windowTitle = I18n.format("gui.category.volume");
+				String windowTitle = I18n.format("gui.category.general");
 				return new GuiConfig(owningScreen, propOnScreen, owningScreen.modID, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,  this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, windowTitle);
 			}
 		}
-
-			
+		
 		
 	}
 

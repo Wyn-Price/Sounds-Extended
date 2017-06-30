@@ -8,16 +8,14 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.net.InetAddresses;
 import com.wynprice.Sound.MainRegistry;
 import com.wynprice.Sound.References;
+import com.wynprice.Sound.Slider;
 
-import akka.actor.Address;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.NumberSliderEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -35,7 +33,7 @@ public class SoundConfig
 	public static String[] blackServers;
 	public static int[] moddedForest, moddedBeach, moddedStorm, moddedCricket, moddedNether, moddedOverworld, moddedEnd, moddedJungle;
 	public static ArrayList<String> readServers = new ArrayList<String>();
-	public static float volBoss, volPiarate;
+	public static float volBoss, volPiarate, volHell;
 	
 	public static Configuration getConfig()
 	{
@@ -75,15 +73,20 @@ public class SoundConfig
 		List<String> genralOrder = new ArrayList<String>();
 		List<String> volumeOrder = new ArrayList<String>();
 		
-		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1, null, 0, 100).setConfigEntryClass(NumberSliderEntry.class);
+		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1, null, 0, 100).setConfigEntryClass(Slider.class);
 		vboss.setLanguageKey("gui.vboss");
 		vboss.setComment(isClient? I18n.format("gui.vboss.comment") : "");
 		volumeOrder.add(vboss.getName());
 		
-		Property vpiarate = config.get(CATEGORY_VOLUME, "vpiarate", 1, null, 0, 100).setConfigEntryClass(NumberSliderEntry.class);
+		Property vpiarate = config.get(CATEGORY_VOLUME, "vpiarate", 1, null, 0, 100).setConfigEntryClass(Slider.class);
 		vpiarate.setLanguageKey("gui.vpiarate");
 		vpiarate.setComment(isClient? I18n.format("gui.vpiarate.comment") : "");
 		volumeOrder.add(vpiarate.getName());
+		
+		Property vhell = config.get(CATEGORY_VOLUME, "vhell", 1, null, 0, 100).setConfigEntryClass(Slider.class);
+		vhell.setLanguageKey("gui.vhell");
+		vhell.setComment(isClient? I18n.format("gui.vhell.comment") : "");
+		volumeOrder.add(vhell.getName());
 		
 		
 		Property forceMusicOff = config.get(CATEGORY_GENERAL, "forceMusic", true);
@@ -275,6 +278,7 @@ public class SoundConfig
 			
 			volBoss = vboss.getInt();
 			volPiarate = vpiarate.getInt();
+			volHell = vhell.getInt();
 		}
 		
 		isForestSound.set(isForest);
@@ -311,6 +315,7 @@ public class SoundConfig
 		
 		vpiarate.set(volPiarate);
 		vboss.set(volBoss);
+		vhell.set(volHell);
 		
 		readServers.clear();
 		for(String IP : blackServers)
