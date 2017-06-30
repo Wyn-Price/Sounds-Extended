@@ -83,8 +83,8 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, justFinishedPig = false;
 	
-	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90"), hell = new MP3Player("hell");
-	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight", 1), piarate = new WAVPlayer("piarate", 1), piarateB = new WAVPlayer("piarateB", 1);
+	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90");
+	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight", 1), hell = new WAVPlayer("hell", 1f) ,piarate = new WAVPlayer("piarate", 1), piarateB = new WAVPlayer("piarateB", 1);
 
 	private void pauseAll()
 	{

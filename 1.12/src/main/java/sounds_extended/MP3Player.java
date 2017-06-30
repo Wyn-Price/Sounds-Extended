@@ -93,8 +93,9 @@ public class MP3Player
 			player = new AdvancedPlayer(new getClass().get().getResourceAsStream(location), device);
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
-		} 
+		}  
 		return player;
+		
 	}
 	
 	public int getPosition()
@@ -133,6 +134,7 @@ public class MP3Player
 	private void registerPlayFromThread() throws JavaLayerException
 	{
 		player.play();
+		
 	}
 	
 	public MP3Player playSound(MP3Player mp3)
