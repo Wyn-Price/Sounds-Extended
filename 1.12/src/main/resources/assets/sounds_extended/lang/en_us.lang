@@ -76,6 +76,15 @@ gui.forceMusic.comment=Happenes everytime the game is launched
 gui.mode2=Should the second "secret" mode be on
 gui.mode2.comment=Not very secret
 
+gui.vboss=The volume for the boss fight music
+gui.vboss.comment=What should the volume be while fighing the EnderDragon or the Wither
+
+gui.vpiarate=The volume for the secret piarate mode
+gui.vpiarate.comment=What should the volume be while your in a boat and mode 2 is on
+
+gui.vhell=The volume for hell
+gui.vhell.comment=What should the volume be while in hell
+
 id.notexist=[sounds_extended] Error in config file: Modded %s has an ID that dosn't exist
 version=[sounds_extended] The Mod is out of date. Your version %s, target version: %s.
 
@@ -88,6 +97,8 @@ gui.category.modded=Use for Modded Support
 gui.category.modded.tooltip=Use this to decide what modded biomes and dimensions should make what sounds
 gui.category.general=General Settings
 gui.category.general.tooltip=The main overall settings
+gui.category.volume=The settings whereas you can change the volume of diffrent things
+gui.category.volume.tooltip=Volume change
 
 commands.biomedictonary.success=%s has the traits %s
 commands.biomedictonary.failure.vanilla=%s hasn't got any traits

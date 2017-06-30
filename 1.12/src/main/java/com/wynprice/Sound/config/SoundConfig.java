@@ -73,17 +73,17 @@ public class SoundConfig
 		List<String> genralOrder = new ArrayList<String>();
 		List<String> volumeOrder = new ArrayList<String>();
 		
-		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1, null, 0, 100).setConfigEntryClass(Slider.class);
+		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 100, null, 0, 100).setConfigEntryClass(Slider.class);
 		vboss.setLanguageKey("gui.vboss");
 		vboss.setComment(isClient? I18n.format("gui.vboss.comment") : "");
 		volumeOrder.add(vboss.getName());
 		
-		Property vpiarate = config.get(CATEGORY_VOLUME, "vpiarate", 1, null, 0, 100).setConfigEntryClass(Slider.class);
+		Property vpiarate = config.get(CATEGORY_VOLUME, "vpiarate", 100, null, 0, 100).setConfigEntryClass(Slider.class);
 		vpiarate.setLanguageKey("gui.vpiarate");
 		vpiarate.setComment(isClient? I18n.format("gui.vpiarate.comment") : "");
 		volumeOrder.add(vpiarate.getName());
 		
-		Property vhell = config.get(CATEGORY_VOLUME, "vhell", 1, null, 0, 100).setConfigEntryClass(Slider.class);
+		Property vhell = config.get(CATEGORY_VOLUME, "vhell", 100, null, 0, 100).setConfigEntryClass(Slider.class);
 		vhell.setLanguageKey("gui.vhell");
 		vhell.setComment(isClient? I18n.format("gui.vhell.comment") : "");
 		volumeOrder.add(vhell.getName());
