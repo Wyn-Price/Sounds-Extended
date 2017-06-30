@@ -63,10 +63,18 @@ import sounds_extended.WAVPlayer;
 
 public class SoundEventPlay
 {
-	private static final ArrayList<Float> pigSwapPositions = new ArrayList<Float>(Arrays.asList(13.015f, 19.102f, 23.563f, 23.753f, 23.947f, 24.123f, 24.32f, 24.508f, 24.692f, 24.879f, 25.074f));
+	private static final ArrayList<Float> pigSwapPositions = new ArrayList<Float>(Arrays.asList(
+   13.015f, 19.102f, 23.563f, 23.753f, 23.947f, 24.123f,
+   			24.32f, 24.508f, 24.692f, 24.879f, 25.074f,
+   			35.679f, 35.883f, 36.065f, 36.263f, 36.483f, 
+   			36.642f, 36.81f, 37.019f, 37.201f, 41.738f,
+   			42.131f, 42.504f, 42.69f, 47.799f, 48.179f,
+   			48.564f, 48.749f, 49.301f, 50.835f,52.336f,//30 
+   			55.378f, 56.875f, 58.399f, 59.91f, 60.276f,
+   			60.665f, 61.033f, 61.425f));
 	
 	private static int timesSwapped = 0;
-	private static final ArrayList<String> allShaders = new ArrayList<String>(Arrays.asList("art bits blobs2 blur bumpy deconverge green invert notch ntsc outline pencil phosphor scan_pincushion sobel spider".split(" ")));
+	private static final ArrayList<String> allShaders = new ArrayList<String>(Arrays.asList("art bits blobs2 blur bumpy deconverge green invert notch ntsc pencil phosphor scan_pincushion sobel".split(" ")));
 	private static ArrayList<Block> foliage = new ArrayList<Block>();
 	private ArrayList<BlockPos> firePositions = new ArrayList<BlockPos>();
 	private ArrayList<BlockPos> foliagePositions = new ArrayList<BlockPos>();
@@ -175,7 +183,7 @@ public class SoundEventPlay
 		if(e.getEntity() instanceof EntityPlayer)
 		{
 			this.player = (EntityPlayer) e.getEntityLiving();
-			if(SoundConfig.mode2)
+			if(SoundConfig.mode2) 
 			{
 				if(player.isRiding())
 				{
@@ -212,7 +220,7 @@ public class SoundEventPlay
 							}
 						}
 					}
-					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)
+					else if(player.getRidingEntity() instanceof EntityPig && world.isRemote)// TODO
 					{
 						if(!pig90.isRunning())
 						{
@@ -222,29 +230,31 @@ public class SoundEventPlay
 							pig90.play();
 						}
 							
-						if(pig90.getPosition() / 1000f > pigSwapPositions.get(timesSwapped))
+						if(timesSwapped == 10 && pig90.getPosition() / 1000 < 35.178f)
+							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
+						else if(timesSwapped == 37 && pig90.getPosition() / 1000 < 96.251f)
+							Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json")); 
+						else if(pig90.getPosition() / 1000f > pigSwapPositions.get(timesSwapped))
 						{
 							if(timesSwapped == 0)
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/phosphor.json"));
-							if(timesSwapped == 1)
+							if(Arrays.asList(1,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33).contains(timesSwapped))
 								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
-							else if(Arrays.asList(2,3,4,5,6,7,8,9).contains(timesSwapped))
+							else if(Arrays.asList(2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,34,35,36,37).contains(timesSwapped))
 								if(timesSwapped % 2 == 0)
 									Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/flip.json"));	
 								else
 									shadersOff();
 							if(pigSwapPositions.size() != timesSwapped + 1)
 								timesSwapped ++;
-						}
-						if(timesSwapped == 10)
-							if(pig90.getPosition() / 1000 < 35.738f)
-								Minecraft.getMinecraft().entityRenderer.loadShader(new ResourceLocation("shaders/post/" + allShaders.get(randInt(0, allShaders.size() - 1)) + ".json"));
 							else if(!justFinishedPig)
-								{
-									justFinishedPig = true;
-									player.sendMessage((ITextComponent) new TextComponentTranslation("Thats all! more in next version"));
-									shadersOff();
-								}
+							{
+								justFinishedPig = true;
+								timesSwapped = 0;
+								pig90.stop();
+								shadersOff();
+							}
+						}
 					}
 				}
 				else
