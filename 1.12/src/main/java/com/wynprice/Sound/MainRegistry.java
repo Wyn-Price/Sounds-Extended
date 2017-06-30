@@ -59,7 +59,7 @@ public class MainRegistry
 	public static void PreInit(FMLPreInitializationEvent e) throws IOException
 	{
 		getlogger().info("Playing that noteblock nicely");
-		new WAVPlayer("startup").play();
+		new WAVPlayer("startup", 1).play();
 		SoundConfig.preInit();
 		SoundSystemConfig.setNumberStreamingChannels(11);
 		SoundSystemConfig.setNumberNormalChannels(21); 

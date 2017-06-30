@@ -17,6 +17,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.NumberSliderEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -74,11 +75,15 @@ public class SoundConfig
 		List<String> genralOrder = new ArrayList<String>();
 		List<String> volumeOrder = new ArrayList<String>();
 		
-		
-		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1f, null, 0f, 1f);
+		Property vboss = config.get(CATEGORY_VOLUME, "vboss", 1, null, 0, 100).setConfigEntryClass(NumberSliderEntry.class);
 		vboss.setLanguageKey("gui.vboss");
 		vboss.setComment(isClient? I18n.format("gui.vboss.comment") : "");
 		volumeOrder.add(vboss.getName());
+		
+		Property vpiarate = config.get(CATEGORY_VOLUME, "vpiarate", 1, null, 0, 100).setConfigEntryClass(NumberSliderEntry.class);
+		vpiarate.setLanguageKey("gui.vpiarate");
+		vpiarate.setComment(isClient? I18n.format("gui.vpiarate.comment") : "");
+		volumeOrder.add(vpiarate.getName());
 		
 		
 		Property forceMusicOff = config.get(CATEGORY_GENERAL, "forceMusic", true);
@@ -267,6 +272,9 @@ public class SoundConfig
 			
 			forceMusic = forceMusicOff.getBoolean();
 			mode2 = mode.getBoolean();
+			
+			volBoss = vboss.getInt();
+			volPiarate = vpiarate.getInt();
 		}
 		
 		isForestSound.set(isForest);
@@ -300,6 +308,9 @@ public class SoundConfig
 		
 		forceMusicOff.set(forceMusic);
 		mode.set(mode2);
+		
+		vpiarate.set(volPiarate);
+		vboss.set(volBoss);
 		
 		readServers.clear();
 		for(String IP : blackServers)
