@@ -10,6 +10,7 @@ import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -690,15 +691,23 @@ public class SoundEventPlay
 			Status status = PENDING;
 	        ComparableVersion target = null;
 			URL url = new URL(References.UPDATE_URL);
-			InputStream con = url.openStream();
+			InputStream con = null;
+			try
+			{
+				con = url.openStream();
+			}
+			catch (UnknownHostException h)
+			{
+				return;
+			}
 	        String data = new String(ByteStreams.toByteArray(con), "UTF-8");
 	        con.close();
+	        System.out.println(data);
 	        @SuppressWarnings("unchecked")
 	        Map<String, Object> json = new Gson().fromJson(data, Map.class);
 	        @SuppressWarnings("unchecked")
 	        Map<String, String> promos = (Map<String, String>)json.get("promos");
 	        String display_url = (String)json.get("homepage");
-
 	        String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
 	        String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
 	        ComparableVersion current = new ComparableVersion(References.VERSION);

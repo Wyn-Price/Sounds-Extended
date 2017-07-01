@@ -10,14 +10,12 @@ import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
-import javax.sound.sampled.Clip;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -25,7 +23,6 @@ import com.wynprice.Sound.config.SoundConfig;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -37,7 +34,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -686,7 +682,15 @@ public class SoundEventPlay
 			Status status = PENDING;
 	        ComparableVersion target = null;
 			URL url = new URL(References.UPDATE_URL);
-			InputStream con = url.openStream();
+			InputStream con = null;
+			try
+			{
+				con = url.openStream();
+			}
+			catch (UnknownHostException h)
+			{
+				return;
+			}
 	        String data = new String(ByteStreams.toByteArray(con), "UTF-8");
 	        con.close();
 	        @SuppressWarnings("unchecked")
