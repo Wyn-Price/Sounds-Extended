@@ -79,8 +79,8 @@ public class SoundEventPlay
 	private static Boolean single = false, loadin = true, printMessages = false, previousFrameDragon = false, previousFrameWither = false,playMusic = false, doUpdate = true,
 			endCityPlay = false, strongholdPlay = false, isInCredits = false, isInCreditsFirst = false, inPauseMenu = true, justFinishedPig = false;
 	
-	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90"), hell = new MP3Player("hell");
-	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight"), piarate = new WAVPlayer("piarate"), piarateB = new WAVPlayer("piarateB");
+	private static MP3Player glassworks = new MP3Player("glasswork_opening"), pig90 = new MP3Player("pig90");
+	private static WAVPlayer bossMusic = new WAVPlayer("boss_fight"), piarate = new WAVPlayer("piarate"), piarateB = new WAVPlayer("piarateB"), hell = new WAVPlayer("hell");
 	private static final String[] wavSound = "b h".split(" ");
 
 	
